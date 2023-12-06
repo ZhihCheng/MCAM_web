@@ -1,0 +1,13 @@
+body {
+  margin: 0; /* 清除預設外邊距 */
+  padding: 0; /* 清除預設內邊距 */
+}
+
+button#scrollToTopBtn {
+  position: fixed; /* 設定元素的定位方式為固定位置 */
+  bottom: 20px; /* 距離底部的距離，可以根據需要調整 */
+  left: 20px; /* 距離左側的距離，可以根據需要調整 */
+  display: none; /* 初始時隱藏按鈕 */
+}
+
+/* 可以添加其他樣式來美化按鈕 */

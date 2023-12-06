@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <title>Motor tech Co-AI</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+   
+</head>
+<style>
+    body {
+        width: 100%;
+        height: 100h; 
+        margin: 0; 
+        padding: 0; 
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+    }
+    label {
+        font-weight: bold;
+    }
+    
+    
+
+    img {
+        max-width: 100%; 
+        max-height: 100%; 
+        width: auto; 
+        height: auto; 
+        position: absolute; 
+        top: 50%;
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+    }
+    .label-font {
+        font-size: 24px;    
+    }
+    
+    .object_font {
+        font-size: 20px;    
+    }
+    
+    .container {
+        max-width: 50%;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .inear-container {
+        max-width: 95%;
+        /* margin: 50px auto; */
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    
+    .split_form{
+        margin: 0;
+        padding: 10px;
+        box-sizing: border-box;
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        height: 100vh;
+    }
+    .grid-item {
+      padding: 20px;
+      overflow: auto; /* 启用滚动条 */
+    }
+    .top-left {
+        grid-row: 1 / 2; /* 位于第一行 */
+        grid-column: 1 / 2; /* 位于第一列 */
+        background-color: rgb(77, 14, 14); /* 红色背景，可根据需要更改颜色 */
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .top-right {
+        grid-row: 1 / 2;
+        grid-column: 2 / 3;
+        background-color: rgb(4, 70, 4); /* 绿色背景，可根据需要更改颜色 */
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .bottom-left {
+        grid-row: 2 / 3;
+        grid-column: 1 / 2;
+        background-color: rgba(0, 0, 255, 0.089); /* 蓝色背景，可根据需要更改颜色 */
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .bottom-right {
+        grid-row: 2 / 3;
+        grid-column: 2 / 3;
+        background-color: rgba(255, 255, 0, 0.164); /* 黄色背景，可根据需要更改颜色 */
+        padding: 20px;
+        border-radius: 20px;
+    }
+    #imageContainer{
+        width: 100px auto; /* 设置容器的宽度 */
+        height: 330px;
+        border: 2px solid rgb(175, 170, 170)0d0; /* 设置容器的边框 */
+        position: relative; /* 相对定位 */
+        overflow: hidden; 
+        display: none;
+    }
+
+    #searchResults {
+        margin-top: 20px;
+        /* display: none; */
+    }
+
+    #Error_content{
+        display: none;
+    }
+
+
+    .typing-cursor {
+      display: inline-block;
+      width: 0.6em;
+      height: 1.2em;
+      background-color: black;
+      animation: blink 0.7s infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+
+    @keyframes blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    /* #search_output{
+        display: none;
+    } */
+
+</style>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor Tech</span><span style="color: black;"> Co-AI</span></h1>
+            </div>
+            
+        </div>
+    </nav>
+    <div class="container" >
+        <label class="label-font ">
+            <span id="first_animatedText" class="typing"></span>
+            <span id="first_finalCursor"  class="typing-cursor" ></span>
+        </label>
+        <!-- <div class="input-group mb-3"> -->
+        <div class="row row-spacing">
+            <div class="col-md-9">
+                <input type="text" id="searchInput" class="form-control object_font" placeholder="輸入關鍵字" aria-label="輸入關鍵字" aria-describedby="basic-addon2">
+            </div>
+            <div class="col-md-3">
+                <div class="input-group-append">
+                    <button id="search_button" class="btn btn-secondary btn-lg">搜尋</button>
+                </div>
+                <!-- <div class="input-group-append">
+                    <button id="recordButton">按住錄音</button>
+                </div> -->
+            </div>
+        </div>
+        <div id="searchResults"><label  id="input_search" class="label-font"></div>
+        
+    </div>
+
+    <div class = "split_form">
+        <div class="top-left grid-item">
+            <div  class="inear-container " id ="search_output">
+                <h3 class="fw-bolder mb-2">馬達中心電子報推薦</h3>
+                <div id="searchResult" class="accordion"></div>
+            </div>
+            <div  class="inear-container " id ="Error_content">
+                <label  id="Error_label" class="label-font ">
+                    <span id="animatedText4" class="typing"></span>
+                    <span id="finalCursor4"  class="typing-cursor" ></span>
+                </label>
+            </div>
+        </div>
+        <div class="top-right grid-item ">
+            <div  class="inear-container " id ="search_output1">
+                <h3 class="fw-bolder mb-2">廠商建議 - 建構中</h3>
+            </div>
+        </div>
+        <div class="bottom-left grid-item">
+            <div  class="inear-container " id ="search_output2">
+                <h3 class="fw-bolder mb-2">專家推薦 - 建構中</h3>
+            </div>
+        </div>
+        <div class="bottom-right grid-item">
+            <div  class="inear-container " id ="search_output3">
+                <h3 class="fw-bolder mb-2">馬達模型</h3>
+                <div id="imageContainer" >
+                    <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage">
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+  
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $(this).toggleClass('active');
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            var search_output = document.getElementById('search_output');
+            var textElement = document.getElementById('first_animatedText');
+            var finalCursor = document.getElementById('first_finalCursor');
+            //var dropdown = document.getElementById('dropdown');
+            var textToAnimate = "您可以在下方搜尋輸入:";
+            var textArray = textToAnimate.split('');
+            
+            finalCursor.style.display = 'inline-block';
+            textElement.innerHTML = '';
+            
+            textArray.forEach(function(char, index) {
+                setTimeout(function(){
+                    textElement.innerHTML += char;
+
+                    if (index === textArray.length - 1) {
+
+                        finalCursor.style.display = 'none';
+                        MPRS_Main.style.display = 'block';
+                    }
+                }, index * 50); 
+            });
+
+            const search_button = document.getElementById('search_button');
+
+            search_button.addEventListener('click', function() {
+                const searchInput = document.getElementById('searchInput');
+                var Error_content = document.getElementById('Error_content');
+                var searchResult = document.getElementById('searchResult');
+                Error_content.style.display='none';
+                imageContainer.style.display='none';
+                // search_output.style.display = 'none';
+                // searchResult.style.display='none';
+                if (searchInput.value !== ""){
+
+                    input_search.textContent = searchInput.value;
+
+                    fetch('/search_database', {
+                        method: 'POST',
+                        body: JSON.stringify({  
+                                                value : searchInput.value,
+                                            }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        var jsonData = JSON.parse(data);
+                        // 遍歷對象並生成手風琴項目
+                        var accordionHtml = "";
+                        if (jsonData === 0) {
+                            Error_content.style.display = 'block';
+                            
+                            var textElement = document.getElementById('animatedText4');
+                            var finalCursor = document.getElementById('finalCursor4');
+                            
+                            var textToAnimate = "資料庫中找不到符合的電子報，請重新輸入";
+                            var textArray = textToAnimate.split('');
+                            finalCursor.style.display = 'inline-block';
+                            textElement.innerHTML = '';
+                            
+                            textArray.forEach(function(char, index) {
+                                setTimeout(function(){
+                                    textElement.innerHTML += char;
+                                    if (index === textArray.length - 1) {
+                                        finalCursor.style.display = 'none';
+                                    }
+                                }, index * 50); 
+                            });
+                        }else{
+                            
+                            var split_form = document.getElementById('split_form');
+                            search_output.style.display = 'block';
+                            var uploadedImage = document.getElementById('uploadedImage');
+                            imageContainer.style.display = 'block';
+
+                            if (searchInput.value === "無刷直流馬達" || searchInput.value === "永磁同步馬達") {
+                                uploadedImage.src = "./static/" + searchInput.value + '.jpg';
+                            }
+
+                            for (var i = 0; i < jsonData.length; i++) {
+                                var item = jsonData[i];
+                                accordionHtml += '<div class="card">';
+                                accordionHtml += '    <div class="card-header" id="heading' + i + '">';
+                                accordionHtml += '        <h2 class="mb-0">';
+                                accordionHtml += '            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' + i + '" aria-expanded="true" aria-controls="collapse' + i + '">';
+                                accordionHtml += '                ' + item.e_newspaper_name;
+                                accordionHtml += '            </button>';
+                                accordionHtml += '        </h2>';
+                                accordionHtml += '    </div>';
+                                accordionHtml += '    <div id="collapse' + i + '" class="collapse" aria-labelledby="heading' + i + '" data-parent="#searchResult">';
+                                accordionHtml += '        <div class="card-body">';
+                                accordionHtml += '            <p>期刊號: ' + item.e_newspaper_id + '</p>';
+                                accordionHtml += '            <p>作者: ' + item.edit_name + '</p>';
+                                accordionHtml += '            <p>出版年份: ' + item.year + '</p>';
+                                accordionHtml += '            <p>摘要: ' + item.abstract + '</p>';
+                                accordionHtml += '            <a href ="http://km.emotors.ncku.edu.tw/emotor/new/motor_learn/epaper_detail.php?id=' + item.e_newspaper_id + '"> 電子報全文</a>'
+                                accordionHtml += '        </div>';
+                                accordionHtml += '    </div>';
+                                accordionHtml += '</div>';
+                            }
+
+                            // 插入手風琴到 HTML 中
+                            document.getElementById("searchResult").innerHTML = accordionHtml;
+                            // searchResult.style.display='block';
+                            split_form.scrollIntoView({ behavior: 'smooth' });
+                        }
+                        
+                    });
+                }
+                
+                
+            });
+            
+
+
+            var recordButton = document.getElementById('recordButton');
+            var resultLabel = document.getElementById('searchResults');
+            var audioData = [];
+            var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            var recorder;
+
+            recordButton.addEventListener('mousedown', startRecording);
+            recordButton.addEventListener('mouseup', stopRecording);
+            
+            function startRecording() {
+                audioData = [];
+                resultLabel.innerHTML = '錄音中...';
+
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(function (stream) {
+                        recorder = new Recorder(audioContext.createMediaStreamSource(stream));
+                        recorder.record();
+                    }).catch(function (err) {
+                        console.error('錄音許可被拒絕：', err);
+                    });
+            }
+
+            function stopRecording() {
+                resultLabel.innerHTML = '辨識中...';
+
+                recorder.stop();
+                recorder.exportWAV(function (blob) {
+                    var reader = new FileReader();
+                    reader.onloadend = function () {
+                        // 將 Uint8Array 轉換為正確的格式（Array）
+                        audioData = Array.from(new Uint8Array(reader.result));
+                        sendAudioData();
+                    };
+                    reader.readAsArrayBuffer(blob);
+                });
+            }
+
+            function sendAudioData() {
+                // 使用 Uint8Array 格式發送錄音數據
+                fetch('/process_audio', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ audioData: audioData }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const searchInput = document.getElementById('searchInput');
+                    resultLabel.innerHTML = data.result;
+                    searchInput.value = data.result;
+                    
+                })
+                .catch((error) => {
+                    console.error('錯誤：', error);
+                    resultLabel.innerHTML = '辨識失敗';
+                });
+            }
+        });
+
+    // document.write('<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"><\/script>');
+    // document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"><\/script>');
+    // document.write('<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"><\/script>');
+    </script>
+
+</body>
+</html>

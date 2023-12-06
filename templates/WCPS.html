@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <title>磁性元件基層製造_磁特性預測系統</title>
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style5.css') }}">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
+</head>
+<style>
+    fieldset {
+        border: 2px solid #000000; 
+        padding: 10px;
+        }
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+    }
+    .container {
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .row-spacing {
+        margin-bottom: 20px; 
+    }
+    .col-spacing {
+        margin-right: 10px; 
+        margin-left: 10px;
+    }
+
+
+    .custom-Label {
+        text-align: center;
+        line-height: 50px; 
+    }
+
+    .show-Label{
+        /* width: 100px; */
+        display: inline-block;
+    }
+
+    .image-preview-wrapper{
+        display: block;
+        /* max-width: 310px; */
+        max-height: 310px;
+        width: 100%;
+        border: 2px solid #cccccc;
+        margin: 0 auto;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .spinner-wrapper {
+        opacity: 0;
+        margin: 0;
+        padding: 0;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .opacity-1 {
+        opacity: 1;
+    }
+    
+
+    .custom-file-label::after{
+        content:  "瀏覽";
+        background-color: rgb(0, 102, 255);
+        color: aliceblue;
+    }
+
+
+    #dropdown2{
+        min-width: 120px;
+
+    }
+    #imageContainer{
+        /* width: 320px;  */
+        height: 320px; 
+        border: 2px solid rgb(175, 170, 170)0d0; /* 设置容器的边框 */
+        position: relative; /* 相对定位 */
+        overflow: hidden; /* 隐藏容器中超出的部分 */
+
+    }
+    img {
+        max-width: 100%; /* 图像的最大宽度为容器宽度的100% */
+        max-height: 100%; /* 图像的最大高度为容器高度的100% */
+        width: auto; /* 保持图像的宽高比例 */
+        height: auto; /* 保持图像的宽高比例 */
+        position: absolute; /* 绝对定位 */
+        top: 50%; /* 顶部偏移为50% */
+        left: 50%; /* 左侧偏移为50% */
+        transform: translate(-50%, -50%); /* 使用translate进行居中偏移 */
+    }
+
+
+
+    #model_type{
+        /* width: 180px;  */
+        min-width: 150px;
+    }
+
+    #customTable{
+        border-collapse: collapse; 
+        border: 2px solid #726f6f; 
+   
+        /* margin-top: 17px;
+        margin-left: 20px;  */
+    }
+
+
+    #customTable td{
+        font-size:18px;
+    }
+    
+    #vislable{
+        margin-bottom: 39px;
+        display: table; 
+    }
+    #resultTable{
+        border-collapse: collapse; 
+    }
+    #incrementButton,#loadingButton {
+        height: 50px;
+        display: flex;
+        align-items: center; 
+        justify-content: center; 
+        margin:  20px auto;
+    }
+
+    #output-table{
+        width: auto; /* 让 fieldset 自适应内容的宽度 */
+        margin: 10px; /* 设置一些外边距，以使内容更加美观 */
+        padding: 10px; /* 设置内边距，以使内容与 fieldset 边界之间有一些间距 */
+    }
+
+    #state-Label{
+        color: rgb(74, 12, 218);
+        font-weight:bold;
+        font-size: larger;
+        text-align: center;
+    }
+    #outTable{
+        width: 100%; 
+        border-collapse: collapse; 
+        
+    }
+    #resultTable td, #outTable td {
+        
+        /* padding: 10px;  */
+        text-align: center; 
+        width: 30px;
+        height: 50px;
+        /* padding-left: 15px;  */
+    } 
+</style>
+
+
+<body>
+    <div class="wrapper">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>磁性元件</br>積層製造</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <p>功能選項</p>
+                <li>
+                    <a href="index">首頁</a>
+                </li>
+                <li>
+                    <a href="Motor">簡易搜尋</a>
+                </li>
+                <li>
+                    <a href="MPRS">參數建議系統</a>
+                </li>
+                <li>
+                    <a href="WCPS">磁特性預估系統</a>
+                </li>
+                <li>
+                    <a href="TSDS">工件生產履歷</a>
+                </li>
+            </ul>
+            <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="paper">Motor Tech Co-AI</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content Holder -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="navbar-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">磁性元件</span><span style="color: black;">積層製造工件特性預測系統</span></h1>
+                    </div>
+                </div>
+            </nav>
+            <div class="container">
+                <div class="row row-spacing">
+                    <div class="col-md-12">   
+                        
+                    </div>
+                </div>
+                
+                    
+                <div class="row row-spacing">
+                    <div class="col-12 col-md-6">
+                        <label style="color: black; font-weight: bold; font-size: 20px; ">圖像選擇</label>
+                        <form method="POST" action="/upload" enctype="multipart/form-data" id="fileUploadForm">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="file" id="customFile">
+                                <label class="custom-file-label" for="customFile" id = "customFile_label">Choose file</label>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+
+
+        
+                <div class="row row-spacing">
+                    <div class="col-md-5">   
+                        <label style="color: black; font-weight: bold; font-size: 20px; ">工件選項</label>
+                        <select id="dropdown" disabled name ="dropdown" class="form-control">
+                            <option value="0">磁導率(Permeability)/鐵損(Iron loss)</option>
+                            <option value="1">拉伸強度(Tensile Strength)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">   
+                        <label style="color: black; font-weight: bold; font-size: 20px; ">操作頻率</label>
+                        <select id="dropdown2" disabled  name="dropdown2" class="form-control">
+                            <option value="50">50hz</option>
+                            <option value="200">200hz</option>
+                            <option value="400">400hz</option>
+                            <option value="800">800hz</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button id="incrementButton" disabled class="btn btn-primary">特性預測</button>
+                        <button id="loadingButton" class="btn btn-primary disabled" style="display: none;">
+                            <span class="spinner-border spinner-border-sm"></span>
+                            Loading..
+                        </button>
+                    </div>
+                </div>
+                <div class="row row-spacing">
+                    <div class="col-md-4">
+                        <div id="imageContainer">
+                            <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage">
+                        </div>
+                    </div>
+                    <div class="col-md-1 "></div> 
+                    <div class="col-md-5 "> 
+                        <table border="1" class = "table table-hover"  id = 'customTable'>
+                            <tr>
+                                <td>氧濃度(ppm)</td> 
+                                <td><input type="text" id="textbox1" name="textbox1" class="form-control" value="0"></td>
+                            </tr>
+                            <tr>
+                                <td>雷射功率(w)</td>
+                                <td><input type="text" id="textbox2" name="textbox2" class="form-control" value="0"></td>
+                            </tr>
+                            <tr>
+                                <td>雷射掃描速度(mm/s)</td>
+                                <td><input type="text" id="textbox3" name="textbox3" class="form-control" value="0"></td>
+                            </tr>
+                            <tr>
+                                <td>線間距(mm)</td>
+                                <td><input type="text" id="textbox4" name="textbox4" class="form-control" value="0"></td>
+                            </tr>
+                            <tr>
+                                <td>能量密度(J/mm3)</td>
+                                <td><input type="text" id="textbox5" name="textbox5" class="form-control" value="0"></td>
+                            </tr>
+                        </table>
+                    </div>
+            
+                </div>
+
+                
+                <div class="row row-spacing">
+                    <div class="col-md-10 col-spacing">
+                        <fieldset id = 'output-table'>
+                            <legend><span style="font-weight:bold;">特性預估:</span></legend>
+                            <table border="0" id = 'outTable'>
+                                <tr>
+                                    <td> </td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 18px;">lightgbm</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 18px;">linear</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 18px;">logistic</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 18px;">svr</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 18px;">xgboost</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 18px;">磁導率       </label></td>
+                                    <td><label id="outLabel11" class="show-Label" >x</label></td>
+                                    <td><label id="outLabel12" class="show-Label" >x</label></td>
+                                    <td><label id="outLabel13" class="show-Label" >x</label></td>
+                                    <td><label id="outLabel14" class="show-Label" >x</label></td>
+                                    <td><label id="outLabel15" class="show-Label" >x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 18px;">鐵損(kW/m3)</label></td>
+                                    <td><label id="outLabel21" class="show-Label"> x</label></td>
+                                    <td><label id="outLabel22" class="show-Label" >x</label></td>
+                                    <td><label id="outLabel23" class="show-Label" >x</label></td>
+                                    <td><label id="outLabel24" class="show-Label" >x</label></td>
+                                    <td><label id="outLabel25" class="show-Label" >x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 18px;">最大拉伸(MPa)</label></td>
+                                    <td><label id="outLabel31" class="show-Label"> x</label></td>
+                                    <td><label id="outLabel32" class="show-Label" >x</label></td>
+                                    <td><label id="outLabel33" class="show-Label" >x</label></td>
+                                    <td><label id="outLabel34" class="show-Label" >x</label></td>
+                                    <td><label id="outLabel35" class="show-Label" >x</label></td>
+                                </tr>
+                            </table>
+                        </fieldset> 
+                    </div>
+
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $(this).toggleClass('active');
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const incrementButton = document.getElementById('incrementButton');
+            const loadingButton = document.getElementById('loadingButton');
+
+            // // pmb
+            const outlabel11 = document.getElementById('outLabel11')
+            const outlabel12 = document.getElementById('outLabel12')
+            const outlabel13 = document.getElementById('outLabel13')
+            const outlabel14 = document.getElementById('outLabel14')
+            const outlabel15 = document.getElementById('outLabel15')
+
+            // // iron
+            const outlabel21 = document.getElementById('outLabel21')
+            const outlabel22 = document.getElementById('outLabel22')
+            const outlabel23 = document.getElementById('outLabel23')
+            const outlabel24 = document.getElementById('outLabel24')
+            const outlabel25 = document.getElementById('outLabel25')
+
+            // // tensile
+            const outlabel31 = document.getElementById('outLabel31')
+            const outlabel32 = document.getElementById('outLabel32')
+            const outlabel33 = document.getElementById('outLabel33')
+            const outlabel34 = document.getElementById('outLabel34')
+            const outlabel35 = document.getElementById('outLabel35')
+            
+
+            const fileInput = document.getElementById('customFile');
+            const imageContainer = document.getElementById('imageContainer');
+            const uploadedImage = document.getElementById('uploadedImage');
+            const material = document.getElementById('dropdown');
+            const frequency = document.getElementById('dropdown2');
+            
+            const imagename = document.getElementById('customFile');
+            const imagelabel = document.getElementById('customFile_label');
+            
+            var image_file = ""
+
+
+            fileInput.addEventListener('change', () => {
+                const form = document.getElementById('fileUploadForm');
+                const formData = new FormData(form);
+                var after_image = uploadedImage.src
+                fetch('/upload_file', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        $('#successModal').modal('show');
+                        uploadedImage.src = data.image_url;
+                        imageContainer.style.display = 'block';
+                        material.disabled = false;
+                        incrementButton.disabled =false;
+                        image_file = imagename.files[0].name;
+                        if (material.value === '1') {
+                            frequency.disabled = true;
+                        } else {
+                            frequency.disabled = false;
+                        }
+                    } else {
+                
+                        $('#errorModal').modal('show');
+                    }
+                });
+            });
+            
+            material.addEventListener('change', function() {
+                if (material.value === '1') {
+                    frequency.disabled = true;
+                } else {
+                    frequency.disabled = false;
+                }
+            });
+
+
+
+            incrementButton.addEventListener('click', function() {
+                incrementButton.style.display = 'none';
+                loadingButton.style.display = 'block';
+                const parm1 = parseFloat(document.getElementById('textbox1').value);
+                const parm2 = parseFloat(document.getElementById('textbox2').value);
+                const parm3 = parseFloat(document.getElementById('textbox3').value);
+                const parm4 = parseFloat(document.getElementById('textbox4').value);
+                const parm5 = parseFloat(document.getElementById('textbox5').value);
+
+                var parm = [parm1,parm2,parm3,parm4,parm5]      
+
+                fetch('/predict', {
+                    method: 'POST',
+                    body: JSON.stringify({  
+                                            material : material.value,
+                                            frequency : frequency.value,
+                                            imagename : imagename.files[0].name,
+                                            parm : parm,
+                                        }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (material.value === '0') {
+                        outlabel11.textContent = data.pred[0];
+                        outlabel12.textContent = data.pred[1];
+                        outlabel13.textContent = data.pred[2];
+                        outlabel14.textContent = data.pred[3];
+                        outlabel15.textContent = data.pred[4];
+
+                        outlabel21.textContent = data.pred[5];
+                        outlabel22.textContent = data.pred[6];
+                        outlabel23.textContent = data.pred[7];
+                        outlabel24.textContent = data.pred[8];
+                        outlabel25.textContent = data.pred[9];
+
+                        outlabel31.textContent = 'x';
+                        outlabel32.textContent = 'x';
+                        outlabel33.textContent = 'x';
+                        outlabel34.textContent = 'x';
+                        outlabel35.textContent = 'x';
+                    }else{
+                        outlabel11.textContent = 'x';
+                        outlabel12.textContent = 'x';
+                        outlabel13.textContent = 'x';
+                        outlabel14.textContent = 'x';
+                        outlabel15.textContent = 'x';
+
+                        outlabel21.textContent = 'x';
+                        outlabel22.textContent = 'x';
+                        outlabel23.textContent = 'x';
+                        outlabel24.textContent = 'x';
+                        outlabel25.textContent = 'x';
+                        
+                        outlabel31.textContent = data.pred[0];
+                        outlabel32.textContent = data.pred[1];
+                        outlabel33.textContent = data.pred[2];
+                        outlabel34.textContent = data.pred[3];
+                        outlabel35.textContent = data.pred[4];
+                    }
+                    incrementButton.style.display = 'block';
+                    loadingButton.style.display = 'none';
+                });
+                
+            });
+        });
+        var textboxes = document.querySelectorAll('.form-control');
+
+
+        textboxes.forEach(function(textbox) {
+            textbox.addEventListener('focus', function () {
+                if (textbox.value === '0') {
+                    textbox.value = '';
+                }
+            });
+
+            textbox.addEventListener('blur', function () {
+                if (textbox.value === '') {
+                    textbox.value = '0';
+                }
+            });
+        });
+    </script>
+
+
+
+
+
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">圖像上傳成功</h5>
+                </div>
+                <div class="modal-body">
+                    圖像上傳成功！
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 失败模态框 -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">圖片上傳失敗</h5>
+                </div>
+                <div class="modal-body">
+                    圖片上傳失敗! 請確認圖片檔案及其副檔名('png', 'jpg', 'jpeg', 'gif')
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

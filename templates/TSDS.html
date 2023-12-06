@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <title> 積層製造生產履歷</title>
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style5.css') }}">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+  
+</head>
+<style>
+    fieldset {
+        border: 2px solid #000000; 
+        /* padding: 10px; */
+        min-width: 400px;
+        max-width: auto;
+        /* width: auto; */
+    }
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+    }
+    .container {
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    .row-spacing {
+        margin-bottom: 20px; 
+    }
+    .col-spacing {
+        margin-right: 10px; 
+        margin-left: 10px;
+    }
+
+    .custom-Label {
+        text-align: center;
+        line-height: 50px; 
+    }
+
+    .show-Label{
+        display: inline-block;
+    }
+
+    .image-preview-wrapper{
+        display: block;
+        max-width: 310px;
+        max-height: 310px;
+        width: 100%;
+        border: 2px solid #cccccc;
+        margin: 0 auto;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .spinner-wrapper {
+        opacity: 0;
+        margin: 0;
+        padding: 0;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .opacity-1 {
+        opacity: 1;
+    }
+    
+
+    .custom-file-label::after{
+        content:  "瀏覽";
+        background-color: rgb(0, 102, 255);
+        color: aliceblue;
+    }
+
+    #show_imageContainer{
+        width: 100px; 
+        height: 100px;
+        border: 2px solid rgb(175, 170, 170)0d0; 
+        /* position: relative;  */
+        overflow: hidden; 
+        /* left :200px; */
+
+    }
+
+    #imageContainer1{
+        width: 320px; /* 设置容器的宽度 */
+        height: 320px; /* 设置容器的高度 */
+        border: 2px solid rgb(175, 170, 170)0d0; /* 设置容器的边框 */
+        position: relative; /* 相对定位 */
+        overflow: hidden; /* 隐藏容器中超出的部分 */
+        left :50px;
+    }
+    #imageContainer2{
+        width: 320px; /* 设置容器的宽度 */
+        height: 320px; /* 设置容器的高度 */
+        border: 2px solid rgb(175, 170, 170)0d0; /* 设置容器的边框 */
+        position: relative; /* 相对定位 */
+        overflow: hidden; /* 隐藏容器中超出的部分 */
+        left :40px;
+    }
+    img {
+        max-width: 100%; /* 图像的最大宽度为容器宽度的100% */
+        max-height: 100%; /* 图像的最大高度为容器高度的100% */
+        width: auto; /* 保持图像的宽高比例 */
+        height: auto; /* 保持图像的宽高比例 */
+        position: absolute; /* 绝对定位 */
+        top: 50%; /* 顶部偏移为50% */
+        left: 50%; /* 左侧偏移为50% */
+        transform: translate(-50%, -50%); /* 使用translate进行居中偏移 */
+    }
+
+
+
+    #model_type{
+        width: 180px; 
+    }
+
+    #customTable{
+        border-collapse: collapse; 
+        border: 2px solid #726f6f; 
+        /* margin-top: 17px;
+        margin-left: 20px;  */
+    }
+
+    #vislable{
+        margin-bottom: 39px;
+        display: table; 
+    }
+
+
+    #state-Label{
+        color: rgb(74, 12, 218);
+        font-weight:bold;
+        font-size: larger;
+        text-align: center;
+    }
+    #c{
+        width: 100%; 
+        border-collapse: collapse; 
+    }
+    #outTable{
+
+        left: 20px;
+    }
+    #outTable td {
+        /* padding: 10px;  */
+        width: 25%;
+        height: 50px;
+        text-align: left; 
+        /* width: auto; */
+        padding-left: 15px; 
+    } 
+</style>
+
+
+<body>
+    <div class="wrapper">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>磁性元件</br>積層製造</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <p>功能選項</p>
+                <li>
+                    <a href="index">首頁</a>
+                </li>
+                <li>
+                    <a href="Motor">簡易搜尋</a>
+                </li>
+                <li>
+                    <a href="MPRS">參數建議系統</a>
+                </li>
+                <li>
+                    <a href="WCPS">磁特性預估系統</a>
+                </li>
+                <li>
+                    <a href="TSDS">工件生產履歷</a>
+                </li>
+            </ul>
+            <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="paper">Motor Tech Co-AI</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content Holder -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="navbar-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">積層製造</span><span style="color: black;">生產履歷</span></h1>
+                    </div>
+                </div>
+            </nav>
+            <div class="container">
+                <div class="row row-spacing">
+                    <div class="col-md-12">   
+
+                    </div>
+                </div>
+                <div class="row row-spacing">
+                    <div class="col-md-3">   
+                        <label style="color: black; font-weight: bold; font-size: 20px; ">選擇組數</label>
+                        <select id="dropdown"  name ="dropdown" class="form-control">
+                            <option value="" selected disabled>請選擇</option>
+                            <option value="1">第一組</option>
+                            <option value="2">第二組</option>
+                            <option value="3">第三組</option>
+                            <option value="4">第四組</option>
+                            <option value="5">第五組</option>
+                            <option value="6">第六組</option>
+                            <option value="7">第七組</option>
+                            <option value="8">第八組</option>
+                            <option value="9">第九組</option>
+                            <option value="10">第十組</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">   
+                        <label style="color: black; font-weight: bold; font-size: 20px; ">選擇編號</label>
+                        <select id="dropdown2"   name="dropdown2" class="form-control">
+                            <option value="" selected disabled>請選擇</option>
+                            <option value="_01">第一顆</option>
+                            <option value="_02">第二顆</option>
+                            <option value="_03">第三顆</option>
+                            <option value="_04">第四顆</option>
+                            <option value="_05">第五顆</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5 col-spacing"> 
+                        <div id="show_imageContainer">
+                            <img src="https://via.placeholder.com/100x100/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="show_range"  style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row row-spacing">
+                    <div class="col-md-5 col-spacing">
+                        <div id="imageContainer1">
+                            <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage">
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-spacing"></div>
+                    <div class="col-md-5 col-spacing">
+                        <div id="imageContainer2">
+                            <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail2" id="uploadedImage2">
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-spacing">
+                    <div class="col-md-5">
+                        <label style="color: black; font-weight: bold; font-size: 20px; " id="angle_label2">層數: </label>
+                        <input type="range" disabled class="custom-range" id="customRange2" name="points1" value=1 min=1 max=200>   
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-5">
+                        <label style="color: black; font-weight: bold; font-size: 20px; " id="angle_label">角度: </label>
+                        <input type="range" disabled class="custom-range" id="customRange" name="points1" value=0 min=0 max=359>   
+                    </div>
+                </div>
+                
+                <div class="row row-spacing">
+                    <div class="col-md-5 col-spacing">
+                        <fieldset >
+                            <legend><span style="font-weight:bold;">GLCM 十三項橫切面特徵:</span></legend>
+                            <table border="0" id = 'outTable'>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;" > Energy    </label></td>
+                                    <td><label id="outLabel11" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Standard_<br>deviation_x      </label></td>
+                                    <td><label id="outLabel23" class="show-Label" >x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Entropy    </label></td>
+                                    <td><label id="outLabel12" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Standard_<br>eviation_y    </label></td>
+                                    <td><label id="outLabel24" class="show-Label" >x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Contrast      </label></td>
+                                    <td><label id="outLabel13" class="show-Label" >x</label></td>
+                                    
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Auto<br>correlation         </label></td>
+                                    <td><label id="outLabel15" class="show-Label" >x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Idm    </label></td>
+                                    <td><label id="outLabel14" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Dissimilarity     </label></td>
+                                    <td><label id="outLabel26" class="show-Label" >x</label></td>
+                                </tr>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Correlation         </label></td>
+                                    <td><label id="outLabel25" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Variance_x    </label></td>
+                                    <td><label id="outLabel21" class="show-Label"> x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Mean_x     </label></td>
+                                    <td><label id="outLabel16" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Variance_y    </label></td>
+                                    <td><label id="outLabel22" class="show-Label" >x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Mean_y     </label></td>
+                                    <td><label id="outLabel17" class="show-Label" >x</label></td>
+                                </tr>
+                            </table>
+                        </fieldset> 
+                    </div>
+                    <div class="col-md-1 col-spacing"></div>
+                    <div class="col-md-5 col-spacing offset-md-2">
+                        <fieldset>
+                            <legend><span style="font-weight:bold;">GLCM 十三項縱切面特徵:</span></legend>
+                            <table border="0" id = 'outTable'>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Energy    </label></td>
+                                    <td><label id="outLabel31" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Standard_<br>deviation_x      </label></td>
+                                    <td><label id="outLabel43" class="show-Label" >x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Entropy    </label></td>
+                                    <td><label id="outLabel32" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Standard_<br>eviation_y    </label></td>
+                                    <td><label id="outLabel44" class="show-Label" >x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Contrast      </label></td>
+                                    <td><label id="outLabel33" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Auto<br>correlation         </label></td>
+                                    <td><label id="outLabel35" class="show-Label" >x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Idm    </label></td>
+                                    <td><label id="outLabel34" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Dissimilarity </label></td>
+                                    <td><label id="outLabel46" class="show-Label" >x</label></td>
+                                </tr>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Correlation         </label></td>
+                                    <td><label id="outLabel45" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Variance_x    </label></td>
+                                    <td><label id="outLabel41" class="show-Label"> x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Mean_x     </label></td>
+                                    <td><label id="outLabel36" class="show-Label" >x</label></td>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Variance_y    </label></td>
+                                    <td><label id="outLabel42" class="show-Label" >x</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label  class="show-Label" style="font-weight: bold; font-size: 17px;"> Mean_y     </label></td>
+                                    <td><label id="outLabel37" class="show-Label" >x</label></td>
+                                </tr>
+                            </table>
+                        </fieldset> 
+                    </div>
+
+                </div>
+
+           
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $(this).toggleClass('active');
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const outlabel11 = document.getElementById('outLabel11')
+            const outlabel12 = document.getElementById('outLabel12')
+            const outlabel13 = document.getElementById('outLabel13')
+            const outlabel14 = document.getElementById('outLabel14')
+            const outlabel15 = document.getElementById('outLabel15')
+            const outlabel16 = document.getElementById('outLabel16')
+            const outlabel17 = document.getElementById('outLabel17')
+
+            const outlabel21 = document.getElementById('outLabel21')
+            const outlabel22 = document.getElementById('outLabel22')
+            const outlabel23 = document.getElementById('outLabel23')
+            const outlabel24 = document.getElementById('outLabel24')
+            const outlabel25 = document.getElementById('outLabel25')
+            const outlabel26 = document.getElementById('outLabel26')
+
+            const outlabel31 = document.getElementById('outLabel31')
+            const outlabel32 = document.getElementById('outLabel32')
+            const outlabel33 = document.getElementById('outLabel33')
+            const outlabel34 = document.getElementById('outLabel34')
+            const outlabel35 = document.getElementById('outLabel35')
+            const outlabel36 = document.getElementById('outLabel36')
+            const outlabel37 = document.getElementById('outLabel37')
+
+            const outlabel41 = document.getElementById('outLabel41')
+            const outlabel42 = document.getElementById('outLabel42')
+            const outlabel43 = document.getElementById('outLabel43')
+            const outlabel44 = document.getElementById('outLabel44')
+            const outlabel45 = document.getElementById('outLabel45')
+            const outlabel46 = document.getElementById('outLabel46')
+
+            const imageContainer = document.getElementById('imageContainer');
+            const uploadedImage = document.getElementById('uploadedImage');
+            const uploadedImage2 = document.getElementById('uploadedImage2');
+            const show_range = document.getElementById('show_range');
+            const patch = document.getElementById('dropdown');
+            const grain = document.getElementById('dropdown2');
+            const angle_label = document.getElementById('angle_label');
+            const angle_label2 = document.getElementById('angle_label2');
+            var rangeInput = document.getElementById('customRange');
+            var rangeInput2 = document.getElementById('customRange2');
+            var init_feature_list =[];
+            var horz_feature_list =[];
+            grain.addEventListener('change', function() {
+                var image_path = "static/patch_picture/" + patch.value + grain.value+'.jpg';
+                var initPath = "static/sectionview/trail"+ patch.value + grain.value + '/angle_0_RGB.png';
+                var horzPath = "static/circle(340x344)/trail"+ patch.value + grain.value + '/layer_01.jpg';
+                var rangePath = "static/slice/line_"+ 0+".png";
+                uploadedImage.src = image_path;
+                angle_label.textContent = "角度: " +  0 + "°";
+                angle_label2.textContent = "層數: 第" +  1 + "層";
+                uploadedImage.src = horzPath;
+                uploadedImage2.src = initPath;
+                show_range.src = rangePath;
+                show_range.style.display = 'block';
+                rangeInput.value = 0;
+                rangeInput2.value = 0;
+                rangeInput.disabled = false
+                rangeInput2.disabled = false
+                fetch('/get_glcm_list', {
+                    method: 'POST',
+                    body: JSON.stringify({  
+                                            init_feature : "static/sectionview/trail"+ patch.value + grain.value,
+                                            horz_feature : "static/circle(340x344)/trail"+ patch.value + grain.value,
+                                        }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    init_feature_list = data.init_feature;
+                    horz_feature_list = data.horz_feature;
+
+
+                    outlabel11.textContent = horz_feature_list[0][0].toFixed(4);
+                    outlabel12.textContent = horz_feature_list[0][1].toFixed(4);
+                    outlabel13.textContent = horz_feature_list[0][2].toFixed(4);
+                    outlabel14.textContent = horz_feature_list[0][3].toFixed(4);
+                    outlabel15.textContent = horz_feature_list[0][4].toFixed(4);
+                    outlabel16.textContent = horz_feature_list[0][5].toFixed(4);
+                    outlabel17.textContent = horz_feature_list[0][6].toFixed(4);
+                    outlabel21.textContent = horz_feature_list[0][7].toFixed(4);
+                    outlabel22.textContent = horz_feature_list[0][8].toFixed(4);
+                    outlabel23.textContent = horz_feature_list[0][9].toFixed(4);
+                    outlabel24.textContent = horz_feature_list[0][10].toFixed(4);
+                    outlabel25.textContent = horz_feature_list[0][11].toFixed(4);
+                    outlabel26.textContent = horz_feature_list[0][12].toFixed(4);
+                    outlabel31.textContent = init_feature_list[0][0].toFixed(4);
+                    outlabel32.textContent = init_feature_list[0][1].toFixed(4);
+                    outlabel33.textContent = init_feature_list[0][2].toFixed(4);
+                    outlabel34.textContent = init_feature_list[0][3].toFixed(4);
+                    outlabel35.textContent = init_feature_list[0][4].toFixed(4);
+                    outlabel36.textContent = init_feature_list[0][5].toFixed(4);
+                    outlabel37.textContent = init_feature_list[0][6].toFixed(4);
+                    outlabel41.textContent = init_feature_list[0][7].toFixed(4);
+                    outlabel42.textContent = init_feature_list[0][8].toFixed(4);
+                    outlabel43.textContent = init_feature_list[0][9].toFixed(4);
+                    outlabel44.textContent = init_feature_list[0][10].toFixed(4);
+                    outlabel45.textContent = init_feature_list[0][11].toFixed(4);
+                    outlabel46.textContent = init_feature_list[0][12].toFixed(4)
+
+                });
+            
+            });
+
+            rangeInput.addEventListener('input', function() {
+                
+                
+                var rangeValue = rangeInput.value;
+
+    
+                var sectionviewPath = "static/sectionview/trail"+ patch.value + grain.value + '/angle_' + rangeValue + '_RGB.png';
+                var rangePath = "static/slice/line_"+ rangeValue+".png";
+                angle_label.textContent = "角度: " +  rangeValue + "°";
+                uploadedImage2.src = sectionviewPath;
+                show_range.src = rangePath;
+                outlabel31.textContent = init_feature_list[rangeValue][0].toFixed(4);
+                outlabel32.textContent = init_feature_list[rangeValue][1].toFixed(4);
+                outlabel33.textContent = init_feature_list[rangeValue][2].toFixed(4);
+                outlabel34.textContent = init_feature_list[rangeValue][3].toFixed(4);
+                outlabel35.textContent = init_feature_list[rangeValue][4].toFixed(4);
+                outlabel36.textContent = init_feature_list[rangeValue][5].toFixed(4);
+                outlabel37.textContent = init_feature_list[rangeValue][6].toFixed(4);
+                outlabel41.textContent = init_feature_list[rangeValue][7].toFixed(4);
+                outlabel42.textContent = init_feature_list[rangeValue][8].toFixed(4);
+                outlabel43.textContent = init_feature_list[rangeValue][9].toFixed(4);
+                outlabel44.textContent = init_feature_list[rangeValue][10].toFixed(4);
+                outlabel45.textContent = init_feature_list[rangeValue][11].toFixed(4);
+                outlabel46.textContent = init_feature_list[rangeValue][12].toFixed(4);
+            });
+            rangeInput2.addEventListener('input', function() {
+
+                var rangeValue2 = rangeInput2.value;
+                if (rangeValue2<10){
+                    rangeValue_str = '0' + rangeValue2;
+                }else{
+                    rangeValue_str = rangeValue2;
+                }
+                var sectionviewPath2 = "static/circle(340x344)/trail"+ patch.value + grain.value + '/layer_' + rangeValue_str + '.jpg';
+                angle_label2.textContent = "層數: 第" +  rangeValue_str + "層";
+                uploadedImage.src = sectionviewPath2;
+                outlabel11.textContent = horz_feature_list[rangeValue2-1][0].toFixed(4);
+                outlabel12.textContent = horz_feature_list[rangeValue2-1][1].toFixed(4);
+                outlabel13.textContent = horz_feature_list[rangeValue2-1][2].toFixed(4);
+                outlabel14.textContent = horz_feature_list[rangeValue2-1][3].toFixed(4);
+                outlabel15.textContent = horz_feature_list[rangeValue2-1][4].toFixed(4);
+                outlabel16.textContent = horz_feature_list[rangeValue2-1][5].toFixed(4);
+                outlabel17.textContent = horz_feature_list[rangeValue2-1][6].toFixed(4);
+                outlabel21.textContent = horz_feature_list[rangeValue2-1][7].toFixed(4);
+                outlabel22.textContent = horz_feature_list[rangeValue2-1][8].toFixed(4);
+                outlabel23.textContent = horz_feature_list[rangeValue2-1][9].toFixed(4);
+                outlabel24.textContent = horz_feature_list[rangeValue2-1][10].toFixed(4);
+                outlabel25.textContent = horz_feature_list[rangeValue2-1][11].toFixed(4);
+                outlabel26.textContent = horz_feature_list[rangeValue2-1][12].toFixed(4);
+            });
+        });
+        var textboxes = document.querySelectorAll('.form-control');
+    </script>
+</body>
+</html>

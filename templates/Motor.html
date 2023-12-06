@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <title>磁性元件積層製造_簡易功能搜尋</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button_css.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style5.css') }}">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+</head>
+<style>
+    body {
+        width: 100%; /* 設定網頁寬度為100% */
+        height: 100h; /* 設定網頁高度為100視窗高度（viewport height） */
+        margin: 0; /* 可以清除預設的外邊距，確保沒有多餘的空間 */
+        padding: 0; /* 可以清除預設的內邊距，確保沒有多餘的空間 */
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+    }
+    label {
+        font-weight: bold;
+    }
+    input {
+        width: 70%;
+        padding: 10px;
+        margin-right: 10px;
+    }
+    
+    fieldset {
+            border: 2px solid #000000; 
+            padding: 10px;
+        }
+    button {
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    img {
+        max-width: 100%; 
+        max-height: 100%; 
+        width: auto; 
+        height: auto; 
+        position: absolute; 
+        top: 50%;
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+    }
+    .label-font {
+        font-size: 24px;    
+    }
+    
+    .object_font {
+        font-size: 20px;    
+    }
+    
+    .container {
+        max-width: 75%;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    .custom-file-label::after{
+        content:  "瀏覽";
+        background-color: rgb(0, 102, 255);
+        color: aliceblue;
+    }
+
+    #incrementButton2,#loadingButton2 {
+        width: 110px;
+        height: 40px;
+        padding-left: 10px;
+        display: flex;
+        align-items: center; 
+        justify-content: center; 
+        margin: 30px auto;
+    }
+
+    #imageContainer{
+        width: 100px; /* 设置容器的宽度 */
+        height: 100px; /* 设置容器的高度 */
+        border: 2px solid rgb(175, 170, 170)0d0; /* 设置容器的边框 */
+        position: relative; /* 相对定位 */
+        overflow: hidden; /* 隐藏容器中超出的部分 */
+
+    }
+    #outTable{
+        width: 100%; 
+        border-collapse: collapse; 
+    }
+
+    #searchResults {
+        margin-top: 20px;
+        /* display: none; */
+    }
+
+    #MPRS_content,#WCPS_content,#TSDS_content,#Error_content{
+        display: none;
+    }
+
+    #MPRS_Main,#custom_input,#MPRS_output{
+        display: none;
+    }
+
+    #MPRS_result{
+        display: none;
+    }
+
+
+    #WCPS_dropdown2_set{
+        display: none;
+    }
+
+    #outLabel10,#outLabel11,#outLabel12,#outLabel13,#outLabel14,#outLabel15{
+        display: none;
+    }
+    #outLabel20,#outLabel21,#outLabel22,#outLabel23,#outLabel24,#outLabel25{
+        display: none;
+    }
+    #outLabel30,#outLabel31,#outLabel32,#outLabel33,#outLabel34,#outLabel35{
+        display: none;
+    }
+    #customTable{
+        border-collapse: collapse; 
+    }
+
+    #customTable td{
+        text-align: center;
+        padding-left: 15px;
+    }
+    #resultTable{
+        border-collapse: collapse; 
+    }
+    
+    #resultTable td, #outTable td {
+        text-align: center;
+        padding-left: 15px;
+        font-size: 18px;
+    }
+    #output-table{
+        width: auto; 
+        margin: 10px; 
+        padding: 10px; 
+    }
+    .col-md-3 {
+        display: inline-block;
+        vertical-align: top; /* 使得多个 inline-block 元素的顶部对齐 */
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      width: 0.6em;
+      height: 1.2em;
+      background-color: black;
+      animation: blink 0.7s infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+
+    @keyframes blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    
+    #WCPS_main,#WCPS_settng,#WCPS_result,#WCPS_label_1,#WCPS_output{
+        display: none;
+    }
+
+</style>
+
+
+<body>
+    <div class="wrapper">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>磁性元件</br>積層製造</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <p>功能選項</p>
+                <li>
+                    <a href="index">首頁</a>
+                </li>
+                <li>
+                    <a href="Motor">簡易搜尋</a>
+                </li>
+                <li>
+                    <a href="MPRS">參數建議系統</a>
+                </li>
+                <li>
+                    <a href="WCPS">磁特性預估系統</a>
+                </li>
+                <li>
+                    <a href="TSDS">工件生產履歷</a>
+                </li>
+                
+            </ul>
+            <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="paper">Motor Tech Co-AI</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content Holder -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    
+                    <button type="button" id="sidebarCollapse" class="navbar-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">磁性元件</span><span style="color: black;">功能簡易搜尋</span></h1>
+                    </div>
+                    
+                </div>
+            </nav>
+            <div class="container" >
+                <label class="label-font ">
+                    <span id="first_animatedText" class="typing"></span>
+                    <span id="first_finalCursor"  class="typing-cursor" ></span>
+                </label>
+                <div class="input-group mb-3">
+                    <input type="text" id="searchInput" class="form-control object_font" placeholder="輸入關鍵字" aria-label="輸入關鍵字" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button id="search_button" class="btn btn-secondary btn-lg">搜尋</button>
+                    </div>
+                    <div class="input-group-append">
+                        <button id="recordButton">按住錄音</button>
+                    </div>
+                </div>
+                <div id="searchResults"><label  id="input_search" class="label-font"></div>
+            </div>
+
+            <div id = "MPRS">
+                <div  class="container" id ="MPRS_content">
+                    <label  id="MPRS_label" class="label-font ">
+                        <span id="animatedText1" class="typing"></span>
+                        <span id="finalCursor1"  class="typing-cursor" ></span>
+                    </label>
+                    <div  id = "MPRS_Main">
+                        <div class="row row-spacing">
+                            <div class="col-md-2">   
+                                <label style="color: black; font-weight: bold; font-size: 20px; ">材料</label>
+                                <select id="dropdown" name="dropdown" class="form-control">
+                                    <option value="FeSiCr">FeSiCr</option>
+                                    <option value="NiFe">NiFe</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">   
+                                <label style="color: black; font-weight: bold; font-size: 20px; ">操作頻率</label>
+                                <select id="dropdown2" name="dropdown2" class="form-control">
+                                    <option value="50">50hz</option>
+                                    <option value="200">200hz</option>
+                                    <option value="400">400hz</option>
+                                    <option value="800">800hz</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">   
+                                <label style="color: black; font-weight: bold; font-size: 20px; ">模式選項</label>
+                                <select id="dropdown3" name="dropdown3" class="form-control">
+                                    <option value="option1">磁導率↑/鐵損↓</option>
+                                    <option value="option2">磁導率↑/最大拉伸↑</option>
+                                    <option value="option3">客製化</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                </br>
+                                <button id="incrementButton1" class="btn btn-primary">最佳化參數</button>
+                                <button id="loadingButton" class="btn btn-primary disabled" style="display: none;">
+                                    <span class="spinner-border spinner-border-sm"></span>
+                                    Loading..
+                                </button>
+                            </div>
+
+                        </div>
+                        <div class="row row-spacing" id="custom_input">
+                            <div class="col-md-3">
+                                <label style="color: black; font-weight: bold; font-size: 20px; ">磁導率</label>
+                                <input type="text"  id="textbox1" name="textbox1" class="form-control" value="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label style="color: black; font-weight: bold; font-size: 20px; ">鐵損(kW/m3)</label>
+                                <input type="text"  id="textbox2" name="textbox2" class="form-control" value="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label style="color: black; font-weight: bold; font-size: 20px; ">最大拉伸(MPa)</label>
+                                <input type="text"  id="textbox3" name="textbox3" class="form-control" value="0">
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                
+                <div  class="container" id ="MPRS_result">
+                    <label  id="MPRS_label_1" >
+                        <span id="animatedText1-1" class="typing object_font"></span>
+                        <span id="finalCursor1-2"  class="typing-cursor object_font" ></span>
+                    </label>
+                    <div  id = "MPRS_output">
+                        <div class="row row-spacing">
+                            <div class="col-md-6">
+                                <fieldset id = 'output-table'>
+                                    <legend><span style="font-weight:bold; font-size: 20px;">製成參數:</span></legend>
+                                    <table border="0" id = 'resultTable'>
+                                        <tr>
+                                            <td>氧濃度<br>(ppm)</td>
+                                            <td>雷射功率<br>(w)</td>
+                                            <td>雷射掃描速度<br>(mm/s)</td>
+                                            <td>線間距<br>(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><label id="counterLabel1" class="custom-Label">0</label></td>
+                                            <td><label id="counterLabel2" class="custom-Label">0</label></td>
+                                            <td><label id="counterLabel3" class="custom-Label">0</label></td>
+                                            <td><label id="counterLabel4" class="custom-Label">0</label></td>
+                                        </tr>
+                                    </table>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-5">
+                                <fieldset id = 'output-table'>
+                                    <legend><span style="font-weight:bold;; font-size: 20px;">特性預估:</span></legend>
+                                    <table border="0" id = 'resultTable'>
+                                        <tr>
+                                            <td>磁導率<br> </td>
+                                            <td>鐵損<br>(kW/m3)</td>
+                                            <td>最大拉伸<br>(MPa)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><label id="outLabel1" class="show-Label" >0</label></td>
+                                            <td><label id="outLabel2" class="show-Label">0</label></td>
+                                            <td><label id="outLabel3" class="show-Label">0</label></td>
+                                        </tr>
+                                    </table>
+                                </fieldset>  
+                            </div>     
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id = "WCPS">
+                <div  class="container" id ="WCPS_content">
+                    </br>
+                    <label class="label-font ">
+                        <span id="animatedText2" class="typing"></span>
+                        <span id="finalCursor2"  class="typing-cursor" ></span>
+                    </label>
+                    <div id ="WCPS_main">
+                        <div class="row row-spacing">
+                            <div class="col-md-6">
+                                <label style="color: black; font-weight: bold; font-size: 16px; ">圖像選擇</label>
+                                <form method="POST" action="/upload" enctype="multipart/form-data" id="fileUploadForm">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="file" id="customFile">
+                                        <label class="custom-file-label" for="customFile" id = "customFile_label">Choose file</label>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-5 col-spacing">
+                                <div id="imageContainer">
+                                    <img src="https://via.placeholder.com/100x100/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage">
+                                </div>
+                            </div>
+                        </div>   
+                    </div>
+                    
+                    <label  id="WCPS_label_1" class="label-font ">
+                        <span id="animatedText2-1" class="typing"></span>
+                        <span id="finalCursor2-1"  class="typing-cursor" ></span>
+                    </label>
+                    <div id="WCPS_settng">
+                        <div class="row row-spacing">
+                            <div class="col-md-5">   
+                                <label style="color: black; font-weight: bold; font-size: 16px; ">工件選項</label>
+                                <select id="WCPS_dropdown"  name ="WCPS_dropdown" class="form-control">
+                                    <option value="" selected disabled>請選擇</option>
+                                    <option value="0">磁導率(Permeability)/鐵損(Iron loss)</option>
+                                    <option value="1">拉伸強度(Tensile Strength)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <div id = "WCPS_dropdown2_set">
+                                    <label style="color: black; font-weight: bold; font-size: 16px; ">操作頻率</label>
+                                    <select id="WCPS_dropdown2"   name="WCPS_dropdown2" class="form-control">
+                                        <option value="" selected disabled>請選擇</option>
+                                        <option value="50">50hz</option>
+                                        <option value="200">200hz</option>
+                                        <option value="400">400hz</option>
+                                        <option value="800">800hz</option>
+                                    </select>
+                                </div>  
+                            </div>
+                            <div class="row row-spacing">
+                                <div class="col-md-2">
+                                    <button id="incrementButton2" class="btn btn-primary">特性預估</button>
+                                    <button id="loadingButton2" class="btn btn-primary disabled" style="display: none;">
+                                        <span class="spinner-border spinner-border-sm"></span>
+                                        Loading..
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-spacing">
+                            <div class="col-md-12">
+                                <label  id="WCPS_label" >    </label>
+                            </div>
+                        </div>
+                        <div class="row row-spacing">
+                            <div class="col-md-12">
+                                <table border="1" class = "table table-hover"  id = 'customTable'>
+                                    <tr>
+                                        <td>氧濃度(ppm)</td> 
+                                        <td>能量密度(J/mm3)</td>
+                                        <td>雷射功率(w)</td>
+                                        <td>雷射掃描速度(mm/s)</td>
+                                        <td>線間距(mm)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" id="textbox11" name="textbox11" class="form-control" value="0"></td>
+                                        <td><input type="text" id="textbox22" name="textbox22" class="form-control" value="0"></td>
+                                        <td><input type="text" id="textbox33" name="textbox33" class="form-control" value="0"></td>
+                                        <td><input type="text" id="textbox44" name="textbox44" class="form-control" value="0"></td>
+                                        <td><input type="text" id="textbox55" name="textbox55" class="form-control" value="0"></td>
+                                    </tr>
+                                </table>
+                            </div>   
+
+                        </div>
+                    </div>
+                </div>
+
+                <div  class="container" id ="WCPS_result">
+                    <label  id="WCPS_label" class="label-font ">
+                        <span id="animatedText2-2" class="typing"></span>
+                        <span id="finalCursor2-2"  class="typing-cursor" ></span>
+                    </label>
+                    <div class="row row-spacing" id = "WCPS_output">
+                        <div class="col-md-11 col-spacing">
+                            <fieldset id = 'output-table'>
+                                <legend><span style="font-weight:bold;">特性預估:</span></legend>
+                                <table border="0" id = 'outTable'>
+                                    <tr>
+                                        <td> </td>
+                                        <td><label  class="show-Label" ><h6>lightgbm</h6></label></td>
+                                        <td><label  class="show-Label" ><h6>linear</h6></label></td>
+                                        <td><label  class="show-Label" ><h6>logistic</h6></label></td>
+                                        <td><label  class="show-Label" ><h6>svr</h6></label></td>
+                                        <td><label  class="show-Label" ><h6>xgboost</h6></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label id="outLabel10" class="show-Label" >磁導率</label></td>
+                                        <td><label id="outLabel11" class="show-Label" >x</label></td>
+                                        <td><label id="outLabel12" class="show-Label" >x</label></td>
+                                        <td><label id="outLabel13" class="show-Label" >x</label></td>
+                                        <td><label id="outLabel14" class="show-Label" >x</label></td>
+                                        <td><label id="outLabel15" class="show-Label" >x</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label id="outLabel20" class="show-Label" >鐵損(kW/m3)</label></td>
+                                        <td><label id="outLabel21" class="show-Label"> x</label></td>
+                                        <td><label id="outLabel22" class="show-Label" >x</label></td>
+                                        <td><label id="outLabel23" class="show-Label" >x</label></td>
+                                        <td><label id="outLabel24" class="show-Label" >x</label></td>
+                                        <td><label id="outLabel25" class="show-Label" >x</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label id="outLabel30" class="show-Label" >最大拉伸(MPa)</label></td>
+                                        <td><label id="outLabel31" class="show-Label"> x</label></td>
+                                        <td><label id="outLabel32" class="show-Label" >x</label></td>
+                                        <td><label id="outLabel33" class="show-Label" >x</label></td>
+                                        <td><label id="outLabel34" class="show-Label" >x</label></td>
+                                        <td><label id="outLabel35" class="show-Label" >x</label></td>
+                                    </tr>
+                                </table>
+                            </fieldset> 
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <div id = "TSDS">
+                <div  class="container" id ="TSDS_content">
+                    <label  id="TSDS_label" class="label-font ">
+                        <span id="animatedText3" class="typing"></span>
+                        <span id="finalCursor3"  class="typing-cursor" ></span>
+                    </label>
+                </div>    
+            </div>
+            
+            <div  class="container" id ="Error_content">
+                <label  id="Error_label" class="label-font ">
+                    <span id="animatedText4" class="typing"></span>
+                    <span id="finalCursor4"  class="typing-cursor" ></span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <button id="scrollToTopBtn">^</button>
+    <script src="{{ url_for('static', filename='js/scroll_button.js') }}"></script>
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
+    
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+    <script>
+    // $(document).ready(function () {
+    //     $('#sidebarCollapse').on('click', function () {
+    //         $('#sidebar').toggleClass('active');
+    //         $(this).toggleClass('active');
+    //     });
+    // });
+        document.addEventListener('DOMContentLoaded', function() {
+
+            var textElement = document.getElementById('first_animatedText');
+            var finalCursor = document.getElementById('first_finalCursor');
+            
+            var textToAnimate = "您可以在下方搜尋欄輸入您想執行的動作，我將進行簡易的功能導覽及執行\n※注意! 目前僅支援功能中的工件參數建議、特性預測展示部分";
+            var textArray = textToAnimate.split('');
+            
+            finalCursor.style.display = 'inline-block';
+            textElement.innerHTML = '';
+            
+            textArray.forEach(function(char, index) {
+                setTimeout(function(){
+                    textElement.innerHTML += char;
+
+                    if (index === textArray.length - 1) {
+
+                        finalCursor.style.display = 'none';
+                        MPRS_Main.style.display = 'block'
+                    }
+                }, index * 50); // 设置延迟时间
+            });
+
+            const search_button = document.getElementById('search_button');
+
+            const uploadedImage = document.getElementById('uploadedImage');
+            // // pmb
+            const outlabel10 = document.getElementById('outLabel10')
+            const outlabel11 = document.getElementById('outLabel11')
+            const outlabel12 = document.getElementById('outLabel12')
+            const outlabel13 = document.getElementById('outLabel13')
+            const outlabel14 = document.getElementById('outLabel14')
+            const outlabel15 = document.getElementById('outLabel15')
+
+            // // iron
+            const outlabel20 = document.getElementById('outLabel20')
+            const outlabel21 = document.getElementById('outLabel21')
+            const outlabel22 = document.getElementById('outLabel22')
+            const outlabel23 = document.getElementById('outLabel23')
+            const outlabel24 = document.getElementById('outLabel24')
+            const outlabel25 = document.getElementById('outLabel25')
+
+            // // tensile
+            const outlabel30 = document.getElementById('outLabel30')
+            const outlabel31 = document.getElementById('outLabel31')
+            const outlabel32 = document.getElementById('outLabel32')
+            const outlabel33 = document.getElementById('outLabel33')
+            const outlabel34 = document.getElementById('outLabel34')
+            const outlabel35 = document.getElementById('outLabel35')
+
+            search_button.addEventListener('click', function() {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput.value !== ""){
+                    var inputlabel = document.getElementById('searchResults');
+                    var input_search = document.getElementById('input_search');
+                    var MPRS_content = document.getElementById('MPRS_content');
+                    var WCPS_content = document.getElementById('WCPS_content');
+                    var TSDS_content = document.getElementById('TSDS_content');
+                    var Error_content = document.getElementById('Error_content');
+                    var MPRS_result = document.getElementById('MPRS_result');
+                    var MPRS_output = document.getElementById('MPRS_output');
+                    var WCPS_main = document.getElementById('WCPS_main');
+                    var MPRS_Main = document.getElementById('MPRS_Main');
+                    var WCPS_settng = document.getElementById('WCPS_settng');
+                    var WCPS_result = document.getElementById('WCPS_result');
+                    var WCPS_label_1 = document.getElementById('WCPS_label_1');
+                    // #WCPS_main,#WCPS_settng,#WCPS_result,#WCPS_label_1,#WCPS_output
+                    var WCPS_output = document.getElementById('WCPS_output');
+
+                    WCPS_output.style.display = 'none';
+                    WCPS_label_1.style.display = 'none';
+                    WCPS_result.style.display = 'none';
+                    MPRS_output.style.display = 'none';
+                    WCPS_main.style.display = 'none';
+                    WCPS_settng.style.display = 'none';
+                    MPRS_Main.style.display = 'none';
+                    MPRS_content.style.display = 'none';
+                    WCPS_content.style.display = 'none';
+                    TSDS_content.style.display = 'none';
+                    Error_content.style.display = 'none';
+                    MPRS_result.style.display = 'none';
+                    inputlabel.style.display = 'block';
+                    uploadedImage.src = "";
+
+                    input_search.textContent = searchInput.value;
+
+                    fetch('/pred_string', {
+                        method: 'POST',
+                        body: JSON.stringify({  
+                                                value : searchInput.value,
+                                            }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.max_value !== 0) {
+                            if (data.type === 0) {
+                                MPRS_content.style.display = 'block'
+                                var textElement = document.getElementById('animatedText1');
+                                var finalCursor = document.getElementById('finalCursor1');
+                                
+                                var textToAnimate = "您如果需要進行磁性元件的參數建議部分，可以在這裡選擇您需要預測的材料及頻率後按下最佳化參數";
+                                var textArray = textToAnimate.split('');
+                                
+                                finalCursor.style.display = 'inline-block';
+                                textElement.innerHTML = '';
+                                
+                                textArray.forEach(function(char, index) {
+                                    setTimeout(function(){
+                                        textElement.innerHTML += char;
+
+                                        if (index === textArray.length - 1) {
+                    
+                                            finalCursor.style.display = 'none';
+                                            MPRS_Main.style.display = 'block'
+                                        }
+                                    }, index * 50); // 设置延迟时间
+                                });
+                            } else if (data.type === 1) {
+                                WCPS_content.style.display = 'block'
+                                
+                                var textElement = document.getElementById('animatedText2');
+                                var finalCursor = document.getElementById('finalCursor2');
+                                
+                                var textToAnimate = "您如果需要進行逐層圖像的特性預估部分，可以在這裡上傳您想預估的圖片，選擇您要預估的環境頻率後，按下特性預測";
+                                var textArray = textToAnimate.split('');
+                                finalCursor.style.display = 'inline-block';
+                                textElement.innerHTML = '';
+                                
+                                textArray.forEach(function(char, index) {
+                                    setTimeout(function(){
+                                        textElement.innerHTML += char;
+
+                                        if (index === textArray.length - 1) {
+                                            finalCursor.style.display = 'none';
+                                            WCPS_main.style.display = 'block';
+                                        }
+                                    }, index * 50); // 设置延迟时间
+                                });
+
+                            } else {
+                                TSDS_content.style.display = 'block'
+                                var textElement = document.getElementById('animatedText3');
+                                var finalCursor = document.getElementById('finalCursor3');
+                                var textToAnimate = "以下是目前現有工件的橫切面逐層影像，以及橫切面擷取堆疊而成的縱切面資訊。";
+                                var textArray = textToAnimate.split('');
+                                finalCursor.style.display = 'inline-block';
+                                textElement.innerHTML = '';
+                                
+                                textArray.forEach(function(char, index) {
+                                    setTimeout(function(){
+                                        textElement.innerHTML += char;
+
+                                        if (index === textArray.length - 1) {
+                    
+                                            finalCursor.style.display = 'none';
+                                            
+                                        }
+                                    }, index * 50); // 设置延迟时间
+                                });
+                            }
+                        } else {
+                            Error_content.style.display = 'block'
+                            var textElement = document.getElementById('animatedText4');
+                            var finalCursor = document.getElementById('finalCursor4');
+                            var textToAnimate = "對不起，我無法辨識您的需求，請重新輸入";
+                            var textArray = textToAnimate.split('');
+                            finalCursor.style.display = 'inline-block';
+                            textElement.innerHTML = '';
+                            
+                            textArray.forEach(function(char, index) {
+                                setTimeout(function(){
+                                    textElement.innerHTML += char;
+
+                                    if (index === textArray.length - 1) {
+                
+                                        finalCursor.style.display = 'none';
+                                    }
+                                }, index * 50); // 设置延迟时间
+                            });
+                            
+                        }
+                    });
+                }
+                
+                
+            });
+            
+            
+            // MPRS java_code
+            const incrementButton1 = document.getElementById('incrementButton1');
+            const loadingButton = document.getElementById('loadingButton');
+            var dropdown3 = document.getElementById('dropdown3');
+            dropdown3.addEventListener('change', function() {
+                var selectedValue = dropdown3.value;
+                var custom_input = document.getElementById('custom_input');
+
+                if (selectedValue === 'option3') {
+                    custom_input.style.display = 'inline-block';
+                } else {
+                    custom_input.style.display = 'none';
+                }
+            });
+            incrementButton1.addEventListener('click', function() {
+                incrementButton1.style.display = 'none';
+                loadingButton.style.display = 'block';
+                const material = document.getElementById('dropdown');
+                const frequency = document.getElementById('dropdown2');
+                var inputValue1 = parseInt(document.getElementById('textbox1').value);
+                var inputValue2 = parseInt(document.getElementById('textbox2').value);
+                var inputValue3 = parseInt(document.getElementById('textbox3').value);
+                
+                MPRS_result.style.display = 'none'
+                fetch('/increment', {
+                    method: 'POST',
+                    body: JSON.stringify({  
+                                            material : material.value,
+                                            frequency : frequency.value,
+                                            radio_type : dropdown3.value,
+                                            value1 : inputValue1,
+                                            value2 : inputValue2,
+                                            value3 : inputValue3,
+                                        }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var textlabel1 = document.getElementById('counterLabel1')
+                    var textlabel2 = document.getElementById('counterLabel2')
+                    var textlabel3 = document.getElementById('counterLabel3')
+                    var textlabel4 = document.getElementById('counterLabel4')
+
+                    var outlabel1 = document.getElementById('outLabel1')
+                    var outlabel2 = document.getElementById('outLabel2')
+                    var outlabel3 = document.getElementById('outLabel3')
+                    textlabel1.textContent = data.p1;
+                    textlabel2.textContent = data.p2;
+                    textlabel3.textContent = data.p3;
+                    textlabel4.textContent = data.p4;
+                    outlabel1.textContent = data.a1;
+                    outlabel2.textContent = data.a2;
+                    outlabel3.textContent = data.a3;
+                    incrementButton1.style.display = 'block';
+                    loadingButton.style.display = 'none';
+                    MPRS_result.style.display = 'block'
+                    var textElement = document.getElementById('animatedText1-1');
+                    var finalCursor = document.getElementById('finalCursor1-2');
+                    
+                    var textToAnimate = "預測的最佳製成參數及預估成品特性如下";
+                    var textArray = textToAnimate.split('');
+                    
+                    finalCursor.style.display = 'inline-block';
+                    textElement.innerHTML = '';
+                    
+                    textArray.forEach(function(char, index) {
+                        setTimeout(function(){
+                            textElement.innerHTML += char;
+
+                            if (index === textArray.length - 1) {
+                                finalCursor.style.display = 'none';
+                                MPRS_output.style.display = 'block'
+                            }
+                        }, index * 50); // 设置延迟时间
+                    });
+                });
+                
+            });
+
+            //MPRS java_code
+
+            const fileInput = document.getElementById('customFile');
+            const imageContainer = document.getElementById('imageContainer');
+            
+            var WCPS_dropdown = document.getElementById('WCPS_dropdown');
+            WCPS_dropdown.addEventListener('change', function() {
+                var selectedValue = WCPS_dropdown.value;
+                var WCPS_dropdown2_set = document.getElementById('WCPS_dropdown2_set');
+
+                if (selectedValue === '0') {
+                    WCPS_dropdown2_set.style.display = 'inline-block';
+                } else {
+                    WCPS_dropdown2_set.style.display = 'none';
+                }
+            });
+            fileInput.addEventListener('change', () => {
+                const form = document.getElementById('fileUploadForm');
+                const formData = new FormData(form);
+                
+                fetch('/upload_file', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        $('#successModal').modal('show');
+                        
+                        uploadedImage.src = data.image_url;
+     
+                    } else {
+                        $('#errorModal').modal('show');
+                    }
+                });
+            });
+            
+            var close_button = document.getElementById('close_button');
+            close_button.addEventListener('click', function() {
+                var textElement = document.getElementById('animatedText2-1');
+                var finalCursor = document.getElementById('finalCursor2-1');
+                
+                
+                var textToAnimate = "接下來請您選擇需要預測的工件特性以及輸入對應製成參數";
+                var textArray = textToAnimate.split('');
+                WCPS_label_1.style.display = 'inline-block'
+                finalCursor.style.display = 'inline-block';
+                textElement.innerHTML = '';
+                
+                textArray.forEach(function(char, index) {
+                    setTimeout(function(){
+                        textElement.innerHTML += char;
+
+                        if (index === textArray.length - 1) {
+                            
+                            finalCursor.style.display = 'none';
+                            
+                            WCPS_settng.style.display = 'inline-block';
+                        }
+                    }, index * 50); // 设置延迟时间
+                });
+            });
+            const incrementButton2 = document.getElementById('incrementButton2');
+            const loadingButton2 = document.getElementById('loadingButton2');
+
+            
+
+            const WCPS_dropdown2 = document.getElementById('WCPS_dropdown2')
+            
+
+            incrementButton2.addEventListener('click', function() {
+                incrementButton2.style.display = 'none';
+                loadingButton2.style.display = 'block';
+                const parm1 = parseFloat(document.getElementById('textbox11').value);
+                const parm2 = parseFloat(document.getElementById('textbox22').value);
+                const parm3 = parseFloat(document.getElementById('textbox33').value);
+                const parm4 = parseFloat(document.getElementById('textbox44').value);
+                const parm5 = parseFloat(document.getElementById('textbox55').value);
+
+                var parm = [parm1,parm2,parm3,parm4,parm5]      
+
+                fetch('/predict', {
+                    method: 'POST',
+                    body: JSON.stringify({  
+                                            material : WCPS_dropdown.value,
+                                            frequency : WCPS_dropdown2.value,
+                                            imagename : fileInput.files[0].name,
+                                            parm : parm,
+                                        }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+
+                    outlabel10.style.display = 'none';
+                    outlabel11.style.display = 'none';
+                    outlabel12.style.display = 'none';
+                    outlabel13.style.display = 'none';
+                    outlabel14.style.display = 'none';
+                    outlabel15.style.display = 'none';
+                    outlabel20.style.display = 'none';
+                    outlabel21.style.display = 'none';
+                    outlabel22.style.display = 'none';
+                    outlabel23.style.display = 'none';
+                    outlabel24.style.display = 'none';
+                    outlabel25.style.display = 'none';
+                    outlabel30.style.display = 'none';
+                    outlabel31.style.display = 'none';
+                    outlabel32.style.display = 'none';
+                    outlabel33.style.display = 'none';
+                    outlabel34.style.display = 'none';
+                    outlabel35.style.display = 'none';
+
+                    if (WCPS_dropdown.value === '0') {
+                        outlabel11.textContent = data.pred[0];
+                        outlabel12.textContent = data.pred[1];
+                        outlabel13.textContent = data.pred[2];
+                        outlabel14.textContent = data.pred[3];
+                        outlabel15.textContent = data.pred[4];
+
+                        outlabel10.style.display = 'inline-block';
+                        outlabel11.style.display = 'inline-block';
+                        outlabel12.style.display = 'inline-block';
+                        outlabel13.style.display = 'inline-block';
+                        outlabel14.style.display = 'inline-block';
+                        outlabel15.style.display = 'inline-block';
+
+                        outlabel21.textContent = data.pred[5];
+                        outlabel22.textContent = data.pred[6];
+                        outlabel23.textContent = data.pred[7];
+                        outlabel24.textContent = data.pred[8];
+                        outlabel25.textContent = data.pred[9];
+
+                        outlabel20.style.display = 'inline-block';
+                        outlabel21.style.display = 'inline-block';
+                        outlabel22.style.display = 'inline-block';
+                        outlabel23.style.display = 'inline-block';
+                        outlabel24.style.display = 'inline-block';
+                        outlabel25.style.display = 'inline-block';
+                    }else{
+                        outlabel31.textContent = data.pred[0];
+                        outlabel32.textContent = data.pred[1];
+                        outlabel33.textContent = data.pred[2];
+                        outlabel34.textContent = data.pred[3];
+                        outlabel35.textContent = data.pred[4];
+                        
+                        outlabel30.style.display = 'inline-block';
+                        outlabel31.style.display = 'inline-block';
+                        outlabel32.style.display = 'inline-block';
+                        outlabel33.style.display = 'inline-block';
+                        outlabel34.style.display = 'inline-block';
+                        outlabel35.style.display = 'inline-block';
+                    }
+                    incrementButton2.style.display = 'block';
+                    loadingButton2.style.display = 'none';
+                    
+                    WCPS_result.style.display = 'block';
+                    var textElement = document.getElementById('animatedText2-2');
+                    var finalCursor = document.getElementById('finalCursor2-2');
+                    var textToAnimate = "工件的特性預估值如下";
+                    var textArray = textToAnimate.split('');
+                    
+                    WCPS_output.style.display = 'block';
+                    finalCursor.style.display = 'inline-block';
+                    textElement.innerHTML = '';
+                    
+                    textArray.forEach(function(char, index) {
+                        setTimeout(function(){
+                            textElement.innerHTML += char;
+                            if (index === textArray.length - 1) {
+                                finalCursor.style.display = 'none';
+                            }
+                        }, index * 50); 
+                    });
+                });
+                
+            });
+            var recordButton = document.getElementById('recordButton');
+            var resultLabel = document.getElementById('searchResults');
+            var audioData = [];
+            var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            var recorder;
+
+            recordButton.addEventListener('mousedown', startRecording);
+            recordButton.addEventListener('mouseup', stopRecording);
+            
+            function startRecording() {
+                audioData = [];
+                resultLabel.innerHTML = '錄音中...';
+
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(function (stream) {
+                        recorder = new Recorder(audioContext.createMediaStreamSource(stream));
+                        recorder.record();
+                    }).catch(function (err) {
+                        console.error('錄音許可被拒絕：', err);
+                    });
+            }
+
+            function stopRecording() {
+                resultLabel.innerHTML = '辨識中...';
+
+                recorder.stop();
+                recorder.exportWAV(function (blob) {
+                    var reader = new FileReader();
+                    reader.onloadend = function () {
+                        // 將 Uint8Array 轉換為正確的格式（Array）
+                        audioData = Array.from(new Uint8Array(reader.result));
+                        sendAudioData();
+                    };
+                    reader.readAsArrayBuffer(blob);
+                });
+            }
+
+            function sendAudioData() {
+                // 使用 Uint8Array 格式發送錄音數據
+                fetch('/process_audio', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ audioData: audioData }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const searchInput = document.getElementById('searchInput');
+                    resultLabel.innerHTML = data.result;
+                    searchInput.value = data.result;
+                    
+                })
+                .catch((error) => {
+                    console.error('錯誤：', error);
+                    resultLabel.innerHTML = '辨識失敗';
+                });
+            }
+        });
+
+        
+    </script>
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">圖像上傳成功</h5>
+                </div>
+                <div class="modal-body">
+                    圖像上傳成功！
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="close_button">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 失败模态框 -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">圖片上傳失敗</h5>
+                </div>
+                <div class="modal-body">
+                    圖片上傳失敗! 請確認圖片檔案及其副檔名('png', 'jpg', 'jpeg', 'gif')
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
