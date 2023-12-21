@@ -15,9 +15,7 @@ import pandas as pd
 import speech_recognition as sr
 import mysql.connector
 # import whisper
-import io
-import wave
-# model = whisper.load_model("small")
+from pydub import AudioSegment
 recognizer = sr.Recognizer()
 app = Flask(__name__)
 
@@ -298,29 +296,43 @@ def pred_string():
 
 @app.route('/process_audio', methods=['POST'])
 def process_audio():
-    audio_data = request.json['audioData']
+    text_line = {
+        'complet': 0,
+        'result' : ""
+    }
+    if 'audio_data' in request.files:
+        audio_file = request.files['audio_data']
+        temp_filename = os.path.join(app.config['UPLOAD_FOLDER'], "temp_audio")
+        audio_file.save(temp_filename)  # 儲存原始檔案
 
-    # 將音訊資料存為.wav檔案
-    with wave.open("audio.wav", 'wb') as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(44100)
-        wf.writeframes(audio_data)
-        print("save")
+        # 轉換音頻格式
+        sound = AudioSegment.from_file(temp_filename)
+        wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "audio.wav")
+        sound.export(wav_filename, format="wav")  # 轉換並儲存為 WAV 格式
 
-    #use_speech_recognition
-    # 使用存檔後的.wav檔案進行辨識
-    with sr.AudioFile("audio.wav") as source:
-        audio = recognizer.record(source)
-    
-    try:
-        result = recognizer.recognize_google(audio, language='zh-TW')
-    except sr.UnknownValueError:
-        result = "無法識別語音"
-    except sr.RequestError as e:
-        result = f"語音辨識服務錯誤：{e}"
+        # 使用 speech_recognition 進行語音識別
+        recognizer = sr.Recognizer()
+        with sr.AudioFile(wav_filename) as source:
+            audio_data = recognizer.record(source)
+            try:
+                text = recognizer.recognize_google(audio_data, language="zh-TW")
+                print("辨識結果:", text)
+                text_line['complet'] = 1
+                text_line['result'] = 'text'
+                return jsonify(text_line)
+            except sr.UnknownValueError:
+                print("Google Speech Recognition 無法理解音頻")
+                text_line['complet'] = 0
+                text_line['result'] = '無法理解音頻'
+                return jsonify(text_line)
+            except sr.RequestError as e:
+                print("無法從 Google Speech Recognition 獲得結果; {0}".format(e))
+                text_line['complet'] = 0
+                text_line['result'] = '無法從 Google Speech Recognition 獲得結果'
+                return jsonify(text_line)
 
-    return jsonify({'result': result})
+            
+            
 if __name__ == '__main__':
     app.debug = True
     app.secret_key = "54088"

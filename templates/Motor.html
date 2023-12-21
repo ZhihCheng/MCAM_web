@@ -249,7 +249,8 @@
                         <button id="search_button" class="btn btn-secondary btn-lg">搜尋</button>
                     </div>
                     <div class="input-group-append">
-                        <button id="recordButton">按住錄音</button>
+                        <button id="recordButton">開始錄音</button>
+                        <!-- <audio id="audio" controls></audio> -->
                     </div>
                 </div>
                 <div id="searchResults"><label  id="input_search" class="label-font"></div>
@@ -628,6 +629,7 @@
                     Error_content.style.display = 'none';
                     MPRS_result.style.display = 'none';
                     inputlabel.style.display = 'block';
+                    
                     uploadedImage.src = "";
 
                     input_search.textContent = searchInput.value;
@@ -996,66 +998,63 @@
                 });
                 
             });
-            var recordButton = document.getElementById('recordButton');
-            var resultLabel = document.getElementById('searchResults');
-            var audioData = [];
-            var audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            var recorder;
+            let mediaRecorder;
+            let audioChunks = [];
+            let isRecording = false; // 錄音狀態標誌
 
-            recordButton.addEventListener('mousedown', startRecording);
-            recordButton.addEventListener('mouseup', stopRecording);
-            
-            function startRecording() {
-                audioData = [];
-                resultLabel.innerHTML = '錄音中...';
+            document.getElementById("recordButton").onclick = function() {
+                if (!isRecording) {
+                    // 開始錄音
+                    navigator.mediaDevices.getUserMedia({ audio: true })
+                        .then(stream => {
+                            mediaRecorder = new MediaRecorder(stream);
+                            mediaRecorder.ondataavailable = event => {
+                                audioChunks.push(event.data);
+                            };
+                            mediaRecorder.start();
+                            document.getElementById("recordButton").textContent = "停止錄音";
+                            isRecording = true;
+                        });
+                } else {
+                    // 停止錄音
+                    mediaRecorder.stop();
+                    mediaRecorder.onstop = () => {
+                        const search_button = document.getElementById('search_button');
+                        var searchInput = document.getElementById('searchInput');
+                        var inputlabel = document.getElementById('searchResults');
+                        inputlabel.style.display = 'block';
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        // document.getElementById("audio").src = audioUrl;
 
-                navigator.mediaDevices.getUserMedia({ audio: true })
-                    .then(function (stream) {
-                        recorder = new Recorder(audioContext.createMediaStreamSource(stream));
-                        recorder.record();
-                    }).catch(function (err) {
-                        console.error('錄音許可被拒絕：', err);
-                    });
-            }
+                        // 傳送至 Flask
+                        const formData = new FormData();
+                        formData.append("audio_data", audioBlob);
+                        fetch("/process_audio", { method: "POST", 
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.complet  === 1 ){
+                                searchInput.value = data.result;
+                                search_button.click();
+                            }else{
+                                searchInput.value = " ";
 
-            function stopRecording() {
-                resultLabel.innerHTML = '辨識中...';
+                                inputlabel.innerText  = data.result;
+                                // search_button.click();
+                            }
 
-                recorder.stop();
-                recorder.exportWAV(function (blob) {
-                    var reader = new FileReader();
-                    reader.onloadend = function () {
-                        // 將 Uint8Array 轉換為正確的格式（Array）
-                        audioData = Array.from(new Uint8Array(reader.result));
-                        sendAudioData();
+                        });
+                        document.getElementById("recordButton").textContent = "開始錄音";
+                        audioChunks = [];
+                        isRecording = false;
                     };
-                    reader.readAsArrayBuffer(blob);
-                });
-            }
-
-            function sendAudioData() {
-                // 使用 Uint8Array 格式發送錄音數據
-                fetch('/process_audio', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ audioData: audioData }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const searchInput = document.getElementById('searchInput');
-                    resultLabel.innerHTML = data.result;
-                    searchInput.value = data.result;
-                    
-                })
-                .catch((error) => {
-                    console.error('錯誤：', error);
-                    resultLabel.innerHTML = '辨識失敗';
-                });
-            }
+                }
+            };
         });
-
+        
+        
         
     </script>
     <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
