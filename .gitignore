@@ -12,6 +12,7 @@
 #temp file
 /uploads
 audio.wav
+temp_audio.webm
 
 #scirpt
 server.crt
