@@ -13,6 +13,7 @@
 /static/temp_audio
 /uploads
 audio.wav
+temp_audio.webm
 
 #scirpt
 server.crt
