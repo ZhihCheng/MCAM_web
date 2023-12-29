@@ -10,6 +10,7 @@
 /sys_py_FeSiCr/model_set_FeSiCr
 
 #temp file
+/static/temp_audio
 /uploads
 audio.wav
 

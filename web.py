@@ -7,15 +7,20 @@ from sys_py_FeSiCr.parameter_sug_customize import *
 from sys_py_NiFe.parameter_sug_max_mu_min_pcv import *
 from sys_py_NiFe.parameter_sug_max_mu_max_tensile import *
 from sys_py_NiFe.parameter_sug_customize import *
-# from Img_Predict.pred_model_loading import *
 from Img_Predict.pred_model_loading import pred_output
 from Img_Predict.glcm import get_gray_level_feature
 import cv2 as cv
 import pandas as pd
 import speech_recognition as sr
+import whisper
 import mysql.connector
 # import whisper
 from pydub import AudioSegment
+from speech_model import ModelSpeech
+from speech_model_zoo import SpeechModel251BN
+from speech_features import Spectrogram
+from language_model3 import ModelLanguage
+
 recognizer = sr.Recognizer()
 app = Flask(__name__)
 
@@ -67,6 +72,8 @@ db_config = {
     'password': '123456',
     'database': 'emotor'
 }
+
+audio_model = 0
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -296,40 +303,85 @@ def pred_string():
 
 @app.route('/process_audio', methods=['POST'])
 def process_audio():
+
     text_line = {
         'complet': 0,
         'result' : ""
     }
+
     if 'audio_data' in request.files:
         audio_file = request.files['audio_data']
         temp_filename = os.path.join(app.config['UPLOAD_FOLDER'], "temp_audio")
-        audio_file.save(temp_filename)  # 儲存原始檔案
+        # audio_file.save(temp_filename)  # 儲存原始音頻檔案
 
         # 轉換音頻格式
         sound = AudioSegment.from_file(temp_filename)
         wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "audio.wav")
-        sound.export(wav_filename, format="wav")  # 轉換並儲存為 WAV 格式
+        # sound.export(wav_filename, format="wav")  # 轉換原始音頻並儲存為 WAV 格式
+        # print(wav_filename)
 
-        # 使用 speech_recognition 進行語音識別
-        recognizer = sr.Recognizer()
-        with sr.AudioFile(wav_filename) as source:
-            audio_data = recognizer.record(source)
-            try:
-                text = recognizer.recognize_google(audio_data, language="zh-TW")
-                print("辨識結果:", text)
+
+        if audio_model == 0 :
+            # 使用 Whisper 進行語音識別
+            model = whisper.load_model("base")  # 或選擇其他適合的模型大小
+            result = model.transcribe(wav_filename, language="Mandarin")
+            text = result["text"]
+            print("辨識結果:", text)
+
+            if text:
                 text_line['complet'] = 1
-                text_line['result'] = 'text'
-                return jsonify(text_line)
-            except sr.UnknownValueError:
-                print("Google Speech Recognition 無法理解音頻")
+                text_line['result'] = text
+            else:
                 text_line['complet'] = 0
                 text_line['result'] = '無法理解音頻'
-                return jsonify(text_line)
-            except sr.RequestError as e:
-                print("無法從 Google Speech Recognition 獲得結果; {0}".format(e))
-                text_line['complet'] = 0
-                text_line['result'] = '無法從 Google Speech Recognition 獲得結果'
-                return jsonify(text_line)
+
+            return jsonify(text_line)
+        
+        elif audio_model == 1 :
+            # 使用 speech_recognition 進行語音識別
+            recognizer = sr.Recognizer()
+            with sr.AudioFile(wav_filename) as source:
+                audio_data = recognizer.record(source)
+                try:
+                    text = recognizer.recognize_google(audio_data, language="zh-TW")
+                    print("辨識結果:", text)
+                    text_line['complet'] = 1
+                    text_line['result'] = 'text'
+                    return jsonify(text_line)
+                except sr.UnknownValueError:
+                    print("Google Speech Recognition 無法理解音頻")
+                    text_line['complet'] = 0
+                    text_line['result'] = '無法理解音頻'
+                    return jsonify(text_line)
+                except sr.RequestError as e:
+                    print("無法從 Google Speech Recognition 獲得結果; {0}".format(e))
+                    text_line['complet'] = 0
+                    text_line['result'] = '無法從 Google Speech Recognition 獲得結果'
+                    return jsonify(text_line)
+        elif audio_model == 2:
+            #使用ASRT 進行語音識別 DCNN+
+            os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
+            AUDIO_LENGTH = 1600
+            AUDIO_FEATURE_LENGTH = 200
+            CHANNELS = 1
+            OUTPUT_SIZE = 1428
+            sm251bn = SpeechModel251BN(
+                input_shape=(AUDIO_LENGTH, AUDIO_FEATURE_LENGTH, CHANNELS),
+                output_size=OUTPUT_SIZE
+                )
+            feat = Spectrogram()
+            ms = ModelSpeech(sm251bn, feat, max_label_length=64)
+
+            ms.load_model('save_models/' + sm251bn.get_model_name() + '.model.h5')
+            res = ms.recognize_speech_from_file('Test.wav')
+            print('*[提示] 声学模型语音识别结果：\n', res)
+
+            ml = ModelLanguage('model_language')
+            ml.load_model()
+            str_pinyin = res
+            res = ml.pinyin_to_text(str_pinyin)
+            print('语音识别最终结果：\n',res)
 
             
             
