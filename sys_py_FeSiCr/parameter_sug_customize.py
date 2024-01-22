@@ -43,14 +43,15 @@ def FeSiCr_customize(input_data):
 
     # Multi type of model can be select (base on R2 score)
     ##############################################################################################
-    model_mu_input = [model_mu_xgb_50,      ## mu model
-                model_mu_xgb_200,
-                model_mu_cat_400,
-                model_mu_lgb_800]
-    model_Pcv_input = [model_Pcv_xgb_50,    ## Pcv model
-                model_Pcv_xgb_200,
-                model_Pcv_cat_400,
-                model_Pcv_cat_800]
+    model_mu_input = [  model_mu_xgb_50,      ## mu model
+                        model_mu_xgb_200,
+                        model_mu_cat_400,
+                        model_mu_lgb_800]
+    
+    model_Pcv_input = [ model_Pcv_xgb_50,    ## Pcv model
+                        model_Pcv_xgb_200,
+                        model_Pcv_cat_400,
+                        model_Pcv_cat_800]
 
     model_tensile_input = model_tensile_xgb # tensile model no relate to frequency
     ##############################################################################################
