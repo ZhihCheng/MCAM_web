@@ -559,13 +559,11 @@
                         finalCursor.style.display = 'none';
                         MPRS_Main.style.display = 'block'
                     }
-                }, index * 50); // 设置延迟时间
+                }, index * 50); 
             });
 
 
-
             const search_button = document.getElementById('search_button');
-
             const uploadedImage = document.getElementById('uploadedImage');
             // // pmb
             const outlabel10 = document.getElementById('outLabel10')
@@ -1036,7 +1034,6 @@
                                 searchInput.value = " ";
 
                                 inputlabel.innerText  = data.result;
-                                // search_button.click();
                             }
 
                         });
