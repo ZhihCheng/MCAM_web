@@ -1,5 +1,7 @@
 import speech_recognition as sr
 import whisper
+from transformers import pipeline
+import librosa
 class Process_audio:
     def transcribe_whisper(wav_filename,text_line):
         # Whisper 語音識別邏輯
@@ -27,7 +29,7 @@ class Process_audio:
                 text = recognizer.recognize_google(audio_data, language="zh-TW")
                 print("辨識結果:", text)
                 text_line['complet'] = 1
-                text_line['result'] = 'text'
+                text_line['result'] = text
                 return text_line
             except sr.UnknownValueError:
                 print("Google Speech Recognition 無法理解音頻")
@@ -39,3 +41,30 @@ class Process_audio:
                 text_line['complet'] = 0
                 text_line['result'] = '無法從 Google Speech Recognition 獲得結果'
                 return text_line
+            
+    def transcribe_whisper_for_pretrained(wav_filename, text_line):
+        try:
+            pipe = pipeline(model="ZhihCheng/whisper-tiny-zh_motor_first", task="automatic-speech-recognition")
+        except Exception as e:
+            text_line['complet'] = 0
+            text_line['error'] = f"模型加載錯誤: {str(e)}"
+            return text_line
+
+        try:
+            audio_data, _ = librosa.load(wav_filename, sr=None)
+        except Exception as e:
+            text_line['complet'] = 0
+            text_line['error'] = f"音頻文件加載錯誤: {str(e)}"
+            return text_line
+
+        try:
+            text = pipe(audio_data)["text"]
+        except Exception as e:
+            text_line['complet'] = 0
+            text_line['error'] = f"語音識別錯誤: {str(e)}"
+            return text_line
+
+        text_line['complet'] = 1
+        text_line['result'] = text
+
+        return text_line
