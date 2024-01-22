@@ -541,17 +541,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 
     <script>
-    // $(document).ready(function () {
-    //     $('#sidebarCollapse').on('click', function () {
-    //         $('#sidebar').toggleClass('active');
-    //         $(this).toggleClass('active');
-    //     });
-    // });
         document.addEventListener('DOMContentLoaded', function() {
-
             var textElement = document.getElementById('first_animatedText');
             var finalCursor = document.getElementById('first_finalCursor');
-            
             var textToAnimate = "您可以在下方搜尋欄輸入您想執行的動作，我將進行簡易的功能導覽及執行\n※注意! 目前僅支援功能中的工件參數建議、特性預測展示部分";
             var textArray = textToAnimate.split('');
             
@@ -569,6 +561,8 @@
                     }
                 }, index * 50); // 设置延迟时间
             });
+
+
 
             const search_button = document.getElementById('search_button');
 

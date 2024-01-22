@@ -274,112 +274,99 @@
     <script>
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
-                $(this).toggleClass('active');
+                $('#sidebar, #sidebarCollapse').toggleClass('active');
             });
         });
-        var options = document.getElementsByName("options");
-        
-        options[0].addEventListener("change", function() {
-            var selectedOption = document.querySelector('input[name="options"]:checked').value;
-            const  in1 = document.getElementById('textbox1');
-            const  in2 = document.getElementById('textbox2');
-            const  in3 = document.getElementById('textbox3');
-            in1.disabled = true
-            in2.disabled = true
-            in3.disabled = true
-            // var table = document.getElementById("customTable");
-            // table.style.display = "none";
-            // var vlabel = document.getElementById("vislable");
-            // vlabel.style.display = "table"
-
-        });
-        options[1].addEventListener("change", function() {
-            var selectedOption = document.querySelector('input[name="options"]:checked').value;
-            const  in1 = document.getElementById('textbox1');
-            const  in2 = document.getElementById('textbox2');
-            const  in3 = document.getElementById('textbox3');
-            in1.disabled = true
-            in2.disabled = true
-            in3.disabled = true
-        });
-        options[2].addEventListener("change", function() {
-            var selectedOption = document.querySelector('input[name="options"]:checked').value;
-            const  in1 = document.getElementById('textbox1');
-            const  in2 = document.getElementById('textbox2');
-            const  in3 = document.getElementById('textbox3');
-            in1.disabled = false
-            in2.disabled = false
-            in3.disabled = false
+    
+        // 簡化的設置輸入欄位狀態的函數
+        function setInputDisabled(disabled) {
+            ['textbox1', 'textbox2', 'textbox3'].forEach(id => {
+                document.getElementById(id).disabled = disabled;
+            });
+        }
+    
+        // 初始化元素
+        const options = document.getElementsByName("options");
+        const inputNumber1 = document.getElementById('textbox1');
+        const inputNumber2 = document.getElementById('textbox2');
+        const inputNumber3 = document.getElementById('textbox3');
+        const incrementButton = document.getElementById('incrementButton');
+        const loadingButton = document.getElementById('loadingButton');
+        const textLabels = ['counterLabel1', 'counterLabel2', 'counterLabel3', 'counterLabel4'].map(id => document.getElementById(id));
+        const outLabels = ['outLabel1', 'outLabel2', 'outLabel3'].map(id => document.getElementById(id));
+    
+        // 設置選項按鈕的事件監聽
+        options.forEach(option => {
+            option.addEventListener("change", function() {
+                const isDisabled = option.value !== "option3"; // 假設第三個選項啟用輸入框
+                setInputDisabled(isDisabled);
+            });
         });
 
 
         document.addEventListener('DOMContentLoaded', function() {
             const incrementButton = document.getElementById('incrementButton');
             const loadingButton = document.getElementById('loadingButton');
+            const inputNumbers = [document.getElementById('textbox1'), 
+                                document.getElementById('textbox2'), 
+                                document.getElementById('textbox3')];
+            const textLabels = [document.getElementById('counterLabel1'), 
+                                document.getElementById('counterLabel2'), 
+                                document.getElementById('counterLabel3'), 
+                                document.getElementById('counterLabel4')];
+            const outLabels = [ document.getElementById('outLabel1'), 
+                                document.getElementById('outLabel2'), 
+                                document.getElementById('outLabel3')];
 
-
-            const inputNumber1 = document.getElementById('textbox1');
-    
-
-            const inputNumber2 = document.getElementById('textbox2');
-            const inputNumber3 = document.getElementById('textbox3');
-
-            const textlabel1 = document.getElementById('counterLabel1')
-            const textlabel2 = document.getElementById('counterLabel2')
-            const textlabel3 = document.getElementById('counterLabel3')
-            const textlabel4 = document.getElementById('counterLabel4')
-
-            const outlabel1 = document.getElementById('outLabel1')
-            const outlabel2 = document.getElementById('outLabel2')
-            const outlabel3 = document.getElementById('outLabel3')
-            
             incrementButton.addEventListener('click', function() {
-                incrementButton.style.display = 'none';
-                loadingButton.style.display = 'block';
+                toggleButtonsVisibility();
+                const payload = buildPayload();
+                
+                fetch('/increment', {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    headers: {'Content-Type': 'application/json'}
+                })
+                .then(handleResponse)
+                .catch(handleError)
+                .finally(() => toggleButtonsVisibility()); // Always toggle visibility regardless of success or error
+            });
+
+            function toggleButtonsVisibility() {
+                incrementButton.style.display = (incrementButton.style.display === 'none') ? 'block' : 'none';
+                loadingButton.style.display = (loadingButton.style.display === 'none') ? 'block' : 'none';
+            }
+
+            function buildPayload() {
                 const radioButtons = document.getElementsByName('options');
                 const material = document.getElementById('dropdown');
                 const frequency = document.getElementById('dropdown2');
-                const inputValue1 = parseInt(inputNumber1.value);
-                const inputValue2 = parseInt(inputNumber2.value);
-                const inputValue3 = parseInt(inputNumber3.value);
-                let selectedValue = null; // 初始化选中值为空
-
-                // 遍历单选按钮以查找选中的按钮
-                for (const radioButton of radioButtons) {
-                    if (radioButton.checked) {
-                        selectedValue = radioButton.value;
-                        break; // 找到选中的按钮后，跳出循环
-                    }
-                }
-                fetch('/increment', {
-                    method: 'POST',
-                    body: JSON.stringify({  
-                                            material : material.value,
-                                            frequency : frequency.value,
-                                            radio_type : selectedValue,
-                                            value1 : inputValue1,
-                                            value2 : inputValue2,
-                                            value3 : inputValue3,
-                                        }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    textlabel1.textContent = data.p1;
-                    textlabel2.textContent = data.p2;
-                    textlabel3.textContent = data.p3;
-                    textlabel4.textContent = data.p4;
-                    outlabel1.textContent = data.a1;
-                    outlabel2.textContent = data.a2;
-                    outlabel3.textContent = data.a3;
-                    incrementButton.style.display = 'block';
-                    loadingButton.style.display = 'none';
-                });
+                const selectedRadioButton = Array.from(radioButtons).find(rb => rb.checked);
                 
-            });
+                return {
+                    material: material.value,
+                    frequency: frequency.value,
+                    radio_type: selectedRadioButton ? selectedRadioButton.value : null,
+                    value1: parseInt(inputNumbers[0].value),
+                    value2: parseInt(inputNumbers[1].value),
+                    value3: parseInt(inputNumbers[2].value)
+                };
+            }
+
+            function handleResponse(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json().then(data => {
+                    textLabels.forEach((label, index) => label.textContent = data['p' + (index + 1)]);
+                    outLabels.forEach((label, index) => label.textContent = data['a' + (index + 1)]);
+                });
+            }
+
+            function handleError(error) {
+                console.error('Fetch Error:', error);
+                alert('An error occurred, please try again later.');
+            }
         });
     </script>
 </body>
