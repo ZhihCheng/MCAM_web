@@ -20,8 +20,12 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
     <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+    <!-- <script src="{{ url_for('static', filename='js/utils.js') }}"></script> -->
 </head>
 <style>
+    html {
+        scroll-behavior: smooth;
+    }
     body {
         width: 100%; /* 設定網頁寬度為100% */
         height: 100h; /* 設定網頁高度為100視窗高度（viewport height） */
@@ -184,6 +188,40 @@
     
     #WCPS_main,#WCPS_settng,#WCPS_result,#WCPS_label_1,#WCPS_output{
         display: none;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+    }
+
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
     }
 
 </style>
@@ -523,8 +561,6 @@
             </div>
         </div>
     </div>
-    <button id="scrollToTopBtn">^</button>
-    <script src="{{ url_for('static', filename='js/scroll_button.js') }}"></script>
     <script>
         // Add the following code if you want the name of the file appear on select
         $(".custom-file-input").on("change", function() {
@@ -539,30 +575,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/animateTyping.js') }}"></script>
+ 
 
     <script>
+       
         document.addEventListener('DOMContentLoaded', function() {
-            var textElement = document.getElementById('first_animatedText');
-            var finalCursor = document.getElementById('first_finalCursor');
-            var textToAnimate = "您可以在下方搜尋欄輸入您想執行的動作，我將進行簡易的功能導覽及執行\n※注意! 目前僅支援功能中的工件參數建議、特性預測展示部分";
-            var textArray = textToAnimate.split('');
-            
-            finalCursor.style.display = 'inline-block';
-            textElement.innerHTML = '';
-            
-            textArray.forEach(function(char, index) {
-                setTimeout(function(){
-                    textElement.innerHTML += char;
 
-                    if (index === textArray.length - 1) {
-
-                        finalCursor.style.display = 'none';
-                        MPRS_Main.style.display = 'block'
-                    }
-                }, index * 50); 
-            });
-
-
+            animateTyping('first_animatedText', 'first_finalCursor', "您可以在下方搜尋欄輸入您想執行的動作，我將進行簡易的功能導覽及執行\n", 'MPRS_Main');
             const search_button = document.getElementById('search_button');
             const uploadedImage = document.getElementById('uploadedImage');
             // // pmb
@@ -662,67 +682,14 @@
                                 });
                             } else if (data.type === 1) {
                                 WCPS_content.style.display = 'block'
-                                
-                                var textElement = document.getElementById('animatedText2');
-                                var finalCursor = document.getElementById('finalCursor2');
-                                
-                                var textToAnimate = "您如果需要進行逐層圖像的特性預估部分，可以在這裡上傳您想預估的圖片，選擇您要預估的環境頻率後，按下特性預測";
-                                var textArray = textToAnimate.split('');
-                                finalCursor.style.display = 'inline-block';
-                                textElement.innerHTML = '';
-                                
-                                textArray.forEach(function(char, index) {
-                                    setTimeout(function(){
-                                        textElement.innerHTML += char;
-
-                                        if (index === textArray.length - 1) {
-                                            finalCursor.style.display = 'none';
-                                            WCPS_main.style.display = 'block';
-                                        }
-                                    }, index * 50); // 设置延迟时间
-                                });
-
+                                animateTyping('animatedText2', 'finalCursor2', "您如果需要進行逐層圖像的特性預估部分，可以在這裡上傳您想預估的圖片，選擇您要預估的環境頻率後，按下特性預測\n", 'WCPS_main');
                             } else {
                                 TSDS_content.style.display = 'block'
-                                var textElement = document.getElementById('animatedText3');
-                                var finalCursor = document.getElementById('finalCursor3');
-                                var textToAnimate = "以下是目前現有工件的橫切面逐層影像，以及橫切面擷取堆疊而成的縱切面資訊。";
-                                var textArray = textToAnimate.split('');
-                                finalCursor.style.display = 'inline-block';
-                                textElement.innerHTML = '';
-                                
-                                textArray.forEach(function(char, index) {
-                                    setTimeout(function(){
-                                        textElement.innerHTML += char;
-
-                                        if (index === textArray.length - 1) {
-                    
-                                            finalCursor.style.display = 'none';
-                                            
-                                        }
-                                    }, index * 50); // 设置延迟时间
-                                });
+                                animateTyping('animatedText3', 'finalCursor3', "以下是目前現有工件的橫切面逐層影像，以及橫切面擷取堆疊而成的縱切面資訊。\n");
                             }
                         } else {
                             Error_content.style.display = 'block'
-                            var textElement = document.getElementById('animatedText4');
-                            var finalCursor = document.getElementById('finalCursor4');
-                            var textToAnimate = "對不起，我無法辨識您的需求，請重新輸入";
-                            var textArray = textToAnimate.split('');
-                            finalCursor.style.display = 'inline-block';
-                            textElement.innerHTML = '';
-                            
-                            textArray.forEach(function(char, index) {
-                                setTimeout(function(){
-                                    textElement.innerHTML += char;
-
-                                    if (index === textArray.length - 1) {
-                
-                                        finalCursor.style.display = 'none';
-                                    }
-                                }, index * 50); // 设置延迟时间
-                            });
-                            
+                            animateTyping('animatedText4', 'finalCursor4', "對不起，我無法辨識您的需求，請重新輸入\n");
                         }
                     });
                 }
@@ -789,25 +756,7 @@
                     incrementButton1.style.display = 'block';
                     loadingButton.style.display = 'none';
                     MPRS_result.style.display = 'block'
-                    var textElement = document.getElementById('animatedText1-1');
-                    var finalCursor = document.getElementById('finalCursor1-2');
-                    
-                    var textToAnimate = "預測的最佳製成參數及預估成品特性如下";
-                    var textArray = textToAnimate.split('');
-                    
-                    finalCursor.style.display = 'inline-block';
-                    textElement.innerHTML = '';
-                    
-                    textArray.forEach(function(char, index) {
-                        setTimeout(function(){
-                            textElement.innerHTML += char;
-
-                            if (index === textArray.length - 1) {
-                                finalCursor.style.display = 'none';
-                                MPRS_output.style.display = 'block'
-                            }
-                        }, index * 50); // 设置延迟时间
-                    });
+                    animateTyping('animatedText1-1', 'finalCursor1-2', "預測的最佳製成參數及預估成品特性如下\n", 'MPRS_output');
                 });
                 
             });
@@ -850,34 +799,15 @@
             
             var close_button = document.getElementById('close_button');
             close_button.addEventListener('click', function() {
-                var textElement = document.getElementById('animatedText2-1');
-                var finalCursor = document.getElementById('finalCursor2-1');
-                
-                
-                var textToAnimate = "接下來請您選擇需要預測的工件特性以及輸入對應製成參數";
-                var textArray = textToAnimate.split('');
                 WCPS_label_1.style.display = 'inline-block'
-                finalCursor.style.display = 'inline-block';
-                textElement.innerHTML = '';
-                
-                textArray.forEach(function(char, index) {
-                    setTimeout(function(){
-                        textElement.innerHTML += char;
-
-                        if (index === textArray.length - 1) {
-                            
-                            finalCursor.style.display = 'none';
-                            
-                            WCPS_settng.style.display = 'inline-block';
-                        }
-                    }, index * 50); // 设置延迟时间
+                animateTyping('animatedText2-1', 'finalCursor2-1', "接下來請您選擇需要預測的工件特性以及輸入對應製成參數",null, function() {
+                    // 在這裡執行任何需要的操作
+                    WCPS_settng.style.display = 'inline-block';
+                    windows_under();
                 });
             });
             const incrementButton2 = document.getElementById('incrementButton2');
             const loadingButton2 = document.getElementById('loadingButton2');
-
-            
-
             const WCPS_dropdown2 = document.getElementById('WCPS_dropdown2')
             
 
@@ -906,7 +836,6 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-
                     outlabel10.style.display = 'none';
                     outlabel11.style.display = 'none';
                     outlabel12.style.display = 'none';
@@ -970,33 +899,21 @@
                     loadingButton2.style.display = 'none';
                     
                     WCPS_result.style.display = 'block';
-                    var textElement = document.getElementById('animatedText2-2');
-                    var finalCursor = document.getElementById('finalCursor2-2');
-                    var textToAnimate = "工件的特性預估值如下";
-                    var textArray = textToAnimate.split('');
-                    
-                    WCPS_output.style.display = 'block';
-                    finalCursor.style.display = 'inline-block';
-                    textElement.innerHTML = '';
-                    
-                    textArray.forEach(function(char, index) {
-                        setTimeout(function(){
-                            textElement.innerHTML += char;
-                            if (index === textArray.length - 1) {
-                                finalCursor.style.display = 'none';
-                            }
-                        }, index * 50); 
+                    windows_under();
+                    animateTyping('animatedText2-2', 'finalCursor2-2', '工件的特性預估值如下',null,function(){
+                        WCPS_output.style.display = 'block';
+                        windows_under();
                     });
-                });
-                
+                }); 
             });
             let mediaRecorder;
             let audioChunks = [];
-            let isRecording = false; // 錄音狀態標誌
+            let isRecording = false;
 
             document.getElementById("recordButton").onclick = function() {
+                let modal = document.getElementById("modal");
+
                 if (!isRecording) {
-                    // 開始錄音
                     navigator.mediaDevices.getUserMedia({ audio: true })
                         .then(stream => {
                             mediaRecorder = new MediaRecorder(stream);
@@ -1004,11 +921,14 @@
                                 audioChunks.push(event.data);
                             };
                             mediaRecorder.start();
-                            document.getElementById("recordButton").textContent = "停止錄音";
+                            modal.style.display = "block"; // 顯示模態彈窗
                             isRecording = true;
                         });
-                } else {
-                    // 停止錄音
+                }
+            };
+
+            document.getElementById("stopButton").onclick = function() {
+                if (isRecording) {
                     mediaRecorder.stop();
                     mediaRecorder.onstop = () => {
                         const search_button = document.getElementById('search_button');
@@ -1017,8 +937,6 @@
                         inputlabel.style.display = 'block';
                         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                         const audioUrl = URL.createObjectURL(audioBlob);
-                        // document.getElementById("audio").src = audioUrl;
-
                         // 傳送至 Flask
                         const formData = new FormData();
                         formData.append("audio_data", audioBlob);
@@ -1035,19 +953,98 @@
 
                                 inputlabel.innerText  = data.result;
                             }
-
                         });
                         document.getElementById("recordButton").textContent = "開始錄音";
                         audioChunks = [];
                         isRecording = false;
                     };
+                    modal.style.display = "none"; // 隱藏模態彈窗
                 }
             };
+
+            // 當用戶點擊彈窗之外的區域，關閉彈窗
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    if (isRecording) {
+                        mediaRecorder.stop();
+                        audioChunks = [];
+                        isRecording = false;
+                    }
+                    modal.style.display = "none";
+                    
+                }
+            };
+
+            let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            let analyser = audioContext.createAnalyser();
+            let dataArray, bufferLength;
+
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                let source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                analyser.fftSize = 4096; // 增加FFT Size
+                analyser.smoothingTimeConstant = 0.2; // 減小平滑時間常數
+                analyser.minDecibels = -90; // 調整最小分貝
+                analyser.maxDecibels = -10; // 調整最大分貝
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                draw();
+            });
+
+            function draw() {
+                requestAnimationFrame(draw);
+                analyser.getByteTimeDomainData(dataArray);
+
+                let canvas = document.getElementById("visualizer");
+                let ctx = canvas.getContext("2d");
+                let width = canvas.width;
+                let height = canvas.height;
+
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, width, height);
+
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "black";
+
+                ctx.beginPath();
+
+                let sliceWidth = width * 1.0 / bufferLength;
+                let x = 0;
+
+                for(let i = 0; i < bufferLength; i++) {
+                    let v = dataArray[i] / 128.0;
+                    let y = v * height / 2;
+
+                    if(i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+
+                    x += sliceWidth;
+                }
+
+                ctx.lineTo(canvas.width, canvas.height / 2);
+                ctx.stroke();
+            }
         });
         
-        
+                
         
     </script>
+
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <p>正在錄音中...</p>
+            <canvas id="visualizer" width="640" height="100"></canvas>
+            <button id="stopButton">停止錄音</button>
+        </div>
+    </div>
+
+
+
     <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
