@@ -383,67 +383,11 @@
                 
                 
             });
+
+            // 錄音按鈕功能新增
             
 
 
-            var recordButton = document.getElementById('recordButton');
-            var resultLabel = document.getElementById('searchResults');
-            var audioData = [];
-            var audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            var recorder;
-
-            recordButton.addEventListener('mousedown', startRecording);
-            recordButton.addEventListener('mouseup', stopRecording);
-            
-            function startRecording() {
-                audioData = [];
-                resultLabel.innerHTML = '錄音中...';
-
-                navigator.mediaDevices.getUserMedia({ audio: true })
-                    .then(function (stream) {
-                        recorder = new Recorder(audioContext.createMediaStreamSource(stream));
-                        recorder.record();
-                    }).catch(function (err) {
-                        console.error('錄音許可被拒絕：', err);
-                    });
-            }
-
-            function stopRecording() {
-                resultLabel.innerHTML = '辨識中...';
-
-                recorder.stop();
-                recorder.exportWAV(function (blob) {
-                    var reader = new FileReader();
-                    reader.onloadend = function () {
-                        // 將 Uint8Array 轉換為正確的格式（Array）
-                        audioData = Array.from(new Uint8Array(reader.result));
-                        sendAudioData();
-                    };
-                    reader.readAsArrayBuffer(blob);
-                });
-            }
-
-            function sendAudioData() {
-                // 使用 Uint8Array 格式發送錄音數據
-                fetch('/process_audio', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ audioData: audioData }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const searchInput = document.getElementById('searchInput');
-                    resultLabel.innerHTML = data.result;
-                    searchInput.value = data.result;
-                    
-                })
-                .catch((error) => {
-                    console.error('錯誤：', error);
-                    resultLabel.innerHTML = '辨識失敗';
-                });
-            }
         });
 
     // document.write('<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"><\/script>');
