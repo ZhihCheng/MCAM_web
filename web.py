@@ -212,7 +212,6 @@ def search_database():
     selected_df = result_df[Database_Config.get_columns]
     if len(selected_df) == 0:
         selected_df = 0
-        print("hi")
         return jsonify(selected_df)
     
     return jsonify(selected_df.to_json(orient='records', force_ascii=False))
@@ -259,7 +258,7 @@ def process_audio():
             elif audio_Config.audio_model == 1:
                 text_line = Process_audio.transcribe_google(wav_filename,text_line)  # 使用 Google Speech Recognition 進行語音識別
             elif audio_Config.audio_model == 2:
-                text_line = Process_audio.transcribe_whisper_for_pretrained(wav_filename,text_line)  # 使用 Google Speech Recognition 進行語音識別
+                text_line = Process_audio.transcribe_whisper_for_pretrained(wav_filename,text_line)  # 使用 訓練過的Whisper 進行語音識別
             return jsonify(text_line)
         except Exception as e:
             text_line['result'] = str(e)
