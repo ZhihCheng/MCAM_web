@@ -248,7 +248,6 @@ def process_audio():
         return jsonify(text_line)
 
     wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "audio.wav")
-
     try:
         if audio_Config.audio_model == 0:
             text_line = Process_audio.transcribe_whisper(wav_filename,text_line)  # 使用 Whisper 進行語音識別
@@ -263,4 +262,4 @@ def process_audio():
 
 if __name__ == '__main__':
     app.secret_key = Config.SECRET_KEY
-    app.run('0.0.0.0',port=8152,ssl_context=('server.crt', 'server.key'))
+    app.run('0.0.0.0',port=8152)

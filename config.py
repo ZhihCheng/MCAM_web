@@ -5,7 +5,7 @@ class Config:
     #audio setting
     
 class audio_Config:
-    audio_model = 0
+    audio_model = 2
 
 class Database_Config:
     db_config = {
