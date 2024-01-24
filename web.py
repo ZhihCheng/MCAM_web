@@ -2,7 +2,7 @@
 import cv2 as cv
 import pandas as pd
 from functools import wraps
-
+import io
 # 第三方庫導入
 from flask import Flask, request, render_template, jsonify, redirect
 from werkzeug.utils import secure_filename
@@ -20,7 +20,7 @@ from sys_py_FeSiCr.parameter_sug_customize import *
 from sys_py_NiFe.parameter_sug_max_mu_min_pcv import *
 from sys_py_NiFe.parameter_sug_max_mu_max_tensile import *
 from sys_py_NiFe.parameter_sug_customize import *
-
+from pydub import AudioSegment
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
@@ -243,21 +243,29 @@ def pred_string():
 @app.route('/process_audio', methods=['POST'])
 def process_audio():
     text_line = {'complet': 0, 'result': ""}
-    if 'audio_data' not in request.files:
-        text_line['result'] = '沒有找到音頻檔案'
-        return jsonify(text_line)
+    if 'audio_data' in request.files:
+        audio_file = request.files['audio_data']
 
-    wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "audio.wav")
-    try:
-        if audio_Config.audio_model == 0:
-            text_line = Process_audio.transcribe_whisper(wav_filename,text_line)  # 使用 Whisper 進行語音識別
-        elif audio_Config.audio_model == 1:
-            text_line = Process_audio.transcribe_google(wav_filename,text_line)  # 使用 Google Speech Recognition 進行語音識別
-        elif audio_Config.audio_model == 2:
-            text_line = Process_audio.transcribe_whisper_for_pretrained(wav_filename,text_line)  # 使用 Google Speech Recognition 進行語音識別
-        return jsonify(text_line)
-    except Exception as e:
-        text_line['result'] = str(e)
+        # 使用 BytesIO 從記憶體讀取音頻數據
+        audio_data = io.BytesIO(audio_file.read())
+
+        # 轉換音頻格式
+        sound = AudioSegment.from_file(audio_data)
+        wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "audio.wav")
+        sound.export(wav_filename, format="wav")
+        try:
+            if audio_Config.audio_model == 0:
+                text_line = Process_audio.transcribe_whisper(wav_filename,text_line)  # 使用 Whisper 進行語音識別
+            elif audio_Config.audio_model == 1:
+                text_line = Process_audio.transcribe_google(wav_filename,text_line)  # 使用 Google Speech Recognition 進行語音識別
+            elif audio_Config.audio_model == 2:
+                text_line = Process_audio.transcribe_whisper_for_pretrained(wav_filename,text_line)  # 使用 Google Speech Recognition 進行語音識別
+            return jsonify(text_line)
+        except Exception as e:
+            text_line['result'] = str(e)
+            return jsonify(text_line)
+    else:
+        text_line['result'] = '沒有找到音頻檔案'
         return jsonify(text_line)
 
 if __name__ == '__main__':

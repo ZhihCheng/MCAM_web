@@ -20,7 +20,6 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
     <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
-    <!-- <script src="{{ url_for('static', filename='js/utils.js') }}"></script> -->
 </head>
 <style>
     html {
@@ -284,7 +283,7 @@
                         <button id="search_button" class="btn btn-secondary btn-lg">搜尋</button>
                     </div>
                     <div class="input-group-append">
-                        <button id="recordButton">開始錄音</button>
+                        <button id="recordButton">語音識別</button>
 
                     </div>
                 </div>
@@ -905,7 +904,8 @@
 
             document.getElementById("recordButton").onclick = function() {
                 let modal = document.getElementById("modal");
-
+                var input_search = document.getElementById('input_search');
+                input_search.textContent = '錄音中...'
                 if (!isRecording) {
                     navigator.mediaDevices.getUserMedia({ audio: true })
                         .then(stream => {
@@ -923,6 +923,8 @@
             document.getElementById("stopButton").onclick = function() {
                 if (isRecording) {
                     mediaRecorder.stop();
+                    var input_search = document.getElementById('input_search');
+                    input_search.textContent = '音訊辨識中...'
                     mediaRecorder.onstop = () => {
                         const search_button = document.getElementById('search_button');
                         var searchInput = document.getElementById('searchInput');
@@ -938,16 +940,16 @@
                         })
                         .then(response => response.json())
                         .then(data => {
+                            input_search.textContent = " "
                             if (data.complet  === 1 ){
                                 searchInput.value = data.result;
                                 search_button.click();
                             }else{
                                 searchInput.value = " ";
-
                                 inputlabel.innerText  = data.result;
                             }
                         });
-                        document.getElementById("recordButton").textContent = "開始錄音";
+                        document.getElementById("recordButton").textContent = "語音識別";
                         audioChunks = [];
                         isRecording = false;
                     };

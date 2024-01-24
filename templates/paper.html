@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html >
 <head>
-    <title>Motor tech Co-AI</title>
+    <title>Motor Co-AI</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     
@@ -21,15 +21,13 @@
         margin: 0; 
         padding: 0; 
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        background-color: #333333;
         margin: 0;
     }
     label {
         font-weight: bold;
     }
     
-    
-
     img {
         max-width: 100%; 
         max-height: 100%; 
@@ -49,7 +47,7 @@
     }
     
     .container {
-        max-width: 50%;
+        max-width: 68%;
         margin: 50px auto;
         padding: 20px;
         background-color: #fff;
@@ -75,14 +73,11 @@
         grid-template-columns: 1fr 1fr;
         height: 100vh;
     }
-    .grid-item {
-      padding: 20px;
-      overflow: auto; /* 启用滚动条 */
-    }
+  
     .top-left {
-        grid-row: 1 / 2; /* 位于第一行 */
-        grid-column: 1 / 2; /* 位于第一列 */
-        background-color: rgb(77, 14, 14); /* 红色背景，可根据需要更改颜色 */
+        grid-row: 1 / 2; /* 位於第一行 */
+        grid-column: 1 / 2; /* 位於第一列 */
+        background-color: #CD5C5C;; 
         padding: 20px;
         border-radius: 20px;
     }
@@ -90,7 +85,7 @@
     .top-right {
         grid-row: 1 / 2;
         grid-column: 2 / 3;
-        background-color: rgb(4, 70, 4); /* 绿色背景，可根据需要更改颜色 */
+        background-color: #B0C4DE; 
         padding: 20px;
         border-radius: 20px;
     }
@@ -98,7 +93,7 @@
     .bottom-left {
         grid-row: 2 / 3;
         grid-column: 1 / 2;
-        background-color: rgba(0, 0, 255, 0.089); /* 蓝色背景，可根据需要更改颜色 */
+        background-color: #C8A2C8; 
         padding: 20px;
         border-radius: 20px;
     }
@@ -106,10 +101,11 @@
     .bottom-right {
         grid-row: 2 / 3;
         grid-column: 2 / 3;
-        background-color: rgba(255, 255, 0, 0.164); /* 黄色背景，可根据需要更改颜色 */
+        background-color: #F5F5DC; /* 淺綠色背景 */
         padding: 20px;
         border-radius: 20px;
     }
+
     #imageContainer{
         width: 100px auto; /* 设置容器的宽度 */
         height: 330px;
@@ -136,6 +132,31 @@
       background-color: black;
       animation: blink 0.7s infinite;
     }
+    .grid-item {
+        /* 為放大縮小添加過渡效果 */
+        transition: all 0.3s ease; 
+        transform-origin: 50% 50%; /* 設置變形原點為元素中心 */
+        position: relative; /* 為了讓按鈕絕對定位於容器內 */
+        padding: 20px;
+        overflow: auto; /* 启用滚动条 */
+    }
+    
+    .zoomed {
+        position: fixed; /* 固定位置，使其脫離正常流 */
+        width: 70vw; /* 設定寬度為視窗的 70% */
+        height: 80vh; /* 設定高度為視窗的 80% */
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* 居中視窗 */
+        z-index: 10; /* 確保放大後的視窗在其他元素上方 */
+    }
+
+    .zoom-btn {
+        position: absolute; /* 按鈕的絕對定位，便於控制其位置 */
+        bottom: 10px;
+        right: 10px;
+        /* 其他按鈕樣式... */
+    }
 
     @keyframes typing {
       from { width: 0; }
@@ -147,18 +168,13 @@
       0%, 100% { opacity: 0; }
       50% { opacity: 1; }
     }
-
-    /* #search_output{
-        display: none;
-    } */
-
 </style>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor Tech</span><span style="color: black;"> Co-AI</span></h1>
+                <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor </span><span style="color: black;"> Co-AI</span></h1>
             </div>
             
         </div>
@@ -168,7 +184,6 @@
             <span id="first_animatedText" class="typing"></span>
             <span id="first_finalCursor"  class="typing-cursor" ></span>
         </label>
-        <!-- <div class="input-group mb-3"> -->
         <div class="row row-spacing">
             <div class="col-md-9">
                 <input type="text" id="searchInput" class="form-control object_font" placeholder="輸入關鍵字" aria-label="輸入關鍵字" aria-describedby="basic-addon2">
@@ -176,10 +191,8 @@
             <div class="col-md-3">
                 <div class="input-group-append">
                     <button id="search_button" class="btn btn-secondary btn-lg">搜尋</button>
+                    <button id="recordButton" class="btn btn-secondary btn-lg">語音識別</button>
                 </div>
-                <!-- <div class="input-group-append">
-                    <button id="recordButton">按住錄音</button>
-                </div> -->
             </div>
         </div>
         <div id="searchResults"><label  id="input_search" class="label-font"></div>
@@ -190,6 +203,7 @@
         <div class="top-left grid-item">
             <div  class="inear-container " id ="search_output">
                 <h3 class="fw-bolder mb-2">馬達中心電子報推薦</h3>
+                <button class="zoom-btn btn btn-primary" onclick="zoomIn(this)">放大</button>
                 <div id="searchResult" class="accordion"></div>
             </div>
             <div  class="inear-container " id ="Error_content">
@@ -202,16 +216,19 @@
         <div class="top-right grid-item ">
             <div  class="inear-container " id ="search_output1">
                 <h3 class="fw-bolder mb-2">廠商建議 - 建構中</h3>
+                <button class="zoom-btn btn btn-primary" onclick="zoomIn(this)">放大</button>
             </div>
         </div>
         <div class="bottom-left grid-item">
             <div  class="inear-container " id ="search_output2">
                 <h3 class="fw-bolder mb-2">專家推薦 - 建構中</h3>
+                <button class="zoom-btn btn btn-primary" onclick="zoomIn(this)">放大</button>
             </div>
         </div>
         <div class="bottom-right grid-item">
             <div  class="inear-container " id ="search_output3">
                 <h3 class="fw-bolder mb-2">馬達模型</h3>
+                <button class="zoom-btn btn btn-primary" onclick="zoomIn(this)">放大</button>
                 <div id="imageContainer" >
                     <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage">
                 </div>
@@ -244,12 +261,25 @@
     </script>
 
     <script>
+        function zoomIn(button) {
+            // 找到最近的 grid-item 元素
+            let gridItem = button.closest('.grid-item');
+            // 判斷當前是否已經放大
+            if(gridItem.classList.contains('zoomed')) {
+                // 如果已放大，則移除 zoomed 類別以還原大小
+                gridItem.classList.remove('zoomed');
+                button.textContent = '放大'; // 更新按鈕文字
+            } else {
+                // 如果未放大，則添加 zoomed 類別以放大視窗
+                gridItem.classList.add('zoomed');
+                button.textContent = '還原'; // 更新按鈕文字
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
             
             var search_output = document.getElementById('search_output');
             var textElement = document.getElementById('first_animatedText');
             var finalCursor = document.getElementById('first_finalCursor');
-            //var dropdown = document.getElementById('dropdown');
             var textToAnimate = "您可以在下方搜尋輸入:";
             var textArray = textToAnimate.split('');
             
@@ -276,8 +306,6 @@
                 var searchResult = document.getElementById('searchResult');
                 Error_content.style.display='none';
                 imageContainer.style.display='none';
-                // search_output.style.display = 'none';
-                // searchResult.style.display='none';
                 if (searchInput.value !== ""){
 
                     input_search.textContent = searchInput.value;
@@ -294,7 +322,6 @@
                     .then(response => response.json())
                     .then(data => {
                         var jsonData = JSON.parse(data);
-                        // 遍歷對象並生成手風琴項目
                         var accordionHtml = "";
                         if (jsonData === 0) {
                             Error_content.style.display = 'block';
@@ -316,7 +343,6 @@
                                 }, index * 50); 
                             });
                         }else{
-                            
                             var split_form = document.getElementById('split_form');
                             search_output.style.display = 'block';
                             var uploadedImage = document.getElementById('uploadedImage');
@@ -350,10 +376,8 @@
 
                             // 插入手風琴到 HTML 中
                             document.getElementById("searchResult").innerHTML = accordionHtml;
-                            // searchResult.style.display='block';
                             split_form.scrollIntoView({ behavior: 'smooth' });
                         }
-                        
                     });
                 }
                 
