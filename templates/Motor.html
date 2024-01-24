@@ -192,7 +192,7 @@
     .modal {
         display: none;
         position: fixed;
-        z-index: 1;
+        /* z-index: 1; */
         left: 0;
         top: 0;
         width: 100%;
@@ -903,7 +903,7 @@
             let isRecording = false;
 
             document.getElementById("recordButton").onclick = function() {
-                let modal = document.getElementById("modal");
+                let modaler = document.getElementById("record_modal");
                 var input_search = document.getElementById('input_search');
                 input_search.textContent = '錄音中...'
                 if (!isRecording) {
@@ -914,7 +914,7 @@
                                 audioChunks.push(event.data);
                             };
                             mediaRecorder.start();
-                            modal.style.display = "block"; // 顯示模態彈窗
+                            modaler.style.display = "block"; // 顯示模態彈窗
                             isRecording = true;
                         });
                 }
@@ -953,19 +953,23 @@
                         audioChunks = [];
                         isRecording = false;
                     };
-                    modal.style.display = "none"; // 隱藏模態彈窗
+                    let modaler = document.getElementById("record_modal");
+                    modaler.style.display = "none"; // 隱藏模態彈窗
                 }
             };
 
             // 當用戶點擊彈窗之外的區域，關閉彈窗
             window.onclick = function(event) {
-                if (event.target == modal) {
+                if (event.target == modaler) {
                     if (isRecording) {
                         mediaRecorder.stop();
                         audioChunks = [];
                         isRecording = false;
                     }
-                    modal.style.display = "none";
+                    var input_search = document.getElementById('input_search');
+                    var modaler = document.getElementById("record_modal");
+                    input_search.textContent = ' '
+                    modaler.style.display = "none";
                     
                 }
             };
@@ -1029,14 +1033,14 @@
     </script>
 
 
-    <div id="modal" class="modal">
+    <div class="modal" id="record_modal" >
         <div class="modal-content">
             <span class="close-button">×</span>
             <p>正在錄音中...</p>
             <canvas id="visualizer" width="640" height="100"></canvas>
             <button id="stopButton">停止錄音</button>
         </div>
-    </div>
+    </div> 
 
 
 

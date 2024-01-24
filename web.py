@@ -237,21 +237,18 @@ def pred_string():
 
     return jsonify(return_dict)
 
-
-
 @app.route('/process_audio', methods=['POST'])
 def process_audio():
     text_line = {'complet': 0, 'result': ""}
     if 'audio_data' in request.files:
         audio_file = request.files['audio_data']
-
         # 使用 BytesIO 從記憶體讀取音頻數據
         audio_data = io.BytesIO(audio_file.read())
-
         # 轉換音頻格式
         sound = AudioSegment.from_file(audio_data)
         wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "audio.wav")
         sound.export(wav_filename, format="wav")
+        wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "test_audio.wav")
         try:
             if audio_Config.audio_model == 0:
                 text_line = Process_audio.transcribe_whisper(wav_filename,text_line)  # 使用 Whisper 進行語音識別

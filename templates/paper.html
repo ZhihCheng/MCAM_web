@@ -175,7 +175,7 @@
     .modal {
         display: none;
         position: fixed;
-        z-index: 1;
+        z-index: 90;
         left: 0;
         top: 0;
         width: 100%;
@@ -520,6 +520,8 @@
                         audioChunks = [];
                         isRecording = false;
                     }
+                    var input_search = document.getElementById('input_search');
+                    input_search.textContent = ' '
                     modal.style.display = "none";
                     
                 }
