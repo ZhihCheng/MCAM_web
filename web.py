@@ -209,7 +209,7 @@ def search_database():
     cursor.close()
     conn.close()
     result_df = df[df['e_newspaper_name'].str.contains(data['value'], case=False, regex=False)] 
-    selected_df = result_df[Config.get_columns]
+    selected_df = result_df[Database_Config.get_columns]
     if len(selected_df) == 0:
         selected_df = 0
         print("hi")
