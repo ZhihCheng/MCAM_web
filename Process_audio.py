@@ -2,6 +2,7 @@ import speech_recognition as sr
 import whisper
 from transformers import pipeline
 import librosa
+import torch
 class Process_audio:
     def transcribe_whisper(wav_filename,text_line):
         # Whisper 語音識別邏輯
@@ -43,8 +44,15 @@ class Process_audio:
                 return text_line
             
     def transcribe_whisper_for_pretrained(wav_filename, text_line):
+        device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        print(f'Useing deviece:{device}')
         try:
-            pipe = pipeline(model="ZhihCheng/whisper-tiny-zh_motor_first", task="automatic-speech-recognition")
+            pipe = pipeline(
+                "automatic-speech-recognition",
+                model="ZhihCheng/whisper-tiny-zh_motor_first",
+                chunk_length_s=30,
+                device=device,
+            )
         except Exception as e:
             text_line['complet'] = 0
             text_line['error'] = f"模型加載錯誤: {str(e)}"
