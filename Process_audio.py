@@ -51,7 +51,7 @@ class Process_audio:
             return text_line
 
         try:
-            audio_data, _ = librosa.load(wav_filename, sr=None)
+            audio_data, _ = librosa.load(wav_filename, sr=16000)
         except Exception as e:
             text_line['complet'] = 0
             text_line['error'] = f"音頻文件加載錯誤: {str(e)}"

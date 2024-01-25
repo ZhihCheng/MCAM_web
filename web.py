@@ -248,7 +248,6 @@ def process_audio():
         sound = AudioSegment.from_file(audio_data)
         wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "audio.wav")
         sound.export(wav_filename, format="wav")
-        wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "test_audio.wav")
         try:
             if audio_Config.audio_model == 0:
                 text_line = Process_audio.transcribe_whisper(wav_filename,text_line)  # 使用 Whisper 進行語音識別
