@@ -571,7 +571,12 @@
  
 
     <script>
-       
+        //側邊欄位收放動畫
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar, #sidebarCollapse').toggleClass('active');
+            });
+        });
         document.addEventListener('DOMContentLoaded', function() {
 
             animateTyping('first_animatedText', 'first_finalCursor', "您可以在下方搜尋欄輸入您想執行的動作，我將進行簡易的功能導覽及執行\n", 'MPRS_Main');

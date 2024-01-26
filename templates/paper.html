@@ -1,213 +1,194 @@
 <!DOCTYPE html>
 <html >
-<head>
-    <title>Motor Co-AI</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <head>
+        <title>Motor Tech Co-AI</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
     
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            width: 100%;
+            height: 100h; 
+            margin: 0; 
+            padding: 0; 
+            font-family: Arial, sans-serif;
+            background-color: #333333;
+            margin: 0;
+        }
+        label {
+            font-weight: bold;
+        }
+        img {
+            max-width: 100%; 
+            max-height: 100%; 
+            width: auto; 
+            height: auto; 
+            position: absolute; 
+            top: 50%;
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+        }
+        .label-font {
+            font-size: 24px;    
+        }
+        .object_font {
+            font-size: 20px;    
+        }
+        .container {
+            max-width: 68%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .inear-container {
+            max-width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .outer-container {
+            display: none;
+            overflow-y: auto;
+            max-width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .split_form{
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+        }
+        .top-left {
+            grid-row: 1 / 2; 
+            grid-column: 1 / 2; 
+            background-color: #CD5C5C;; 
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 50vh; /* 或者您想要的任何固定值 */
+            width: 100%; /* 或者您想要的任何固定值 */
+            overflow: hidden; /* 超出部分不顯示 */
+        }
     
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-   
-</head>
-<style>
-    body {
-        width: 100%;
-        height: 100h; 
-        margin: 0; 
-        padding: 0; 
-        font-family: Arial, sans-serif;
-        background-color: #333333;
-        margin: 0;
-    }
-    label {
-        font-weight: bold;
-    }
+        .top-right {
+            grid-row: 1 / 2;
+            grid-column: 2 / 3;
+            background-color: #B0C4DE; 
+            padding: 20px;
+            border-radius: 20px;
+        }
     
-    img {
-        max-width: 100%; 
-        max-height: 100%; 
-        width: auto; 
-        height: auto; 
-        position: absolute; 
-        top: 50%;
-        left: 50%; 
-        transform: translate(-50%, -50%); 
-    }
-    .label-font {
-        font-size: 24px;    
-    }
-
- 
+        .bottom-left {
+            grid-row: 2 / 3;
+            grid-column: 1 / 2;
+            background-color: #C8A2C8; 
+            padding: 20px;
+            border-radius: 20px;
+        }
     
-    .object_font {
-        font-size: 20px;    
-    }
+        .bottom-right {
+            grid-row: 2 / 3;
+            grid-column: 2 / 3;
+            background-color: #F5F5DC; /* 淺綠色背景 */
+            padding: 20px;
+            border-radius: 20px;
+        }
     
-    .container {
-        max-width: 68%;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-    }
-
-    .inear-container {
-        max-width: 100%;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-    }
-    .outer-container {
-        display: none;
-        overflow-y: auto;
-        max-width: 100%;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-    }
+        #imageContainer{
+            width: 100px auto; /* 设置容器的宽度 */
+            height: 330px;
+            border: 2px solid rgb(175, 170, 170)0d0; /* 设置容器的边框 */
+            position: relative; /* 相对定位 */
+            overflow: hidden; 
+        }
     
-    .split_form{
-        margin: 0;
-        padding: 10px;
-        box-sizing: border-box;
-        display: grid;
-        grid-template-rows: 1fr 1fr;
-        grid-template-columns: 1fr 1fr;
-        height: 100vh;
-    }
-  
-    .top-left {
-        grid-row: 1 / 2; 
-        grid-column: 1 / 2; 
-        background-color: #CD5C5C;; 
-        padding: 20px;
-        border-radius: 20px;
-
-        display: flex;
-        flex-direction: column;
-
-        height: 50vh; /* 或者您想要的任何固定值 */
-        width: 100%; /* 或者您想要的任何固定值 */
-        overflow: hidden; /* 超出部分不顯示 */
-    }
-
-    .top-right {
-        grid-row: 1 / 2;
-        grid-column: 2 / 3;
-        background-color: #B0C4DE; 
-        padding: 20px;
-        border-radius: 20px;
-    }
-
-    .bottom-left {
-        grid-row: 2 / 3;
-        grid-column: 1 / 2;
-        background-color: #C8A2C8; 
-        padding: 20px;
-        border-radius: 20px;
-    }
-
-    .bottom-right {
-        grid-row: 2 / 3;
-        grid-column: 2 / 3;
-        background-color: #F5F5DC; /* 淺綠色背景 */
-        padding: 20px;
-        border-radius: 20px;
-    }
-
-    #imageContainer{
-        width: 100px auto; /* 设置容器的宽度 */
-        height: 330px;
-        border: 2px solid rgb(175, 170, 170)0d0; /* 设置容器的边框 */
-        position: relative; /* 相对定位 */
-        overflow: hidden; 
-    }
-
-    #searchResults {
-        margin-top: 20px;
-    }
-
-    #Error_content,#search_result,#image_show {
-        display: none;
-    }
-
-
-    .typing-cursor {
-      display: inline-block;
-      width: 0.6em;
-      height: 1.2em;
-      background-color: black;
-      animation: blink 0.7s infinite;
-    }
-    .grid-item {
-        /* 為放大縮小添加過渡效果 */
-        transition: all 0.3s ease; 
-        transform-origin: 50% 50%; /* 設置變形原點為元素中心 */
-        position: relative; /* 為了讓按鈕絕對定位於容器內 */
-        padding: 20px;
-        /* overflow: auto;  */
-    }
-    .zoomed {
-        position: fixed; /* 固定位置，使其脫離正常流 */
-        width: 70vw; /* 設定寬度為視窗的 70% */
-        height: 90vh; /* 設定高度為視窗的 80% */
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%); /* 居中視窗 */
-        z-index: 10; /* 確保放大後的視窗在其他元素上方 */
-    }
-
-    .zoom-btn {
-        /* position: absolute;  */
-        top: 10px; /* 與上邊界的距離 */
-        right: 10px; /* 與右邊界的距離 */
-        /* 其他按鈕樣式... */
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 90;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
-    }
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 50%;
-    }
-
-    @keyframes typing {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-
-
-    @keyframes blink {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
-    }
-</style>
+        #searchResults {
+            margin-top: 20px;
+        }
+        #Error_content,#search_result,#image_show {
+            display: none;
+        }
+        .typing-cursor {
+          display: inline-block;
+          width: 0.6em;
+          height: 1.2em;
+          background-color: black;
+          animation: blink 0.7s infinite;
+        }
+        .grid-item {
+            /* 為放大縮小添加過渡效果 */
+            transition: all 0.3s ease; 
+            transform-origin: 50% 50%; /* 設置變形原點為元素中心 */
+            position: relative; /* 為了讓按鈕絕對定位於容器內 */
+            padding: 20px;
+        }
+        .zoomed {
+            position: fixed; /* 固定位置，使其脫離正常流 */
+            width: 70vw; /* 設定寬度為視窗的 70% */
+            height: 90vh; /* 設定高度為視窗的 80% */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* 居中視窗 */
+            z-index: 10; /* 確保放大後的視窗在其他元素上方 */
+        }
+    
+        .zoom-btn {
+            top: 10px; /* 與上邊界的距離 */
+        }
+    
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 90;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+    
+        @keyframes typing {
+          from { width: 0; }
+          to { width: 100%; }
+        }
+    
+    
+        @keyframes blink {
+          0%, 100% { opacity: 0; }
+          50% { opacity: 1; }
+        }
+    </style>
+    
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor </span><span style="color: black;"> Co-AI</span></h1>
+                <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor Tech</span><span style="color: black;"> Co-AI</span></h1>
             </div>
             
         </div>
@@ -312,15 +293,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-    
-    <!-- <script type="text/javascript">
-        $(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
-                $(this).toggleClass('active');
-            });
-        });
-    </script> -->
 
     <script>
         function zoomIn(button) {
@@ -338,11 +310,10 @@
             }
         }
         document.addEventListener('DOMContentLoaded', function() {
-            
             var search_output = document.getElementById('search_output');
             var textElement = document.getElementById('first_animatedText');
             var finalCursor = document.getElementById('first_finalCursor');
-            var textToAnimate = "您可以在下方搜尋輸入:";
+            var textToAnimate = "您可以在下方搜尋輸入您的需求:";
             var textArray = textToAnimate.split('');
             
             finalCursor.style.display = 'inline-block';
@@ -410,38 +381,36 @@
                             });
                         }else{
                             search_result.style.display = 'block';
-                            var split_form = document.getElementById('split_form');
                             search_output.style.display = 'block';
-                            var uploadedImage = document.getElementById('uploadedImage');
                             
-
+                            var uploadedImage = document.getElementById('uploadedImage');
                             if (searchInput.value === "無刷直流馬達" || searchInput.value === "永磁同步馬達") {
                                 image_show.style.display = 'block';
                                 uploadedImage.src = "./static/" + searchInput.value + '.jpg';
                             }
 
+                            var split_form = document.getElementById('split_form');
                             for (var i = 0; i < jsonData.length; i++) {
                                 var item = jsonData[i];
                                 accordionHtml += '<div class="card">';
                                 accordionHtml += '    <div class="card-header" id="heading' + i + '">';
                                 accordionHtml += '        <h2 class="mb-0">';
-                                accordionHtml += '            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' + i + '" aria-expanded="true" aria-controls="collapse' + i + '">';
+                                accordionHtml += '            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' + i + '" aria-expanded="' + (i === 0 ? 'true' : 'false') + '" aria-controls="collapse' + i + '">';
                                 accordionHtml += '                ' + item.e_newspaper_name;
                                 accordionHtml += '            </button>';
                                 accordionHtml += '        </h2>';
                                 accordionHtml += '    </div>';
-                                accordionHtml += '    <div id="collapse' + i + '" class="collapse" aria-labelledby="heading' + i + '" data-parent="#searchResult">';
+                                accordionHtml += '    <div id="collapse' + i + '" class="collapse ' + (i === 0 ? 'show' : '') + '" aria-labelledby="heading' + i + '" data-parent="#searchResult">';
                                 accordionHtml += '        <div class="card-body">';
                                 accordionHtml += '            <p>期刊號: ' + item.e_newspaper_id + '</p>';
                                 accordionHtml += '            <p>作者: ' + item.edit_name + '</p>';
                                 accordionHtml += '            <p>出版年份: ' + item.year + '</p>';
                                 accordionHtml += '            <p>摘要: ' + item.abstract + '</p>';
-                                accordionHtml += '            <a href ="http://km.emotors.ncku.edu.tw/emotor/new/motor_learn/epaper_detail.php?id=' + item.e_newspaper_id + '"> 電子報全文</a>'
+                                accordionHtml += '            <a href ="http://km.emotors.ncku.edu.tw/emotor/new/motor_learn/epaper_detail.php?id=' + item.e_newspaper_id + '"> 電子報全文</a>';
                                 accordionHtml += '        </div>';
                                 accordionHtml += '    </div>';
                                 accordionHtml += '</div>';
                             }
-
                             // 插入手風琴到 HTML 中
                             document.getElementById("searchResult").innerHTML = accordionHtml;
                             split_form.scrollIntoView({ behavior: 'smooth' });
