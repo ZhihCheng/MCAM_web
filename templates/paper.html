@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html >
 <head>
-    <title>Motor Co-AI</title>
+    <!-- <title>Motor Co-AI</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     
@@ -11,7 +11,20 @@
     
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">     -->
+ 
+    <title>Motor Tech Co-AI</title>
+    <!-- 引入 Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+    
+    <!-- 移除 jQuery 和 Popper.js 的引用 -->
+    
+    <!-- 引入 Bootstrap 5 Bundle JS (包含 Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    
 </head>
 <style>
@@ -49,7 +62,7 @@
     }
     
     .container {
-        max-width: 68%;
+        max-width: 78%;
         margin: 50px auto;
         padding: 20px;
         background-color: #fff;
@@ -90,13 +103,13 @@
         background-color: #CD5C5C;; 
         padding: 20px;
         border-radius: 20px;
+        
 
         display: flex;
         flex-direction: column;
-
-        height: 50vh; /* 或者您想要的任何固定值 */
-        width: 100%; /* 或者您想要的任何固定值 */
-        overflow: hidden; /* 超出部分不顯示 */
+        height: 50vh;
+        width: 100%;
+        overflow: hidden; 
     }
 
     .top-right {
@@ -118,16 +131,16 @@
     .bottom-right {
         grid-row: 2 / 3;
         grid-column: 2 / 3;
-        background-color: #F5F5DC; /* 淺綠色背景 */
+        background-color: #F5F5DC; 
         padding: 20px;
         border-radius: 20px;
     }
 
     #imageContainer{
-        width: 100px auto; /* 设置容器的宽度 */
+        width: 100px auto; 
         height: 330px;
-        border: 2px solid rgb(175, 170, 170)0d0; /* 设置容器的边框 */
-        position: relative; /* 相对定位 */
+        border: 2px solid rgb(175, 170, 170)0d0; 
+        position: relative; 
         overflow: hidden; 
     }
 
@@ -138,7 +151,9 @@
     #Error_content,#search_result,#image_show {
         display: none;
     }
-
+    .accordion-button {
+        font-size: 18px; /* 或你想要的任何大小 */
+    }
 
     .typing-cursor {
       display: inline-block;
@@ -147,29 +162,26 @@
       background-color: black;
       animation: blink 0.7s infinite;
     }
+
     .grid-item {
-        /* 為放大縮小添加過渡效果 */
         transition: all 0.3s ease; 
-        transform-origin: 50% 50%; /* 設置變形原點為元素中心 */
-        position: relative; /* 為了讓按鈕絕對定位於容器內 */
+        position: relative; 
         padding: 20px;
-        /* overflow: auto;  */
+        
     }
     .zoomed {
-        position: fixed; /* 固定位置，使其脫離正常流 */
-        width: 70vw; /* 設定寬度為視窗的 70% */
-        height: 90vh; /* 設定高度為視窗的 80% */
+        position: fixed;
+        width: 70vw; 
+        height: 90vh; 
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%); /* 居中視窗 */
-        z-index: 10; /* 確保放大後的視窗在其他元素上方 */
+        transform: translate(-50%, -50%); 
+        z-index: 10; 
     }
 
     .zoom-btn {
-        /* position: absolute;  */
-        top: 10px; /* 與上邊界的距離 */
-        right: 10px; /* 與右邊界的距離 */
-        /* 其他按鈕樣式... */
+        top: 10px; 
+        right: 10px; 
     }
 
     .modal {
@@ -207,7 +219,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor </span><span style="color: black;"> Co-AI</span></h1>
+                <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor Tech</span><span style="color: black;"> Co-AI</span></h1>
             </div>
             
         </div>
@@ -224,14 +236,12 @@
             <div class="col-md-3">
                 <div class="input-group-append">
                     <button id="search_button" class="btn btn-secondary btn-lg">搜尋</button>
-                    <button id="recordButton" class="btn btn-secondary btn-info">語音識別</button>
+                    <button id="recordButton" class="btn btn-success btn-lg">語音識別</button>
                 </div>
             </div>
         </div>
         <div id="searchResults"><label  id="input_search" class="label-font"></div>
-        
     </div>
-
     <div class = "split_form">
         <div class="top-left grid-item">
             <div  class="inear-container " id ="search_output">
@@ -239,8 +249,8 @@
                     <div class="col-md-10">
                         <h3 class="fw-bolder mb-2">馬達中心電子報推薦</h3>
                     </div>
-                    <div class="col-md-2">
-                        <button class="zoom-btn btn btn-primary" onclick="zoomIn(this)">放大</button>
+                    <div class="col-md-2 text-end">
+                        <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
                     </div>
                 </div>
             </div>
@@ -261,8 +271,8 @@
                     <div class="col-md-10">
                         <h3 class="fw-bolder mb-2">廠商建議 - 建構中</h3>
                     </div>
-                    <div class="col-md-2">
-                        <button class="zoom-btn btn btn-primary" onclick="zoomIn(this)">放大</button>
+                    <div class="col-md-2 text-end">
+                        <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
                     </div>
                 </div>
             </div>
@@ -273,8 +283,8 @@
                     <div class="col-md-10">
                         <h3 class="fw-bolder mb-2">專家推薦 - 建構中</h3>
                     </div>
-                    <div class="col-md-2">
-                        <button class="zoom-btn btn btn-primary" onclick="zoomIn(this)">放大</button>
+                    <div class="col-md-2 text-end">
+                        <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
                     </div>
                 </div>
             </div>
@@ -285,8 +295,8 @@
                     <div class="col-md-10">
                         <h3 class="fw-bolder mb-2">馬達模型</h3>
                     </div>
-                    <div class="col-md-2">
-                        <button class="zoom-btn btn btn-primary" onclick="zoomIn(this)">放大</button>
+                    <div class="col-md-2 text-end">
+                        <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
                     </div>
                 </div>
             </div>
@@ -297,44 +307,15 @@
             </div>
         </div>
     </div>
- 
-  
-    <script>
-        // Add the following code if you want the name of the file appear on select
-        $(".custom-file-input").on("change", function() {
-          var fileName = $(this).val().split("\\").pop();
-          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-        });
-    </script>
-    
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <!-- Popper.JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-    
-    <!-- <script type="text/javascript">
-        $(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
-                $(this).toggleClass('active');
-            });
-        });
-    </script> -->
 
     <script>
         function zoomIn(button) {
-            // 找到最近的 grid-item 元素
             let gridItem = button.closest('.grid-item');
-            // 判斷當前是否已經放大
             if(gridItem.classList.contains('zoomed')) {
-                // 如果已放大，則移除 zoomed 類別以還原大小
                 gridItem.classList.remove('zoomed');
-                button.textContent = '放大'; // 更新按鈕文字
             } else {
-                // 如果未放大，則添加 zoomed 類別以放大視窗
                 gridItem.classList.add('zoomed');
-                button.textContent = '還原'; // 更新按鈕文字
+                button.textContent = '還原'; 
             }
         }
         document.addEventListener('DOMContentLoaded', function() {
@@ -422,24 +403,22 @@
 
                             for (var i = 0; i < jsonData.length; i++) {
                                 var item = jsonData[i];
-                                accordionHtml += '<div class="card">';
-                                accordionHtml += '    <div class="card-header" id="heading' + i + '">';
-                                accordionHtml += '        <h2 class="mb-0">';
-                                accordionHtml += '            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' + i + '" aria-expanded="true" aria-controls="collapse' + i + '">';
+                                accordionHtml += '  <div class="accordion-item">';
+                                accordionHtml += '    <h2 class="accordion-header" id="flush-heading' + i + '">';
+                                accordionHtml += '            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse' + i + '" aria-expanded="false" aria-controls="flush-collapse' + i + '">';
                                 accordionHtml += '                ' + item.e_newspaper_name;
                                 accordionHtml += '            </button>';
-                                accordionHtml += '        </h2>';
-                                accordionHtml += '    </div>';
-                                accordionHtml += '    <div id="collapse' + i + '" class="collapse" aria-labelledby="heading' + i + '" data-parent="#searchResult">';
-                                accordionHtml += '        <div class="card-body">';
+                                accordionHtml += '    </h2>';
+                                accordionHtml += '    <div id="flush-collapse' + i + '" class="accordion-collapse collapse" aria-labelledby="flush-heading' + i + '" data-bs-parent="#searchResult">';
+                                accordionHtml += '        <div class="accordion-body">';
                                 accordionHtml += '            <p>期刊號: ' + item.e_newspaper_id + '</p>';
                                 accordionHtml += '            <p>作者: ' + item.edit_name + '</p>';
                                 accordionHtml += '            <p>出版年份: ' + item.year + '</p>';
-                                accordionHtml += '            <p>摘要: ' + item.abstract + '</p>';
+                                accordionHtml += '            <p>摘要: </br>   ' + item.abstract + '</p>';
                                 accordionHtml += '            <a href ="http://km.emotors.ncku.edu.tw/emotor/new/motor_learn/epaper_detail.php?id=' + item.e_newspaper_id + '"> 電子報全文</a>'
                                 accordionHtml += '        </div>';
                                 accordionHtml += '    </div>';
-                                accordionHtml += '</div>';
+                                accordionHtml += '  </div>';
                             }
 
                             // 插入手風琴到 HTML 中
@@ -583,10 +562,6 @@
 
 
         });
-
-    // document.write('<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"><\/script>');
-    // document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"><\/script>');
-    // document.write('<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"><\/script>');
     </script>
     <div id="modal" class="modal">
         <div class="modal-content">

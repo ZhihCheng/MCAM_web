@@ -7,7 +7,7 @@ import io
 from flask import Flask, request, render_template, jsonify, redirect
 from werkzeug.utils import secure_filename
 import mysql.connector
-
+import soundfile as sf
 # 應用程式或局部模組導入
 from config import DevelopmentConfig, Config,Database_Config,audio_Config
 from determine_str import determine
@@ -124,7 +124,7 @@ def increment():
     if func:
         result = calculate_parameters(func, args)
     else:
-        # 處理無效的 radio_type
+
         print(f'Invalid radio_type: {radio_type}')
     return jsonify(result)
 
@@ -254,9 +254,11 @@ def process_audio():
             elif audio_Config.audio_model == 1:
                 text_line = Process_audio.transcribe_google(wav_filename,text_line)  # 使用 Google Speech Recognition 進行語音識別
             elif audio_Config.audio_model == 2:
+                print('使用Whisper 進行語音識別')
                 text_line = Process_audio.transcribe_whisper_for_pretrained(wav_filename,text_line)  # 使用 訓練過的Whisper 進行語音識別
             return jsonify(text_line)
         except Exception as e:
+            print('no audui file')
             text_line['result'] = str(e)
             return jsonify(text_line)
     else:
