@@ -45,16 +45,7 @@ class Process_audio:
             
     def transcribe_whisper_for_pretrained(wav_filename, text_line):
         device = "cuda:0" if torch.cuda.is_available() else "cpu"
-<<<<<<< Updated upstream
-        print(f'Useing deviece:{device}')
-        try:
-            pipe = pipeline(
-                "automatic-speech-recognition",
-                model="ZhihCheng/whisper-tiny-zh_motor_first",
-                chunk_length_s=30,
-                device=device,
-            )
-=======
+
         print(device)
         try:
             pipe = pipeline("automatic-speech-recognition",
@@ -68,7 +59,6 @@ class Process_audio:
             #         task="transcribe"
             #     )
             # )
->>>>>>> Stashed changes
         except Exception as e:
             text_line['complet'] = 0
             text_line['error'] = f"模型加載錯誤: {str(e)}"
