@@ -77,6 +77,7 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         border-radius: 10px;
     }
+
     .outer-container {
         display: none;
         overflow-y: auto;
@@ -135,10 +136,15 @@
         padding: 20px;
         border-radius: 20px;
     }
+    /*parm_tabel fone setting*/
+    .boldAndLarge {
+        font-weight: bold; /* 使文字粗體 */
+        font-size: 20px; /* 文字大小設為16像素 */
+    }
 
     #imageContainer{
         width: 100px auto; 
-        height: 330px;
+        height: 100%;
         border: 2px solid rgb(175, 170, 170)0d0; 
         position: relative; 
         overflow: hidden; 
@@ -148,7 +154,7 @@
         margin-top: 20px;
     }
 
-    #Error_content,#search_result,#image_show {
+    #Error_content,#search_result,#image_show,#motor_curve,#parm_table {
         display: none;
     }
     .accordion-button {
@@ -213,6 +219,15 @@
       0%, 100% { opacity: 0; }
       50% { opacity: 1; }
     }
+
+    #customTable{
+        border-collapse: collapse; 
+        border: 2px solid #726f6f; 
+   
+        /* margin-top: 17px;
+        margin-left: 20px;  */
+    }
+
 </style>
 
 <body>
@@ -247,7 +262,7 @@
             <div  class="inear-container " id ="search_output">
                 <div class="row row-spacing">
                     <div class="col-md-10">
-                        <h3 class="fw-bolder mb-2">馬達中心電子報推薦</h3>
+                        <h3 class="fw-bolder mb-2" id="newsletterHeading">馬達中心電子報推薦</h3>
                     </div>
                     <div class="col-md-2 text-end">
                         <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
@@ -269,11 +284,16 @@
             <div  class="inear-container " id ="search_output1">
                 <div class="row row-spacing">
                     <div class="col-md-10">
-                        <h3 class="fw-bolder mb-2">廠商建議 - 建構中</h3>
+                        <h3 class="fw-bolder mb-2">特性曲線</h3>
                     </div>
                     <div class="col-md-2 text-end">
                         <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
                     </div>
+                </div>
+            </div>
+            <div  class="outer-container" style="height: 80%;" id ="motor_curve">
+                <div id="imageContainer" >
+                    <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage2">
                 </div>
             </div>
         </div>
@@ -281,12 +301,46 @@
             <div  class="inear-container " id ="search_output2">
                 <div class="row row-spacing">
                     <div class="col-md-10">
-                        <h3 class="fw-bolder mb-2">專家推薦 - 建構中</h3>
+                        <h3 class="fw-bolder mb-2">馬達參數</h3>
                     </div>
                     <div class="col-md-2 text-end">
                         <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
                     </div>
                 </div>
+            </div>
+            <div  class="outer-container " id ="parm_table">
+                <table border="1" class = "table table-hover"  id = 'customTable'>
+                    <tr>
+                        <td class="boldAndLarge" >電樞電感(L)</td> 
+                        <td><input type="text" id="textbox1" name="textbox1" class="form-control" value="0" readonly></td>
+                        <td class="boldAndLarge" style="font-style: italic;">H</td> 
+                    </tr>
+                    <tr>
+                        <td class="boldAndLarge">電樞電阻(R)</td>
+                        <td><input type="text" id="textbox2" name="textbox2" class="form-control" value="0" readonly></td>
+                        <td class="boldAndLarge" style="font-style: italic;">Ω</td> 
+                    </tr>
+                    <tr>
+                        <td class="boldAndLarge">反電動勢常數(Ke)</td>
+                        <td><input type="text" id="textbox3" name="textbox3" class="form-control" value="0" readonly></td>
+                        <td class="boldAndLarge" style="font-style: italic;">V𝑜𝑙𝑡𝑠/(rad/s)</td> 
+                    </tr>
+                    <tr>
+                        <td class="boldAndLarge">轉矩常數(Kt)</td>
+                        <td><input type="text" id="textbox4" name="textbox4" class="form-control" value="0" readonly></td>
+                        <td class="boldAndLarge" style="font-style: italic;">𝑁𝑚/𝐴𝑚𝑝𝑠</td> 
+                    </tr>
+                    <tr>
+                        <td class="boldAndLarge">轉動慣量(J)</td>
+                        <td><input type="text" id="textbox5" name="textbox5" class="form-control" value="0" readonly></td>
+                        <td class="boldAndLarge" style="font-style: italic;">𝑘𝑔∙𝑚^2</td> 
+                    </tr>
+                    <tr>
+                        <td class="boldAndLarge">黏滯係數(B)</td>
+                        <td><input type="text" id="textbox6" name="textbox6" class="form-control" value="0"readonly></td>
+                        <td class="boldAndLarge" style="font-style: italic;">(𝑁∙𝑚)⁄(𝑟𝑎𝑑⁄𝑠)</td> 
+                    </tr>
+                </table>
             </div>
         </div>
         <div class="bottom-right grid-item">
@@ -300,7 +354,7 @@
                     </div>
                 </div>
             </div>
-            <div  class="outer-container " id ="image_show">
+            <div  class="outer-container " style="height: 80%;" id ="image_show">
                 <div id="imageContainer" >
                     <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage">
                 </div>
@@ -349,10 +403,16 @@
                 var search_result = document.getElementById('search_result');
                 var searchResult = document.getElementById('searchResult');
                 var image_show = document.getElementById('image_show')
+                var motor_curve = document.getElementById('motor_curve')
+                var parm_table = document.getElementById('parm_table')
+
+                
                 
                 Error_content.style.display='none';
                 image_show.style.display='none';
+                motor_curve.style.display='none';
                 search_result.style.display='none';
+                parm_table.style.display='none';
                 if (searchInput.value !== ""){
 
                     input_search.textContent = searchInput.value;
@@ -368,8 +428,25 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        var jsonData = JSON.parse(data);
+                        var jsonData = JSON.parse(data.news);
                         var accordionHtml = "";
+                        if (data.sentence === "無刷直流馬達" || data.sentence === "永磁同步馬達" || data.sentence === "永磁直流馬達") {
+                            image_show.style.display = 'block';
+                            var uploadedImage = document.getElementById('uploadedImage');
+                            uploadedImage.src = "./static/" + data.sentence + '.jpg';
+                        }
+                        if (searchInput.value.includes("最大功率") || searchInput.value.includes("最高轉速")) {
+                            motor_curve.style.display = 'block';
+                            var uploadedImage2 = document.getElementById('uploadedImage2');
+                            uploadedImage2.src = "./static/output_figure.png";
+                            parm_table.style.display = 'block';
+                            document.getElementById("textbox1").value = parseFloat(data.L).toFixed(5);
+                            document.getElementById("textbox2").value = parseFloat(data.R).toFixed(5);
+                            document.getElementById("textbox3").value = parseFloat(data.Ke).toFixed(5);
+                            document.getElementById("textbox4").value = parseFloat(data.Kt).toFixed(5);
+                            document.getElementById("textbox5").value = parseFloat(data.J).toFixed(5);
+                            document.getElementById("textbox6").value = parseFloat(data.B).toFixed(5);     
+                        }
                         if (jsonData === 0) {
                             Error_content.style.display = 'block';
                             
@@ -390,16 +467,11 @@
                                 }, index * 50); 
                             });
                         }else{
+                            document.getElementById("newsletterHeading").textContent = "馬達中心電子報推薦   關鍵字 : " + data.sentence;
                             search_result.style.display = 'block';
                             var split_form = document.getElementById('split_form');
                             search_output.style.display = 'block';
-                            var uploadedImage = document.getElementById('uploadedImage');
                             
-
-                            if (searchInput.value === "無刷直流馬達" || searchInput.value === "永磁同步馬達") {
-                                image_show.style.display = 'block';
-                                uploadedImage.src = "./static/" + searchInput.value + '.jpg';
-                            }
 
                             for (var i = 0; i < jsonData.length; i++) {
                                 var item = jsonData[i];
@@ -424,7 +496,7 @@
                             // 插入手風琴到 HTML 中
                             document.getElementById("searchResult").innerHTML = accordionHtml;
                             split_form.scrollIntoView({ behavior: 'smooth' });
-                        }
+                        }                   
                     });
                 }
                 

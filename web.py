@@ -8,6 +8,8 @@ from flask import Flask, request, render_template, jsonify, redirect
 from werkzeug.utils import secure_filename
 import mysql.connector
 import soundfile as sf
+import matlab
+import matlab.engine
 # 應用程式或局部模組導入
 from config import DevelopmentConfig, Config,Database_Config,audio_Config
 from determine_str import determine
@@ -20,6 +22,8 @@ from sys_py_FeSiCr.parameter_sug_customize import *
 from sys_py_NiFe.parameter_sug_max_mu_min_pcv import *
 from sys_py_NiFe.parameter_sug_max_mu_max_tensile import *
 from sys_py_NiFe.parameter_sug_customize import *
+from chinese_number import extract_and_convert_numbers
+from find_motor_sentence import find_first_motor
 from pydub import AudioSegment
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
@@ -192,10 +196,19 @@ def upload_file():
 
 @app.route('/search_database', methods=['POST'])
 def search_database():
+    return_dict = {
+        'L': 0,
+        'R': 0,
+        'J': 0,
+        'B': 0,
+        'Ke': 0,
+        'Kt': 0,
+        'news':0,
+        'sentence':'none',
+    }
+   
     data = request.get_json()
-    print(data)
     conn = mysql.connector.connect(**Database_Config.db_config)
-
     cursor = conn.cursor()
 
     query = "SELECT * FROM e_newspaper_name"
@@ -203,18 +216,59 @@ def search_database():
     results = cursor.fetchall()
 
     columns = [i[0] for i in cursor.description]
-    # print(columns)
     df = pd.DataFrame(results, columns=columns)
     
     cursor.close()
     conn.close()
+    
     result_df = df[df['e_newspaper_name'].str.contains(data['value'], case=False, regex=False)] 
     selected_df = result_df[Database_Config.get_columns]
-    if len(selected_df) == 0:
-        selected_df = 0
-        return jsonify(selected_df)
+    return_dict['sentence'] = data['value']
+    # 新增參數
     
-    return jsonify(selected_df.to_json(orient='records', force_ascii=False))
+    keyword = None
+    #find the motor curve
+    if '最大功率' in data['value']:
+        keyword = '最大功率'#'max_torque'
+    if '最高轉速' in data['value']:
+        keyword = '最高轉速'#'max_speed'
+        
+    
+    if keyword is not None:
+        ratio = extract_and_convert_numbers(data['value'])
+        print(ratio)
+        excel_path = r'./static/parm_table.xlsx'
+        df_parm = pd.read_excel(excel_path)
+        multiplier_value = df_parm.loc[df_parm[keyword] == ratio, '倍率'].iloc[0] if not df_parm.loc[df_parm[keyword] == ratio, '倍率'].empty else None
+        
+        if multiplier_value is not None:
+            print('find setence')
+            sentence = find_first_motor(data['value'])
+            return_dict['sentence'] = sentence
+            print(return_dict['sentence'])
+            if sentence is not None:
+                result_df = df[df['e_newspaper_name'].str.contains(sentence, case=False, regex=False)] 
+                selected_df = result_df[Database_Config.get_columns]
+            print("start find curve")
+            eng = matlab.engine.start_matlab()
+            # 輸入所需參數
+            eng.workspace['a']=float(multiplier_value)   
+            # 呼叫matlab.M檔
+            eng.this_is_for_exhibition(nargout = 0)
+            return_dict['L']  = eng.evalin('base', 'L', nargout=1)
+            return_dict['R']  = eng.evalin('base', 'R', nargout=1)
+            return_dict['J']  = eng.evalin('base', 'J', nargout=1)
+            return_dict['B']  = eng.evalin('base', 'B', nargout=1)
+            return_dict['Ke'] = eng.evalin('base', 'Ke', nargout=1)
+            return_dict['Kt'] = eng.evalin('base', 'Kt', nargout=1)
+            print("end")
+        else:
+            print("no parm found")
+    if len(selected_df) == 0:
+        return jsonify(return_dict)
+    
+    return_dict['news'] = selected_df.to_json(orient='records', force_ascii=False)
+    return jsonify(return_dict)
 
 @app.route('/pred_string', methods=['POST'])
 def pred_string():

@@ -49,7 +49,7 @@ class Process_audio:
         print(device)
         try:
             pipe = pipeline("automatic-speech-recognition",
-                            model="ZhihCheng/whisper-tiny-zh_motor_first",
+                            model="ZhihCheng/whisper-tiny-with-motor_zh",
                             device = device,
                             )
             
