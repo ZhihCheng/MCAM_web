@@ -308,9 +308,9 @@ def process_audio():
             elif audio_Config.audio_model == 1:
                 text_line = Process_audio.transcribe_google(wav_filename,text_line)  # 使用 Google Speech Recognition 進行語音識別
             elif audio_Config.audio_model == 2:
-                print('使用Whisper 進行語音識別')
                 text_line = Process_audio.transcribe_whisper_for_pretrained(wav_filename,text_line)  # 使用 訓練過的Whisper 進行語音識別
             return jsonify(text_line)
+        
         except Exception as e:
             print('no audui file')
             text_line['result'] = str(e)

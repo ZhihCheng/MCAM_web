@@ -172,6 +172,42 @@
         right: 10px; 
     }
 
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 90;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+    }
+    .loading-form {
+        display: none;
+        position: fixed;
+        z-index: 90;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+    .loading-form-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 25%;
+    }
 
     @keyframes typing {
       from { width: 0; }
@@ -374,12 +410,11 @@
                 motor_curve.style.display='none';
                 search_result.style.display='none';
                 parm_table.style.display='none';
-                var myModal = new bootstrap.Modal(document.getElementById('loading_modal'));
+                let loading_form = document.getElementById("loading_form");
                 if (searchInput.value !== ""){
-                    myModal.show();
+
                     input_search.textContent = searchInput.value;
-                    let showModalForAtLeast = 500; // 毫秒
-                    let showStart = new Date().getTime();
+                    loading_form.style.display = 'block';
                     fetch('/search_database', {
                         method: 'POST',
                         body: JSON.stringify({  
@@ -391,14 +426,7 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        let timePassed = new Date().getTime() - showStart;
-                        if (timePassed < showModalForAtLeast) {
-                            setTimeout(() => {
-                                myModal.hide();
-                            }, showModalForAtLeast - timePassed);
-                        } else {
-                            myModal.hide();
-                        }
+                        loading_form.style.display='none';
                         var jsonData = JSON.parse(data.news);
                         var accordionHtml = "";
                         if (data.sentence === "無刷直流馬達" || data.sentence === "永磁同步馬達" || data.sentence === "永磁直流馬達") {
@@ -437,6 +465,7 @@
                                     }
                                 }, index * 50); 
                             });
+                            loading_form.style.display = 'none';
                         }else{
                             document.getElementById("newsletterHeading").textContent = "馬達中心電子報推薦   關鍵字 : " + data.sentence;
                             search_result.style.display = 'block';
@@ -482,9 +511,7 @@
             let isRecording = false;
 
             document.getElementById("recordButton").onclick = function() {
-                var audio_modal = new bootstrap.Modal(document.getElementById('audio_modal'), {
-                    keyboard: false // 選項設置，這裡表示按下鍵盤上的esc鍵不會關閉Modal
-                });
+                let modal = document.getElementById("modal");
                 var input_search = document.getElementById('input_search');
                 input_search.textContent = '錄音中...'
                 if (!isRecording) {
@@ -495,22 +522,12 @@
                                 audioChunks.push(event.data);
                             };
                             mediaRecorder.start();
-                            audio_modal.show();             
+                            modal.style.display = "block"; // 顯示模態彈窗
+                            
                             isRecording = true;
                         });
                 }
             };
-
-            document.getElementById("cancelButton").onclick = function() {
-                if (isRecording) {
-                    mediaRecorder.stop();
-                    var input_search = document.getElementById('input_search');
-                    input_search.textContent = ''
-
-                }
-                audioChunks = [];
-                isRecording = false;
-            }
 
             document.getElementById("stopButton").onclick = function() {
                 if (isRecording) {
@@ -541,113 +558,94 @@
                                 inputlabel.innerText  = data.result;
                             }
                         });
+                        document.getElementById("recordButton").textContent = "語音識別";
                         audioChunks = [];
                         isRecording = false;
                     };
+                    modal.style.display = "none"; // 隱藏模態彈窗
                 }
             };
 
-            const canvas = document.getElementById('audioCanvas');
-            const canvasContext = canvas.getContext('2d');
+            // 當用戶點擊彈窗之外的區域，關閉彈窗
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    if (isRecording) {
+                        mediaRecorder.stop();
+                        audioChunks = [];
+                        isRecording = false;
+                    }
+                    var input_search = document.getElementById('input_search');
+                    input_search.textContent = ' '
+                    modal.style.display = "none";
+                    
+                }
+            };
 
-            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-                .then(stream => {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const analyser = audioContext.createAnalyser();
-                    const microphone = audioContext.createMediaStreamSource(stream);
-                    microphone.connect(analyser);
-                    analyser.fftSize = 2048;
+            let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            let analyser = audioContext.createAnalyser();
+            let dataArray, bufferLength;
 
-                    const bufferLength = analyser.frequencyBinCount;
-                    const dataArray = new Uint8Array(bufferLength);
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                let source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                analyser.fftSize = 4096; // 增加FFT Size
+                analyser.smoothingTimeConstant = 0.2; // 減小平滑時間常數
+                analyser.minDecibels = -90; // 調整最小分貝
+                analyser.maxDecibels = -10; // 調整最大分貝
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                draw();
+            });
 
-                    function draw() {
-                        requestAnimationFrame(draw);
+            function draw() {
+                requestAnimationFrame(draw);
+                analyser.getByteTimeDomainData(dataArray);
 
-                        analyser.getByteTimeDomainData(dataArray);
+                let canvas = document.getElementById("visualizer");
+                let ctx = canvas.getContext("2d");
+                let width = canvas.width;
+                let height = canvas.height;
 
-                        canvasContext.fillStyle = 'rgb(256, 256, 256)';
-                        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, width, height);
 
-                        canvasContext.lineWidth = 2;
-                        canvasContext.strokeStyle = 'rgb(0, 0, 0)';
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "black";
 
-                        canvasContext.beginPath();
+                ctx.beginPath();
 
-                        var sliceWidth = canvas.width * 1.0 / bufferLength;
-                        var x = 0;
+                let sliceWidth = width * 1.0 / bufferLength;
+                let x = 0;
 
-                        for(var i = 0; i < bufferLength; i++) {
-                            var v = dataArray[i] / 128.0;
-                            var y = v * canvas.height / 2;
+                for(let i = 0; i < bufferLength; i++) {
+                    let v = dataArray[i] / 128.0;
+                    let y = v * height / 2;
 
-                            if(i === 0) {
-                                canvasContext.moveTo(x, y);
-                            } else {
-                                canvasContext.lineTo(x, y);
-                            }
-
-                            x += sliceWidth;
-                        }
-
-                        canvasContext.lineTo(canvas.width, canvas.height / 2);
-                        canvasContext.stroke();
+                    if(i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
                     }
 
-                    draw();
-                })
+                    x += sliceWidth;
+                }
+
+                ctx.lineTo(canvas.width, canvas.height / 2);
+                ctx.stroke();
+            }
+            
+
+
         });
     </script>
- 
-    <!--Audio Modal -->
-    <div class="modal fade" id="audio_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+    <div id="modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">音訊錄製</h5>
-            </div>
-            <div class="modal-body">
-                音訊錄製中...
-                <canvas id="audioCanvas"></canvas>
-            </div>
-            <div class="modal-footer">
-            <button id="stopButton" type="button" class="btn btn-primary" data-bs-dismiss="modal">結束錄製</button>
-            <button id="cancelButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-            </div>
-        </div>
+            <span class="close-button"> × </span>
+            <p>正在錄音中...</p>
+            <canvas id="visualizer" width="640" height="100"></canvas>
+            <button id="stopButton">停止錄音</button>
         </div>
     </div>
-
-    <div class="modal fade" id="loading_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="staticBackdropLabel">執行中</h5>
-            </div>
-            <div class="modal-body">
-                <div class="d-flex align-items-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <h3 id="loadingText" class="ms-3" style="color: #5a7beb;">Loading</h3>
-                </div>
-                
-                <script>
-                    const loadingText = document.getElementById('loadingText');
-                    let dots = 0;
-                
-                    setInterval(() => {
-                        dots = (dots + 1) % 4; // 循环0, 1, 2, 3
-                        loadingText.innerHTML = 'Loading' + '.'.repeat(dots);
-                    }, 500); // 每500毫秒更新一次文本
-                </script>
-                
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <!-- 
 
     <div id="loading_form" class="loading-form">
         <div class="loading-form-content">
@@ -655,7 +653,7 @@
             <p>正在錄音中...</p>
 
         </div>
-    </div> -->
+    </div>
  
     
    

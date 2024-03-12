@@ -49,16 +49,9 @@ class Process_audio:
         print(device)
         try:
             pipe = pipeline("automatic-speech-recognition",
-                            model="ZhihCheng/whisper-tiny-with-motor_zh",
+                            model="ZhihCheng/whisper-base-with-motor_zh_v2",
                             device = device,
                             )
-            
-            # pipe.model.config.forced_decoder_ids = (
-            #     pipe.tokenizer.get_decoder_prompt_ids(
-            #         language="zh", 
-            #         task="transcribe"
-            #     )
-            # )
         except Exception as e:
             text_line['complet'] = 0
             text_line['error'] = f"模型加載錯誤: {str(e)}"

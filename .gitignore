@@ -2,17 +2,21 @@
 /static/circle(340x344)
 /static/sectionview
 /static/slice
+/static/output_figure.png
+
 
 
 #weight
 /Img_Predict/result
 /sys_py_NiFe/model_set_NiFe
 /sys_py_FeSiCr/model_set_FeSiCr
+
 #temp file
 /static/temp_audio
 /uploads
 audio.wav
 temp_audio.webm
+
 
 #scirpt
 server.crt
