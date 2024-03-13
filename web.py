@@ -3,13 +3,15 @@ import cv2 as cv
 import pandas as pd
 from functools import wraps
 import io
+import shutil
+
 # 第三方庫導入
 from flask import Flask, request, render_template, jsonify, redirect
 from werkzeug.utils import secure_filename
 import mysql.connector
 import soundfile as sf
-# import matlab
-# import matlab.engine
+from pydub import AudioSegment
+
 # 應用程式或局部模組導入
 from config import DevelopmentConfig, Config,Database_Config,audio_Config
 from determine_str import determine
@@ -24,7 +26,7 @@ from sys_py_NiFe.parameter_sug_max_mu_max_tensile import *
 from sys_py_NiFe.parameter_sug_customize import *
 from chinese_number import extract_and_convert_numbers
 from find_motor_sentence import find_first_motor
-from pydub import AudioSegment
+
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
@@ -197,12 +199,6 @@ def upload_file():
 @app.route('/search_database', methods=['POST'])
 def search_database():
     return_dict = {
-        'L': 0,
-        'R': 0,
-        'J': 0,
-        'B': 0,
-        'Ke': 0,
-        'Kt': 0,
         'news':0,
         'sentence':'none',
     }
@@ -224,51 +220,70 @@ def search_database():
     result_df = df[df['e_newspaper_name'].str.contains(data['value'], case=False, regex=False)] 
     selected_df = result_df[Database_Config.get_columns]
     return_dict['sentence'] = data['value']
-    # 新增參數
     
+    print('find setence')
+    sentence = find_first_motor(data['value'])
+    return_dict['sentence'] = sentence
+    if sentence is not None:
+        result_df = df[df['e_newspaper_name'].str.contains(sentence, case=False, regex=False)] 
+        selected_df = result_df[Database_Config.get_columns]
+
+    if len(selected_df) == 0:
+        return jsonify(return_dict)
+    
+    return_dict['news']= selected_df.to_json(orient='records', force_ascii=False)
+    return jsonify(return_dict)
+
+
+@app.route('/run_simulink', methods=['POST'])
+def run_simulink():
+    return_dict = {
+        'L': 0,
+        'R': 0,
+        'J': 0,
+        'B': 0,
+        'Ke': 0,
+        'Kt': 0,
+    }
+    data = request.get_json()
     keyword = None
     #find the motor curve
     if '最大功率' in data['value']:
         keyword = '最大功率'#'max_torque'
     if '最高轉速' in data['value']:
         keyword = '最高轉速'#'max_speed'
-        
-    
-    # if keyword is not None:
-    #     ratio = extract_and_convert_numbers(data['value'])
-    #     print(ratio)
-    #     excel_path = r'./static/parm_table.xlsx'
-    #     df_parm = pd.read_excel(excel_path)
-    #     multiplier_value = df_parm.loc[df_parm[keyword] == ratio, '倍率'].iloc[0] if not df_parm.loc[df_parm[keyword] == ratio, '倍率'].empty else None
-        
-    #     if multiplier_value is not None:
-    #         print('find setence')
-    #         sentence = find_first_motor(data['value'])
-    #         return_dict['sentence'] = sentence
-    #         print(return_dict['sentence'])
-    #         if sentence is not None:
-    #             result_df = df[df['e_newspaper_name'].str.contains(sentence, case=False, regex=False)] 
-    #             selected_df = result_df[Database_Config.get_columns]
-    #         print("start find curve")
-    #         eng = matlab.engine.start_matlab()
-    #         # 輸入所需參數
-    #         eng.workspace['a']=float(multiplier_value)   
-    #         # 呼叫matlab.M檔
-    #         eng.this_is_for_exhibition(nargout = 0)
-    #         return_dict['L']  = eng.evalin('base', 'L', nargout=1)
-    #         return_dict['R']  = eng.evalin('base', 'R', nargout=1)
-    #         return_dict['J']  = eng.evalin('base', 'J', nargout=1)
-    #         return_dict['B']  = eng.evalin('base', 'B', nargout=1)
-    #         return_dict['Ke'] = eng.evalin('base', 'Ke', nargout=1)
-    #         return_dict['Kt'] = eng.evalin('base', 'Kt', nargout=1)
-    #         print("end")
-    #     else:
-    #         print("no parm found")
-    if len(selected_df) == 0:
-        return jsonify(return_dict)
-    
-    return_dict['news'] = selected_df.to_json(orient='records', force_ascii=False)
+    try:
+        if keyword is not None:
+            import matlab
+            import matlab.engine
+            ratio = extract_and_convert_numbers(data['value'])
+            print(ratio)
+            excel_path = r'./static/parm_table.xlsx'
+            df_parm = pd.read_excel(excel_path)
+            multiplier_value = df_parm.loc[df_parm[keyword] == ratio, '倍率'].iloc[0] if not df_parm.loc[df_parm[keyword] == ratio, '倍率'].empty else None
+            
+            if multiplier_value is not None:
+                
+                print("start find curve")
+                eng = matlab.engine.start_matlab()
+                # 輸入所需參數
+                eng.workspace['a']=float(multiplier_value)   
+                # 呼叫matlab.M檔
+                eng.this_is_for_exhibition(nargout = 0)
+                return_dict['L']  = eng.evalin('base', 'L', nargout=1)
+                return_dict['R']  = eng.evalin('base', 'R', nargout=1)
+                return_dict['J']  = eng.evalin('base', 'J', nargout=1)
+                return_dict['B']  = eng.evalin('base', 'B', nargout=1)
+                return_dict['Ke'] = eng.evalin('base', 'Ke', nargout=1)
+                return_dict['Kt'] = eng.evalin('base', 'Kt', nargout=1)
+                print("end")
+            else:
+                print("no parm found")
+        # 模塊導入成功，可以使用numpy進行後續操作
+    except ImportError:
+         print("Matlab module is not available.")
     return jsonify(return_dict)
+    
 
 @app.route('/pred_string', methods=['POST'])
 def pred_string():
@@ -319,7 +334,19 @@ def process_audio():
     else:
         text_line['result'] = '沒有找到音頻檔案'
         return jsonify(text_line)
+    
+def clear_folder(folder_path):
+    # 確認資料夾存在
+    if os.path.exists(folder_path):
+        # 刪除資料夾及其所有內容
+        shutil.rmtree(folder_path)
+        # 重新建立同名資料夾
+        os.mkdir(folder_path)
+    else:
+        print(f"資料夾 {folder_path} 不存在，無法清空。") 
 
 if __name__ == '__main__':
     app.secret_key = Config.SECRET_KEY
     app.run('0.0.0.0',port=8152)
+    print("code END")
+    clear_folder(app.config['UPLOAD_FOLDER'])

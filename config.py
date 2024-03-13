@@ -1,5 +1,5 @@
 class Config:
-    UPLOAD_FOLDER = 'static'
+    UPLOAD_FOLDER = 'static/temp'
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     SECRET_KEY = "54088" 
     #audio setting

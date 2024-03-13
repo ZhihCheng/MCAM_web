@@ -45,7 +45,17 @@
     
     .container {
         max-width: 78%;
-        margin: 50px auto;
+        margin: 25px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .AI-container{
+        display: none;
+        max-width: 78%;
+        margin: 2px auto;
         padding: 20px;
         background-color: #fff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -120,8 +130,8 @@
     }
     /*parm_tabel fone setting*/
     .boldAndLarge {
-        font-weight: bold; /* 使文字粗體 */
-        font-size: 20px; /* 文字大小設為16像素 */
+        font-weight: bold; 
+        font-size: 20px; 
     }
 
     #imageContainer{
@@ -218,6 +228,22 @@
         </div>
         <div id="searchResults"><label  id="input_search" class="label-font"></div>
     </div>
+    <!-- output -->
+    <div class="AI-container" id="AIout" >
+        <div class="row row-spacing">
+            <div class="col-md-1">
+                <div id="imageContainer" >
+                    <img src="./static/EMTRC_Logo.png" alt="image-placeholder" class="img-thumbnail" id="Emtrc_log">
+                </div>
+            </div>
+            <div class="col-md-11">
+                <label class="label-font ">
+                    <span id="AIout_animatedText" class="typing"></span>
+                    <span id="AIout_finalCursor"  class="typing-cursor" ></span>
+                </label>
+            </div>
+        </div>
+    </div>
     <div class = "split_form">
         <div class="top-left grid-item">
             <div  class="inear-container " id ="search_output">
@@ -241,7 +267,7 @@
                 </label>
             </div>
         </div>
-        <div class="top-right grid-item ">
+        <div class="bottom-right grid-item ">
             <div  class="inear-container " id ="search_output1">
                 <div class="row row-spacing">
                     <div class="col-md-10">
@@ -304,7 +330,7 @@
                 </table>
             </div>
         </div>
-        <div class="bottom-right grid-item">
+        <div class="top-right grid-item">
             <div  class="inear-container " id ="search_output3">
                 <div class="row row-spacing">
                     <div class="col-md-10">
@@ -328,17 +354,19 @@
             let gridItem = button.closest('.grid-item');
             if(gridItem.classList.contains('zoomed')) {
                 gridItem.classList.remove('zoomed');
+                button.textContent = '展開'; 
             } else {
                 gridItem.classList.add('zoomed');
                 button.textContent = '還原'; 
             }
         }
+
         document.addEventListener('DOMContentLoaded', function() {
             
             var search_output = document.getElementById('search_output');
             var textElement = document.getElementById('first_animatedText');
             var finalCursor = document.getElementById('first_finalCursor');
-            var textToAnimate = "您可以在下方搜尋輸入:";
+            var textToAnimate = "您好，這裡是馬達AI小助手，很高興為您服務:";
             var textArray = textToAnimate.split('');
             
             finalCursor.style.display = 'inline-block';
@@ -366,20 +394,44 @@
                 var image_show = document.getElementById('image_show')
                 var motor_curve = document.getElementById('motor_curve')
                 var parm_table = document.getElementById('parm_table')
-
-                
+                var AI_result = document.getElementById('AIout')
                 
                 Error_content.style.display='none';
                 image_show.style.display='none';
                 motor_curve.style.display='none';
                 search_result.style.display='none';
                 parm_table.style.display='none';
+                AI_result.style.display='none';
+                
                 var myModal = new bootstrap.Modal(document.getElementById('loading_modal'));
+
+
+
                 if (searchInput.value !== ""){
                     myModal.show();
-                    input_search.textContent = searchInput.value;
+                    // input_search.textContent = searchInput.value;# 字詞顯示位置
                     let showModalForAtLeast = 500; // 毫秒
                     let showStart = new Date().getTime();
+
+                    AI_result.style.display='block';
+                    var textElement1 = document.getElementById('AIout_animatedText');
+                    var finalCursor1 = document.getElementById('AIout_finalCursor');
+                    
+                    var textToAnimate1 = "馬達係DAWDWADWDJADJKWAJDWAJHDKJAWHD";
+                    var textArray1 = textToAnimate1.split('');
+                    finalCursor1.style.display = 'inline-block';
+                    textElement1.innerHTML = '';
+                    
+                    textArray1.forEach(function(char, index) {
+                        setTimeout(function(){
+                            textElement1.innerHTML += char;
+                            if (index === textArray1.length - 1) {
+                                finalCursor1.style.display = 'none';
+                            }
+                        }, index * 50); 
+                    });
+
+                    // 資料庫搜尋
                     fetch('/search_database', {
                         method: 'POST',
                         body: JSON.stringify({  
@@ -400,24 +452,9 @@
                             myModal.hide();
                         }
                         var jsonData = JSON.parse(data.news);
-                        var accordionHtml = "";
-                        if (data.sentence === "無刷直流馬達" || data.sentence === "永磁同步馬達" || data.sentence === "永磁直流馬達") {
-                            image_show.style.display = 'block';
-                            var uploadedImage = document.getElementById('uploadedImage');
-                            uploadedImage.src = "./static/" + data.sentence + '.jpg';
-                        }
-                        if (searchInput.value.includes("最大功率") || searchInput.value.includes("最高轉速")) {
-                            motor_curve.style.display = 'block';
-                            var uploadedImage2 = document.getElementById('uploadedImage2');
-                            uploadedImage2.src = "./static/output_figure.png";
-                            parm_table.style.display = 'block';
-                            document.getElementById("textbox1").value = parseFloat(data.L).toFixed(5);
-                            document.getElementById("textbox2").value = parseFloat(data.R).toFixed(5);
-                            document.getElementById("textbox3").value = parseFloat(data.Ke).toFixed(5);
-                            document.getElementById("textbox4").value = parseFloat(data.Kt).toFixed(5);
-                            document.getElementById("textbox5").value = parseFloat(data.J).toFixed(5);
-                            document.getElementById("textbox6").value = parseFloat(data.B).toFixed(5);     
-                        }
+                        document.getElementById("newsletterHeading").textContent = "馬達中心電子報推薦";
+
+                        var jsonData = JSON.parse(data.news);
                         if (jsonData === 0) {
                             Error_content.style.display = 'block';
                             
@@ -442,10 +479,11 @@
                             search_result.style.display = 'block';
                             var split_form = document.getElementById('split_form');
                             search_output.style.display = 'block';
-                            
+                            var accordionHtml = "";
 
                             for (var i = 0; i < jsonData.length; i++) {
                                 var item = jsonData[i];
+                                
                                 accordionHtml += '  <div class="accordion-item">';
                                 accordionHtml += '    <h2 class="accordion-header" id="flush-heading' + i + '">';
                                 accordionHtml += '            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse' + i + '" aria-expanded="false" aria-controls="flush-collapse' + i + '">';
@@ -463,14 +501,42 @@
                                 accordionHtml += '    </div>';
                                 accordionHtml += '  </div>';
                             }
-
-                            // 插入手風琴到 HTML 中
                             document.getElementById("searchResult").innerHTML = accordionHtml;
                             split_form.scrollIntoView({ behavior: 'smooth' });
                             
-                        }                   
-                    });
+                        }
 
+
+                        if (data.sentence === "無刷直流馬達" || data.sentence === "永磁同步馬達" || data.sentence === "永磁直流馬達") {
+                            image_show.style.display = 'block';
+                            var uploadedImage = document.getElementById('uploadedImage');
+                            uploadedImage.src = "./static/" + data.sentence + '.jpg';
+                        }                              
+                    });
+                    fetch('/run_simulink', {
+                        method: 'POST',
+                        body: JSON.stringify({  
+                                                value : searchInput.value,
+                                            }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (searchInput.value.includes("最大功率") || searchInput.value.includes("最高轉速")) {
+                            motor_curve.style.display = 'block';
+                            var uploadedImage2 = document.getElementById('uploadedImage2');
+                            uploadedImage2.src = "./static/output_figure.png";
+                            parm_table.style.display = 'block';
+                            document.getElementById("textbox1").value = parseFloat(data.L).toFixed(5);
+                            document.getElementById("textbox2").value = parseFloat(data.R).toFixed(5);
+                            document.getElementById("textbox3").value = parseFloat(data.Ke).toFixed(5);
+                            document.getElementById("textbox4").value = parseFloat(data.Kt).toFixed(5);
+                            document.getElementById("textbox5").value = parseFloat(data.J).toFixed(5);
+                            document.getElementById("textbox6").value = parseFloat(data.B).toFixed(5);     
+                        }
+                    });
                 }
                 
                 
@@ -647,16 +713,6 @@
         </div>
       </div>
 
-    <!-- 
-
-    <div id="loading_form" class="loading-form">
-        <div class="loading-form-content">
-            <span class="close-button"> × </span>
-            <p>正在錄音中...</p>
-
-        </div>
-    </div> -->
- 
     
    
 </body>
