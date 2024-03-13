@@ -3,6 +3,7 @@ import whisper
 from transformers import pipeline
 import librosa
 import torch
+import time
 class Process_audio:
     def transcribe_whisper(wav_filename,text_line):
         # Whisper 語音識別邏輯
@@ -48,10 +49,14 @@ class Process_audio:
 
         print(device)
         try:
+            start_temp = time.time()
             pipe = pipeline("automatic-speech-recognition",
                             model="ZhihCheng/whisper-base-with-motor_zh_v2",
                             device = device,
                             )
+            end_temp = time.time()
+            elapsed_time = end_temp - start_temp
+            print(f"程式運行耗時：{elapsed_time}秒")
         except Exception as e:
             text_line['complet'] = 0
             text_line['error'] = f"模型加載錯誤: {str(e)}"

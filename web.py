@@ -1,4 +1,4 @@
-# Python標準庫導入
+# Python標準庫導入pred_output
 import cv2 as cv
 import pandas as pd
 from functools import wraps
@@ -8,8 +8,8 @@ from flask import Flask, request, render_template, jsonify, redirect
 from werkzeug.utils import secure_filename
 import mysql.connector
 import soundfile as sf
-import matlab
-import matlab.engine
+# import matlab
+# import matlab.engine
 # 應用程式或局部模組導入
 from config import DevelopmentConfig, Config,Database_Config,audio_Config
 from determine_str import determine
@@ -234,36 +234,36 @@ def search_database():
         keyword = '最高轉速'#'max_speed'
         
     
-    if keyword is not None:
-        ratio = extract_and_convert_numbers(data['value'])
-        print(ratio)
-        excel_path = r'./static/parm_table.xlsx'
-        df_parm = pd.read_excel(excel_path)
-        multiplier_value = df_parm.loc[df_parm[keyword] == ratio, '倍率'].iloc[0] if not df_parm.loc[df_parm[keyword] == ratio, '倍率'].empty else None
+    # if keyword is not None:
+    #     ratio = extract_and_convert_numbers(data['value'])
+    #     print(ratio)
+    #     excel_path = r'./static/parm_table.xlsx'
+    #     df_parm = pd.read_excel(excel_path)
+    #     multiplier_value = df_parm.loc[df_parm[keyword] == ratio, '倍率'].iloc[0] if not df_parm.loc[df_parm[keyword] == ratio, '倍率'].empty else None
         
-        if multiplier_value is not None:
-            print('find setence')
-            sentence = find_first_motor(data['value'])
-            return_dict['sentence'] = sentence
-            print(return_dict['sentence'])
-            if sentence is not None:
-                result_df = df[df['e_newspaper_name'].str.contains(sentence, case=False, regex=False)] 
-                selected_df = result_df[Database_Config.get_columns]
-            print("start find curve")
-            eng = matlab.engine.start_matlab()
-            # 輸入所需參數
-            eng.workspace['a']=float(multiplier_value)   
-            # 呼叫matlab.M檔
-            eng.this_is_for_exhibition(nargout = 0)
-            return_dict['L']  = eng.evalin('base', 'L', nargout=1)
-            return_dict['R']  = eng.evalin('base', 'R', nargout=1)
-            return_dict['J']  = eng.evalin('base', 'J', nargout=1)
-            return_dict['B']  = eng.evalin('base', 'B', nargout=1)
-            return_dict['Ke'] = eng.evalin('base', 'Ke', nargout=1)
-            return_dict['Kt'] = eng.evalin('base', 'Kt', nargout=1)
-            print("end")
-        else:
-            print("no parm found")
+    #     if multiplier_value is not None:
+    #         print('find setence')
+    #         sentence = find_first_motor(data['value'])
+    #         return_dict['sentence'] = sentence
+    #         print(return_dict['sentence'])
+    #         if sentence is not None:
+    #             result_df = df[df['e_newspaper_name'].str.contains(sentence, case=False, regex=False)] 
+    #             selected_df = result_df[Database_Config.get_columns]
+    #         print("start find curve")
+    #         eng = matlab.engine.start_matlab()
+    #         # 輸入所需參數
+    #         eng.workspace['a']=float(multiplier_value)   
+    #         # 呼叫matlab.M檔
+    #         eng.this_is_for_exhibition(nargout = 0)
+    #         return_dict['L']  = eng.evalin('base', 'L', nargout=1)
+    #         return_dict['R']  = eng.evalin('base', 'R', nargout=1)
+    #         return_dict['J']  = eng.evalin('base', 'J', nargout=1)
+    #         return_dict['B']  = eng.evalin('base', 'B', nargout=1)
+    #         return_dict['Ke'] = eng.evalin('base', 'Ke', nargout=1)
+    #         return_dict['Kt'] = eng.evalin('base', 'Kt', nargout=1)
+    #         print("end")
+    #     else:
+    #         print("no parm found")
     if len(selected_df) == 0:
         return jsonify(return_dict)
     
@@ -301,7 +301,8 @@ def process_audio():
         # 轉換音頻格式
         sound = AudioSegment.from_file(audio_data)
         wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "audio.wav")
-        sound.export(wav_filename, format="wav")
+        # wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "voice_我需要最大功率為21000瓦的直流馬達.wav")
+       
         try:
             if audio_Config.audio_model == 0:
                 text_line = Process_audio.transcribe_whisper(wav_filename,text_line)  # 使用 Whisper 進行語音識別
