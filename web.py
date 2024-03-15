@@ -26,10 +26,14 @@ from sys_py_NiFe.parameter_sug_max_mu_max_tensile import *
 from sys_py_NiFe.parameter_sug_customize import *
 from chinese_number import extract_and_convert_numbers
 from find_motor_sentence import find_first_motor
+from call_alpaca import call_alpaca
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
+
+
+alpaca_model = call_alpaca()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
@@ -238,6 +242,7 @@ def search_database():
 
 @app.route('/run_simulink', methods=['POST'])
 def run_simulink():
+    print("hello")
     return_dict = {
         'L': 0,
         'R': 0,
@@ -317,8 +322,7 @@ def process_audio():
         # 轉換音頻格式
         sound = AudioSegment.from_file(audio_data)
         wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "audio.wav")
-        # wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "voice_我需要最大功率為21000瓦的直流馬達.wav")
-       
+
         try:
             if audio_Config.audio_model == 0:
                 text_line = Process_audio.transcribe_whisper(wav_filename,text_line)  # 使用 Whisper 進行語音識別
