@@ -409,7 +409,7 @@
 
                 if (searchInput.value !== ""){
                     myModal.show();
-                    // input_search.textContent = searchInput.value;# 字詞顯示位置
+    
                     let showModalForAtLeast = 500; // 毫秒
                     let showStart = new Date().getTime();
 
@@ -443,18 +443,13 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        let timePassed = new Date().getTime() - showStart;
-                        if (timePassed < showModalForAtLeast) {
-                            setTimeout(() => {
-                                myModal.hide();
-                            }, showModalForAtLeast - timePassed);
-                        } else {
-                            myModal.hide();
-                        }
                         var jsonData = JSON.parse(data.news);
                         document.getElementById("newsletterHeading").textContent = "馬達中心電子報推薦";
-
-                        var jsonData = JSON.parse(data.news);
+                        if (data.sentence === "無刷直流馬達" || data.sentence === "永磁同步馬達" || data.sentence === "永磁直流馬達") {
+                            image_show.style.display='block'
+                            var uploadedImage = document.getElementById('uploadedImage');
+                            uploadedImage.src = "./static/" + data.sentence + '.jpg';
+                        }   
                         if (jsonData === 0) {
                             Error_content.style.display = 'block';
                             
@@ -505,13 +500,8 @@
                             split_form.scrollIntoView({ behavior: 'smooth' });
                             
                         }
-
-
-                        if (data.sentence === "無刷直流馬達" || data.sentence === "永磁同步馬達" || data.sentence === "永磁直流馬達") {
-                            image_show.style.display = 'block';
-                            var uploadedImage = document.getElementById('uploadedImage');
-                            uploadedImage.src = "./static/" + data.sentence + '.jpg';
-                        }                              
+                        
+                                                   
                     });
                     fetch('/run_simulink', {
                         method: 'POST',
@@ -524,6 +514,14 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        let timePassed = new Date().getTime() - showStart;
+                        if (timePassed < showModalForAtLeast) {
+                            setTimeout(() => {
+                                myModal.hide();
+                            }, showModalForAtLeast - timePassed);
+                        } else {
+                            myModal.hide();
+                        }
                         if (searchInput.value.includes("最大功率") || searchInput.value.includes("最高轉速")) {
                             motor_curve.style.display = 'block';
                             var uploadedImage2 = document.getElementById('uploadedImage2');

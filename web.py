@@ -224,10 +224,11 @@ def search_database():
     print('find setence')
     sentence = find_first_motor(data['value'])
     return_dict['sentence'] = sentence
+    print('sentence = : ' + sentence)
     if sentence is not None:
         result_df = df[df['e_newspaper_name'].str.contains(sentence, case=False, regex=False)] 
         selected_df = result_df[Database_Config.get_columns]
-
+    
     if len(selected_df) == 0:
         return jsonify(return_dict)
     
