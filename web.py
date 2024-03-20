@@ -242,7 +242,6 @@ def search_database():
 
 @app.route('/run_simulink', methods=['POST'])
 def run_simulink():
-    print("hello")
     return_dict = {
         'L': 0,
         'R': 0,
@@ -262,12 +261,14 @@ def run_simulink():
         if keyword is not None:
             import matlab
             import matlab.engine
+            print('run Matlab')
+            print('keyword')
             ratio = extract_and_convert_numbers(data['value'])
             print(ratio)
             excel_path = r'./static/parm_table.xlsx'
             df_parm = pd.read_excel(excel_path)
             multiplier_value = df_parm.loc[df_parm[keyword] == ratio, '倍率'].iloc[0] if not df_parm.loc[df_parm[keyword] == ratio, '倍率'].empty else None
-            
+            print(multiplier_value)
             if multiplier_value is not None:
                 
                 print("start find curve")
@@ -340,6 +341,17 @@ def process_audio():
         text_line['result'] = '沒有找到音頻檔案'
         return jsonify(text_line)
     
+@app.route('/run_alpaca', methods=['POST'])
+def run_alpaca():
+    text_line = {'complet': 0, 'result': ""}
+    
+    data = request.get_json()
+    print("predoct start")
+    text_line['result'] = alpaca_model.alpaca_predict(data)
+    print("predoct end")
+    return jsonify(text_line)
+    
+    
 def clear_folder(folder_path):
     # 確認資料夾存在
     if os.path.exists(folder_path):
@@ -349,9 +361,13 @@ def clear_folder(folder_path):
         os.mkdir(folder_path)
     else:
         print(f"資料夾 {folder_path} 不存在，無法清空。") 
+        
+
 
 if __name__ == '__main__':
     app.secret_key = Config.SECRET_KEY
+    app.debug = False
     app.run('0.0.0.0',port=8152)
+    
     print("code END")
     clear_folder(app.config['UPLOAD_FOLDER'])

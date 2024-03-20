@@ -23,12 +23,13 @@ TEMPLATE = (
     "{instruction} [/INST]"
 )
 
-guidance_scale = 7.0
-load_in_8bit = True
-load_in_4bit = False
+guidance_scale = 3.0
+load_in_8bit = False
+load_in_4bit = True
 use_flash_attention_2 = False
 
 base_model_path = './Chinese-Alpaca-2-7B'
+draft_base_model = './Chinese-Alpaca-2-1.3B'
 
 
 
@@ -142,5 +143,6 @@ class call_alpaca():
         #real output
         print("Response:",cc.convert(response))
         print("\n")
+        return cc.convert(response)
 
     
