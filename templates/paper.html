@@ -24,16 +24,48 @@
     label {
         font-weight: bold;
     }
+    h4 {
+        font-family: Helvetica;
+        /* font-size: 36px; */
+        color: #333; 
+        opacity: 0;
+        animation: .6s title ease-in-out;
+        animation-delay: 0.5s;
+        animation-fill-mode: forwards; 
+    }
     
-    img {
-        max-width: 100%; 
-        max-height: 100%; 
-        width: auto; 
-        height: auto; 
-        position: absolute; 
-        top: 50%;
-        left: 50%; 
-        transform: translate(-50%, -50%); 
+    /* Loading message */
+    .success-message {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .success-icon {
+        width: 25px;
+        height: 25px;
+        margin-right: 5px;
+        display: flex;
+        align-items: center; 
+    }
+
+    .loading-icon{
+        width: 25px;     
+        height: 25px;
+        margin-right: 5px;
+        display: flex;
+        align-items: center; 
+    }
+    #loadingText {
+        margin: 0; 
+        color: #5a7beb;
+        line-height: 25px; 
+        align-self: center; 
+    }
+    /* Loading message */
+
+    #SucessText{
+        margin-top: 5px;
     }
     .label-font {
         font-size: 24px;    
@@ -43,6 +75,28 @@
         font-size: 20px;    
     }
     
+    #Emtrc_log{
+        max-width: 100px; 
+        max-height: 100px; 
+        width:50px; 
+        height: 50px; 
+        position: absolute; 
+        top: 50%;
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+    }
+
+    #uploadedImage2,#uploadedImage {
+        max-width: 100%; 
+        max-height: 100%; 
+        width: auto; 
+        height: auto; 
+        position: absolute; 
+        top: 50%;
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+    }
+
     .container {
         max-width: 78%;
         margin: 25px auto;
@@ -141,6 +195,12 @@
         position: relative; 
         overflow: hidden; 
     }
+    #logoContainer{
+        width: 100px auto; 
+        height: 100%;
+        border: 2px solid rgb(175, 170, 170)0d0; 
+        position: relative; 
+    }
 
     #searchResults {
         margin-top: 20px;
@@ -149,6 +209,7 @@
     #Error_content,#search_result,#image_show,#motor_curve,#parm_table {
         display: none;
     }
+
     .accordion-button {
         font-size: 18px; 
     }
@@ -199,6 +260,57 @@
         border: 2px solid #726f6f; 
     }
 
+    /* success message */
+    .circle {
+        stroke-dasharray: 1194;
+        stroke-dashoffset: 1194;
+        }
+
+        
+    svg .circle {
+    animation: circle 1s ease-in-out;
+    animation-fill-mode: forwards;
+    }
+    
+    svg .tick {
+    animation: tick .8s ease-out;
+    animation-fill-mode: forwards;
+    animation-delay: .95s;
+    }
+
+    .tick {
+    stroke-dasharray: 350;
+    stroke-dashoffset: 350;
+    }
+    
+    
+    @keyframes circle {
+    from {
+        stroke-dashoffset: 1194;
+    }
+    to {
+        stroke-dashoffset: 2388;
+    }
+    }
+
+    
+    @keyframes tick {
+    from {
+        stroke-dashoffset: 350;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+    }
+    
+    @keyframes title {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+    }
 </style>
 
 <body>
@@ -232,7 +344,7 @@
     <div class="AI-container" id="AIout" >
         <div class="row row-spacing">
             <div class="col-md-1">
-                <div id="imageContainer" >
+                <div id="logoContainer" >
                     <img src="./static/EMTRC_Logo.png" alt="image-placeholder" class="img-thumbnail" id="Emtrc_log">
                 </div>
             </div>
@@ -360,6 +472,26 @@
                 button.textContent = '還原'; 
             }
         }
+        function updateLoadingToSuccess() {
+            var loadingDiv = document.getElementById('loading_div');
+            loadingDiv.innerHTML = `
+                <svg class="success-icon" viewBox="0 0 400 400">
+                    <circle fill="none" stroke="#68E534" stroke-width="20" cx="200" cy="200" r="190" stroke-linecap="round" transform="rotate(-90 200 200)" class="circle"/>
+                    <polyline fill="none" stroke="#68E534" stroke-width="24" points="88,214 173,284 304,138" stroke-linecap="round" stroke-linejoin="round" class="tick" />
+                </svg>
+                <h4 id="SucessText" class="ms-3" style="color: #5a7beb;">Search Newsletter Success</h4>
+            `;
+        }
+        function updateSimulinkToSuccess() {
+            var simulinkdiv = document.getElementById('simulink_div');
+            simulinkdiv.innerHTML = `
+                <svg class="success-icon" viewBox="0 0 400 400">
+                    <circle fill="none" stroke="#68E534" stroke-width="20" cx="200" cy="200" r="190" stroke-linecap="round" transform="rotate(-90 200 200)" class="circle"/>
+                    <polyline fill="none" stroke="#68E534" stroke-width="24" points="88,214 173,284 304,138" stroke-linecap="round" stroke-linejoin="round" class="tick" />
+                </svg>
+                <h4 id="SucessText" class="ms-3" style="color: #5a7beb;">Simulink Success</h4>
+            `;
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             
@@ -429,9 +561,10 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                    
+
                         input_search.textContent = " "
                         textToAnimate1 = data.result;
-                        
                         var textArray1 = textToAnimate1.split('');
                         finalCursor1.style.display = 'inline-block';
                         textElement1.innerHTML = '';
@@ -459,6 +592,7 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        updateLoadingToSuccess();
                         var jsonData = JSON.parse(data.news);
                         document.getElementById("newsletterHeading").textContent = "馬達中心電子報推薦";
                         if (data.sentence === "無刷直流馬達" || data.sentence === "永磁同步馬達" || data.sentence === "永磁直流馬達") {
@@ -515,9 +649,7 @@
                             document.getElementById("searchResult").innerHTML = accordionHtml;
                             split_form.scrollIntoView({ behavior: 'smooth' });
                             
-                        }
-                        
-                                                   
+                        }               
                     });
                     fetch('/run_simulink', {
                         method: 'POST',
@@ -530,13 +662,18 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        updateSimulinkToSuccess();
                         let timePassed = new Date().getTime() - showStart;
                         if (timePassed < showModalForAtLeast) {
                             setTimeout(() => {
-                                myModal.hide();
+                                setTimeout(() => {
+                                    myModal.hide();
+                                }, 1500);
                             }, showModalForAtLeast - timePassed);
                         } else {
-                            myModal.hide();
+                            setTimeout(() => {
+                                myModal.hide();
+                            }, 1500);
                         }
                         if (searchInput.value.includes("最大功率") || searchInput.value.includes("最高轉速")) {
                             motor_curve.style.display = 'block';
@@ -552,8 +689,7 @@
                         }
                     });
                 }
-                
-                
+              
             });
 
             // 錄音按鈕功能新增
@@ -645,15 +781,11 @@
                         requestAnimationFrame(draw);
 
                         analyser.getByteTimeDomainData(dataArray);
-
                         canvasContext.fillStyle = 'rgb(256, 256, 256)';
                         canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-
                         canvasContext.lineWidth = 2;
                         canvasContext.strokeStyle = 'rgb(0, 0, 0)';
-
                         canvasContext.beginPath();
-
                         var sliceWidth = canvas.width * 1.0 / bufferLength;
                         var x = 0;
 
@@ -705,29 +837,23 @@
               <h5 class="modal-title" id="staticBackdropLabel">執行中</h5>
             </div>
             <div class="modal-body">
-                <div class="d-flex align-items-center">
-                    <div class="spinner-border text-primary" role="status">
+                <div class="success-message" id="loading_div">
+                    <div class="spinner-border text-primary loading-icon" role="status" >
                         <span class="visually-hidden">Loading...</span>
                     </div>
-                    <h3 id="loadingText" class="ms-3" style="color: #5a7beb;">Loading</h3>
+                    <h4 id="loadingText" class="ms-3" style="color: #5a7beb;">Search Database</h4>
                 </div>
-                
-                <script>
-                    const loadingText = document.getElementById('loadingText');
-                    let dots = 0;
-                
-                    setInterval(() => {
-                        dots = (dots + 1) % 4; // 循环0, 1, 2, 3
-                        loadingText.innerHTML = 'Loading' + '.'.repeat(dots);
-                    }, 500); // 每500毫秒更新一次文本
-                </script>
+                <div class="success-message" id="simulink_div">
+                    <div class="spinner-border text-primary loading-icon" role="status" >
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h4 id="loadingText" class="ms-3" style="color: #5a7beb;">Simulink</h4>
+                </div>
                 
             </div>
           </div>
         </div>
       </div>
-
-    
    
 </body>
 </html>

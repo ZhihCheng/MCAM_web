@@ -50,7 +50,6 @@ model_Pcv_lgb_200 = lgb.LGBMRegressor()
 model_Pcv_lgb_400 = lgb.LGBMRegressor()
 model_Pcv_lgb_800 = lgb.LGBMRegressor()
 model_tensile_lgb = lgb.LGBMRegressor()
-print(current_path + '/' + folder_xgb + '/')
 ## XGBoost model loading
 try:    # model_mu_xgb
     model_mu_xgb_50.load_model(current_path + '/' + folder_xgb + '/' + 'model_mu_xgb_50.json')

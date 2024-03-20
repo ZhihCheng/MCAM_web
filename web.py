@@ -26,14 +26,16 @@ from sys_py_NiFe.parameter_sug_max_mu_max_tensile import *
 from sys_py_NiFe.parameter_sug_customize import *
 from chinese_number import extract_and_convert_numbers
 from find_motor_sentence import find_first_motor
-from call_alpaca import call_alpaca
+
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
+call_motor_AI = False
 
-
-alpaca_model = call_alpaca()
+if call_motor_AI:
+    from call_alpaca import call_alpaca
+    alpaca_model = call_alpaca()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
@@ -139,8 +141,6 @@ def increment():
     return jsonify(result)
 
 
-
-
 @app.route('/get_glcm_list', methods=['POST'])
 def get_glcm_list():
     pred_result = {}
@@ -155,6 +155,7 @@ def get_glcm_list():
     pred_result['init_feature'] = init.to_numpy().tolist()
     pred_result['horz_feature'] = horz.to_numpy().tolist()
     return jsonify(pred_result)
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -183,7 +184,6 @@ def predict():
         return jsonify({"error": f"Missing key: {e}"}), 400
 
 
-
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -198,7 +198,6 @@ def upload_file():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         return jsonify({'result': 'success', 'image_url': file_path})
     return jsonify({'result': 'failure'})
-
 
 @app.route('/search_database', methods=['POST'])
 def search_database():
@@ -346,9 +345,12 @@ def run_alpaca():
     text_line = {'complet': 0, 'result': ""}
     
     data = request.get_json()
-    print("predoct start")
-    text_line['result'] = alpaca_model.alpaca_predict(data)
-    print("predoct end")
+    if call_motor_AI:
+        print("predoct start")
+        text_line['result'] = alpaca_model.alpaca_predict(data)
+        print("predoct end")
+    else:
+        text_line['complet'] = 1
     return jsonify(text_line)
     
     
@@ -363,11 +365,8 @@ def clear_folder(folder_path):
         print(f"資料夾 {folder_path} 不存在，無法清空。") 
         
 
-
 if __name__ == '__main__':
     app.secret_key = Config.SECRET_KEY
-    app.debug = False
+    # app.debug = False
     app.run('0.0.0.0',port=8152)
-    
-    print("code END")
     clear_folder(app.config['UPLOAD_FOLDER'])
