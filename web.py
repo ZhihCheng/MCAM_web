@@ -48,6 +48,8 @@ def render_page(template):
         return decorated_function
     return decorator
 
+
+
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 @render_page('index.html')
@@ -74,7 +76,6 @@ def tsds():
 def search():
     pass
 
-
 @app.route('/Motor', methods=['GET', 'POST'])
 @render_page('Motor.html')
 def motor():
@@ -84,7 +85,6 @@ def motor():
 @render_page('paper.html')
 def paper():
     pass
-
 
 @app.route('/increment', methods=['POST'])
 def increment():
@@ -224,14 +224,18 @@ def search_database():
     selected_df = result_df[Database_Config.get_columns]
     return_dict['sentence'] = data['value']
     
+    print(data['value'])
+    print(selected_df)
     print('find setence')
     sentence = find_first_motor(data['value'])
+    print(sentence)
     return_dict['sentence'] = sentence
-    print('sentence = : ' + sentence)
+
     if sentence is not None:
+        print('sentence =  ' + sentence)
         result_df = df[df['e_newspaper_name'].str.contains(sentence, case=False, regex=False)] 
         selected_df = result_df[Database_Config.get_columns]
-    
+    # print(selected_df)
     if len(selected_df) == 0:
         return jsonify(return_dict)
     

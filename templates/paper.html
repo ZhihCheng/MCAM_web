@@ -544,42 +544,24 @@
                     myModal.show();
                     let showModalForAtLeast = 500; // 毫秒
                     let showStart = new Date().getTime();
-                    var textToAnimate1 = "預設";
-                    AI_result.style.display='block';
-                    var textElement1 = document.getElementById('AIout_animatedText');
-                    var finalCursor1 = document.getElementById('AIout_finalCursor');
-                    textElement1.innerHTML = '';
-                    fetch('/run_alpaca', {
-                        
-                        method: 'POST',
-                        body: JSON.stringify({  
-                                                value : searchInput.value,
-                                            }),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
+                    // var textToAnimate1 = "搜尋結果如下";
+                    // AI_result.style.display='block';
+                    // var textElement1 = document.getElementById('AIout_animatedText');
+                    // var finalCursor1 = document.getElementById('AIout_finalCursor');
+                    // textElement1.innerHTML = '';
+                    // var textArray1 = textToAnimate1.split('');
+                    // finalCursor1.style.display = 'inline-block';
                     
+                    // textArray1.forEach(function(char, index) {
+                    //     setTimeout(function(){
+                    //         textElement1.innerHTML += char;
+                    //         if (index === textArray1.length - 1) {
+                    //             finalCursor1.style.display = 'none';
+                    //         }
+                    //     }, index * 50); 
+                    // });
+    
 
-                        input_search.textContent = " "
-                        textToAnimate1 = data.result;
-                        var textArray1 = textToAnimate1.split('');
-                        finalCursor1.style.display = 'inline-block';
-                        textElement1.innerHTML = '';
-                        
-                        textArray1.forEach(function(char, index) {
-                            setTimeout(function(){
-                                textElement1.innerHTML += char;
-                                if (index === textArray1.length - 1) {
-                                    finalCursor1.style.display = 'none';
-                                }
-                            }, index * 50); 
-                        });
-                    });
-
-                    
                     // 資料庫搜尋
                     fetch('/search_database', {
                         method: 'POST',
