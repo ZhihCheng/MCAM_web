@@ -46,8 +46,6 @@ class Process_audio:
             
     def transcribe_whisper_for_pretrained(wav_filename, text_line):
         device = "cuda:0" if torch.cuda.is_available() else "cpu"
-
-        print(device)
         try:
             start_temp = time.time()
             pipe = pipeline("automatic-speech-recognition",
@@ -62,12 +60,15 @@ class Process_audio:
             text_line['error'] = f"模型加載錯誤: {str(e)}"
             return text_line
 
+
         try:
             audio_data, _ = librosa.load(wav_filename, sr=16000)
         except Exception as e:
             text_line['complet'] = 0
             text_line['error'] = f"音頻文件加載錯誤: {str(e)}"
             return text_line
+        
+        
         try:
             text = pipe(audio_data)["text"]
         except Exception as e:

@@ -31,7 +31,7 @@ from find_motor_sentence import find_first_motor
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
-call_motor_AI = False
+call_motor_AI = True
 
 if call_motor_AI:
     from call_alpaca import call_alpaca
