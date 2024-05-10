@@ -4,11 +4,10 @@
 
 import numpy as np
 import sys
-
-#from model_load import *
 from sys_py_FeSiCr.model_load import *
 from pymoo.core.problem import ElementwiseProblem
 from pymoo.factory import get_problem, get_sampling, get_crossover, get_mutation
+
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.factory import get_termination
 from pymoo.optimize import minimize

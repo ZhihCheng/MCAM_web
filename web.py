@@ -1,9 +1,13 @@
 # Python標準庫導入pred_output
 import cv2 as cv
+import os
+import numpy as np
 import pandas as pd
 from functools import wraps
 import io
 import shutil
+import logging
+logging.basicConfig(level=logging.INFO)
 
 # 第三方庫導入
 from flask import Flask, request, render_template, jsonify, redirect
@@ -18,20 +22,19 @@ from determine_str import determine
 from Img_Predict.glcm import get_gray_level_feature
 from Img_Predict.pred_model_loading import pred_output
 from Process_audio import Process_audio
-from sys_py_FeSiCr.parameter_sug_max_mu_min_pcv import *
-from sys_py_FeSiCr.parameter_sug_max_mu_max_tensile import *
-from sys_py_FeSiCr.parameter_sug_customize import *
-from sys_py_NiFe.parameter_sug_max_mu_min_pcv import *
-from sys_py_NiFe.parameter_sug_max_mu_max_tensile import *
-from sys_py_NiFe.parameter_sug_customize import *
 from chinese_number import extract_and_convert_numbers
 from find_motor_sentence import find_first_motor
+
+
+# 預測模型導入
+from sys_py_FeSiCr.parameter_sug_total import FeSiCr_customize,FeSiCr_max_mu_max_tensile,FeSiCr_max_mu_min_pcv
+from sys_py_NiFe.parameter_sug_total import Nife_customize,Nife_max_mu_max_tensile,Nife_max_mu_min_pcv
 
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
-call_motor_AI = True
+call_motor_AI = False
 
 if call_motor_AI:
     from call_alpaca import call_alpaca
@@ -99,9 +102,7 @@ def increment():
     radio_type = data.get('radio_type')
     material = data.get('material')
     frequency = frequency_map.get(data.get('frequency'))
-
-    print(data)
-    print(f'Use on {material}')
+    logging.info(f'Use on {material}')
 
     def calculate_parameters(func, args):
         out1, out2 = func(args)
@@ -137,7 +138,7 @@ def increment():
         result = calculate_parameters(func, args)
     else:
 
-        print(f'Invalid radio_type: {radio_type}')
+        logging.info(f'Invalid radio_type: {radio_type}')
     return jsonify(result)
 
 
@@ -189,7 +190,6 @@ def upload_file():
     if 'file' not in request.files:
         return redirect(request.url)
     file = request.files['file']
-    print(type(file))
     if file.filename == '':
         return redirect(request.url)
     if file and allowed_file(file.filename):
@@ -224,18 +224,16 @@ def search_database():
     selected_df = result_df[Database_Config.get_columns]
     return_dict['sentence'] = data['value']
     
-    print(data['value'])
-    print(selected_df)
-    print('find setence')
+    
     sentence = find_first_motor(data['value'])
-    print(sentence)
+    logging.info(f'find setence {sentence}')
+
     return_dict['sentence'] = sentence
 
     if sentence is not None:
-        print('sentence =  ' + sentence)
+        logging.info('find setence')('sentence =  ' + sentence)
         result_df = df[df['e_newspaper_name'].str.contains(sentence, case=False, regex=False)] 
         selected_df = result_df[Database_Config.get_columns]
-    # print(selected_df)
     if len(selected_df) == 0:
         return jsonify(return_dict)
     
@@ -264,17 +262,13 @@ def run_simulink():
         if keyword is not None:
             import matlab
             import matlab.engine
-            print('run Matlab')
-            print('keyword')
+            logging.info('run Matlab')
             ratio = extract_and_convert_numbers(data['value'])
-            print(ratio)
             excel_path = r'./static/parm_table.xlsx'
             df_parm = pd.read_excel(excel_path)
             multiplier_value = df_parm.loc[df_parm[keyword] == ratio, '倍率'].iloc[0] if not df_parm.loc[df_parm[keyword] == ratio, '倍率'].empty else None
-            print(multiplier_value)
             if multiplier_value is not None:
-                
-                print("start find curve")
+                logging.info("start find curve")
                 eng = matlab.engine.start_matlab()
                 # 輸入所需參數
                 eng.workspace['a']=float(multiplier_value)   
@@ -286,12 +280,11 @@ def run_simulink():
                 return_dict['B']  = eng.evalin('base', 'B', nargout=1)
                 return_dict['Ke'] = eng.evalin('base', 'Ke', nargout=1)
                 return_dict['Kt'] = eng.evalin('base', 'Kt', nargout=1)
-                print("end")
             else:
-                print("no parm found")
+                logging.info("no parm found")
         # 模塊導入成功，可以使用numpy進行後續操作
     except ImportError:
-         print("Matlab module is not available.")
+         logging.info("Matlab module is not available.")
     return jsonify(return_dict)
     
 
@@ -337,7 +330,7 @@ def process_audio():
             return jsonify(text_line)
         
         except Exception as e:
-            print('no audui file')
+            logging.info('no audui file')
             text_line['result'] = str(e)
             return jsonify(text_line)
     else:
@@ -350,9 +343,9 @@ def run_alpaca():
     
     data = request.get_json()
     if call_motor_AI:
-        print("predoct start")
+        logging.info("predoct start")
         text_line['result'] = alpaca_model.alpaca_predict(data)
-        print("predoct end")
+        logging.info("predoct end")
     else:
         text_line['complet'] = 1
     return jsonify(text_line)
@@ -366,11 +359,13 @@ def clear_folder(folder_path):
         # 重新建立同名資料夾
         os.mkdir(folder_path)
     else:
-        print(f"資料夾 {folder_path} 不存在，無法清空。") 
+        logging.info(f"資料夾 {folder_path} 不存在，無法清空。") 
         
 
 if __name__ == '__main__':
     app.secret_key = Config.SECRET_KEY
     # app.debug = False
+    logging.info("Web server is running...")
     app.run('0.0.0.0',port=8152)
+
     clear_folder(app.config['UPLOAD_FOLDER'])

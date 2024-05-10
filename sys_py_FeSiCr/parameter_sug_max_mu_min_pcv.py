@@ -150,9 +150,9 @@ def FeSiCr_max_mu_min_pcv(input_data):
     
     ########manufacturing parameter suggestion################
     print(np.int16(X[i][0]),                ## ox            #
-        np.int16(X[i][1]),                ## power         #
-        np.int16(X[i][2]),                ## speed         #
-        X[i][3].round(decimals=2))        ## spacing       #
+            np.int16(X[i][1]),                ## power         #
+            np.int16(X[i][2]),                ## speed         #
+            X[i][3].round(decimals=2))        ## spacing       #
     ##########################################################
     out_list2 = [np.int16(X[i][0]),np.int16(X[i][1]),np.int16(X[i][2]),X[i][3].round(decimals=2)]
     print("mode = ", mode)
