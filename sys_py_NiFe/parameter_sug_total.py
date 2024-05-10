@@ -42,13 +42,13 @@ def Nife_customize(input_data):
     cus_characteristic = [int(input_data[2]), int(input_data[3]), int(input_data[4])]
 
     model_mu_input = [model_mu_xgb_50,      ## mu model
-                model_mu_xgb_200,
-                model_mu_xgb_400,
-                model_mu_xgb_800]
+                        model_mu_xgb_200,
+                        model_mu_xgb_400,
+                        model_mu_xgb_800]
     model_Pcv_input = [model_Pcv_xgb_50,    ## Pcv model
-                model_Pcv_xgb_200,
-                model_Pcv_xgb_400,
-                model_Pcv_xgb_800]
+                        model_Pcv_xgb_200,
+                        model_Pcv_xgb_400,
+                        model_Pcv_xgb_800]
 
     model_tensile_input = model_tensile_xgb # tensile model no relate to frequency
 
@@ -208,11 +208,9 @@ def Nife_max_mu_max_tensile(input_data):
     # print("mode = ",mode)
 
     model_mu_input = [model_mu_xgb_50,      ## mu model
-                model_mu_xgb_200,
-                model_mu_xgb_400,
-                model_mu_xgb_800]
-
-    model_tensile_input = model_tensile_xgb # tensile model no relate to frequency
+                        model_mu_xgb_200,
+                        model_mu_xgb_400,
+                        model_mu_xgb_800]
 
 
     problem = max_mu_max_tensile(mode1=model_mu_input[int(mode)], mode2=model_tensile_xgb)   # input different mode
@@ -248,8 +246,7 @@ def Nife_max_mu_max_tensile(input_data):
 
     ## Multi-Criteria Decision Making
 
-    fl = F.min(axis=0)
-    fu = F.max(axis=0)
+
     approx_ideal = F.min(axis=0)
     approx_nadir = F.max(axis=0)
 
@@ -262,9 +259,6 @@ def Nife_max_mu_max_tensile(input_data):
 
     nF = (F - approx_ideal) / (approx_nadir - approx_ideal)
     # nF shape = (40, 2)
-
-    fl = nF.min(axis=0) 
-    fu = nF.max(axis=0) 
 
     ## Compromise Programming
 
@@ -411,9 +405,6 @@ def Nife_max_mu_min_pcv(input_data):
 
 
     ## Multi-Criteria Decision Making
-
-    fl = F.min(axis=0)
-    fu = F.max(axis=0)
     approx_ideal = F.min(axis=0)
     approx_nadir = F.max(axis=0)
 
@@ -426,9 +417,6 @@ def Nife_max_mu_min_pcv(input_data):
 
     nF = (F - approx_ideal) / (approx_nadir - approx_ideal)
     # nF shape = (40, 2)
-
-    fl = nF.min(axis=0) 
-    fu = nF.max(axis=0)
 
     ## Compromise Programming
 

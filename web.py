@@ -25,16 +25,18 @@ from Process_audio import Process_audio
 from chinese_number import extract_and_convert_numbers
 from find_motor_sentence import find_first_motor
 
-
+logging.info("Loading parameter model start...")
 # 預測模型導入
 from sys_py_FeSiCr.parameter_sug_total import FeSiCr_customize,FeSiCr_max_mu_max_tensile,FeSiCr_max_mu_min_pcv
 from sys_py_NiFe.parameter_sug_total import Nife_customize,Nife_max_mu_max_tensile,Nife_max_mu_min_pcv
 
+logging.info("Loading parameter model complete")
+call_motor_AI = True
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
-call_motor_AI = False
+
 
 if call_motor_AI:
     from call_alpaca import call_alpaca
