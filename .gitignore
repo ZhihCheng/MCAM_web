@@ -4,7 +4,10 @@
 /static/slice
 /static/output_figure.png
 /static/voice_我需要最大功率為21000瓦的直流馬達.wav
-
+/static/output_PMDC.png 
+/static/output_SeparatelyExcited.png 
+/static/output_SeriesExcited.png 
+/static/output_ShuntExcited.png
 
 #weight
 /Img_Predict/result
