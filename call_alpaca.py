@@ -2,10 +2,9 @@ import argparse
 import os
 from opencc import OpenCC
 import torch
-from transformers import AutoModelForCausalLM, LlamaForCausalLM, LlamaTokenizer
+from transformers import AutoModelForCausalLM,  LlamaTokenizer
 from transformers import GenerationConfig
 from transformers import BitsAndBytesConfig
-from peft import  PeftModel
 import sys
 
 
@@ -28,6 +27,7 @@ load_in_8bit = False
 load_in_4bit = True
 use_flash_attention_2 = False
 
+
 base_model_path = './Chinese-Alpaca-2-7B'
 draft_base_model = './Chinese-Alpaca-2-1.3B'
 
@@ -47,18 +47,6 @@ if load_in_8bit and load_in_4bit:
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
-generation_config = GenerationConfig(
-    temperature=0.2,
-    top_k=40,
-    top_p=0.9,
-    do_sample=True,
-    num_beams=1,
-    repetition_penalty=1.1,
-    max_new_tokens=400
-)
-
-sample_data = ["自我介紹"]
-
 def generate_prompt(instruction, system_prompt=DEFAULT_SYSTEM_PROMPT):
     return TEMPLATE.format_map({'instruction': instruction,'system_prompt': system_prompt})
 
@@ -75,6 +63,19 @@ class call_alpaca():
 
         self.tokenizer = LlamaTokenizer.from_pretrained(tokenizer_path, legacy=True)
         
+        self.generation_config = GenerationConfig(
+            temperature=0.2,
+            top_k=40,
+            top_p=0.9,
+            do_sample=True,
+            num_beams=1,
+            repetition_penalty=1.1,
+            max_new_tokens=400
+        )
+
+
+
+
         quantization_config = BitsAndBytesConfig(
             load_in_4bit=load_in_4bit,
             load_in_8bit=load_in_8bit,
@@ -95,10 +96,7 @@ class call_alpaca():
 
         model_vocab_size = base_model.get_input_embeddings().weight.size(0)
         tokenizer_vocab_size = len(self.tokenizer)
-        print(f"Vocab of the base model: {model_vocab_size}")
-        print(f"Vocab of the tokenizer: {tokenizer_vocab_size}")
         if model_vocab_size!=tokenizer_vocab_size:
-            print("Resize model embeddings to fit tokenizer")
             base_model.resize_token_embeddings(tokenizer_vocab_size)
         
         self.model = base_model
@@ -106,9 +104,6 @@ class call_alpaca():
         if self.device==torch.device('cpu'):
             self.model.float()
         self.model.eval()
-        # test data
-    
-        examples = sample_data
     
         
         #####################################################################
@@ -132,7 +127,7 @@ class call_alpaca():
             attention_mask = inputs['attention_mask'].to(self.device),
             eos_token_id=self.tokenizer.eos_token_id,
             pad_token_id=self.tokenizer.pad_token_id,
-            generation_config = generation_config,
+            generation_config = self.generation_config,
             guidance_scale = guidance_scale,
             negative_prompt_ids = negative_prompt_ids,
             negative_prompt_attention_mask = negative_prompt_attention_mask
@@ -141,8 +136,8 @@ class call_alpaca():
         output = self.tokenizer.decode(s,skip_special_tokens=True)
         response = output.split("[/INST]")[-1].strip()
         #real output
-        print("Response:",cc.convert(response))
-        print("\n")
+        # print("Response:",cc.convert(response))
+        # print("\n")
         return cc.convert(response)
 
     

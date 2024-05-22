@@ -2,7 +2,7 @@ import numpy as np
 import sys
 from sys_py_NiFe.model_load import *
 from pymoo.core.problem import ElementwiseProblem
-from pymoo.factory import get_problem, get_sampling, get_crossover, get_mutation
+from pymoo.factory import get_sampling, get_crossover, get_mutation
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.factory import get_termination
 from pymoo.optimize import minimize
@@ -463,16 +463,19 @@ def Nife_max_mu_min_pcv(input_data):
         pred_Pcv_50 = model_Pcv_xgb_50.predict(data_for_pred)
         print('%.3f'%pred_mu_50[0], '%.3f'%pred_Pcv_50[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_50[0],pred_Pcv_50[0],pred_tensile[0]]
+        
     if(mode == "1"):
         pred_mu_200 = model_mu_xgb_200.predict(data_for_pred)
         pred_Pcv_200 = model_Pcv_xgb_200.predict(data_for_pred)
         print('%.3f'%pred_mu_200[0], '%.3f'%pred_Pcv_200[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_200[0],pred_Pcv_200[0],pred_tensile[0]]
+
     if(mode == "2"):
         pred_mu_400 = model_mu_xgb_400.predict(data_for_pred)
         pred_Pcv_400 = model_Pcv_xgb_400.predict(data_for_pred)
         print('%.3f'%pred_mu_400[0], '%.3f'%pred_Pcv_400[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_400[0],pred_Pcv_400[0],pred_tensile[0]]
+
     if(mode == "3"):
         pred_mu_800 = model_mu_xgb_800.predict(data_for_pred)
         pred_Pcv_800 = model_Pcv_xgb_800.predict(data_for_pred)

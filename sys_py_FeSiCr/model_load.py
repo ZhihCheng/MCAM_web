@@ -9,12 +9,9 @@ import os
 import sys
 import joblib
 import logging
-import re
 logging.basicConfig(level=logging.INFO)
-
 sys.path.append('.')
 current_path = os.path.dirname(os.path.abspath(__file__))
-#current_path = os.getcwd()
 folder_xgb = 'model_set_FeSiCr/xgb'
 folder_cat = 'model_set_FeSiCr/cat'
 folder_lgb = 'model_set_FeSiCr/lgb'

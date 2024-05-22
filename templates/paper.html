@@ -34,7 +34,6 @@
         animation-fill-mode: forwards; 
     }
     
-    /* Loading message */
     .success-message {
         display: flex;
         align-items: center;
@@ -150,8 +149,6 @@
         background-color: #CD5C5C;; 
         padding: 20px;
         border-radius: 20px;
-        
-
         display: flex;
         flex-direction: column;
         height: 50vh;
@@ -319,7 +316,6 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor Tech</span><span style="color: black;"> Co-AI</span></h1>
             </div>
-            
         </div>
     </nav>
     <div class="container" >
@@ -446,7 +442,7 @@
             <div  class="inear-container " id ="search_output3">
                 <div class="row row-spacing">
                     <div class="col-md-10">
-                        <h3 class="fw-bolder mb-2">馬達模型</h3>
+                        <h3 class="fw-bolder mb-2">Motor Digital Twin</h3>
                     </div>
                     <div class="col-md-2 text-end">
                         <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
@@ -545,7 +541,7 @@
                     let showModalForAtLeast = 500; // 毫秒
                     let showStart = new Date().getTime();
                     var textToAnimate1 = "預設";
-                    AI_result.style.display='block';
+                    // AI_result.style.display='block';
                     var textElement1 = document.getElementById('AIout_animatedText');
                     var finalCursor1 = document.getElementById('AIout_finalCursor');
                     textElement1.innerHTML = '';
@@ -591,14 +587,34 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        updateLoadingToSuccess();
+                        
                         var jsonData = JSON.parse(data.news);
                         document.getElementById("newsletterHeading").textContent = "馬達中心電子報推薦";
-                        if (data.sentence === "無刷直流馬達" || data.sentence === "永磁同步馬達" || data.sentence === "永磁直流馬達") {
+
+                        if (data.two_port_model!='none' && data.two_port_curve!='none'){
+                            
+                            // play two port model
                             image_show.style.display='block'
                             var uploadedImage = document.getElementById('uploadedImage');
-                            uploadedImage.src = "./static/" + data.sentence + '.jpg';
-                        }   
+                            uploadedImage.src = "./static/" + data.two_port_model + '.jpg';
+
+                            // play TN curve
+                            motor_curve.style.display = 'block';
+                            var uploadedImage2 = document.getElementById('uploadedImage2');
+                            uploadedImage2.src =  data.two_port_curve;
+
+
+                        }
+                        
+
+                        // if (data.sentence === "無刷直流馬達" || data.sentence === "永磁同步馬達" || data.sentence === "永磁直流馬達") {
+                        //     image_show.style.display='block'
+                        //     var uploadedImage = document.getElementById('uploadedImage');
+                        //     uploadedImage.src = "./static/" + data.sentence + '.jpg';
+                        // }   
+
+
+                        updateLoadingToSuccess();   
                         if (jsonData === 0) {
                             Error_content.style.display = 'block';
                             
@@ -648,7 +664,8 @@
                             document.getElementById("searchResult").innerHTML = accordionHtml;
                             split_form.scrollIntoView({ behavior: 'smooth' });
                             
-                        }               
+                        }
+                                
                     });
                     fetch('/run_simulink', {
                         method: 'POST',
@@ -700,6 +717,54 @@
                 var audio_modal = new bootstrap.Modal(document.getElementById('audio_modal'), {
                     keyboard: false // 選項設置，這裡表示按下鍵盤上的esc鍵不會關閉Modal
                 });
+
+                const canvas = document.getElementById('audioCanvas');
+                const canvasContext = canvas.getContext('2d');
+
+                navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                    .then(stream => {
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const analyser = audioContext.createAnalyser();
+                        const microphone = audioContext.createMediaStreamSource(stream);
+                        microphone.connect(analyser);
+                        analyser.fftSize = 2048;
+
+                        const bufferLength = analyser.frequencyBinCount;
+                        const dataArray = new Uint8Array(bufferLength);
+
+                        function draw() {
+                            requestAnimationFrame(draw);
+
+                            analyser.getByteTimeDomainData(dataArray);
+                            canvasContext.fillStyle = 'rgb(256, 256, 256)';
+                            canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+                            canvasContext.lineWidth = 2;
+                            canvasContext.strokeStyle = 'rgb(0, 0, 0)';
+                            canvasContext.beginPath();
+                            var sliceWidth = canvas.width * 1.0 / bufferLength;
+                            var x = 0;
+
+                            for(var i = 0; i < bufferLength; i++) {
+                                var v = dataArray[i] / 128.0;
+                                var y = v * canvas.height / 2;
+
+                                if(i === 0) {
+                                    canvasContext.moveTo(x, y);
+                                } else {
+                                    canvasContext.lineTo(x, y);
+                                }
+
+                                x += sliceWidth;
+                            }
+
+                            canvasContext.lineTo(canvas.width, canvas.height / 2);
+                            canvasContext.stroke();
+                        }
+
+                        draw();
+                    })
+
+
                 var input_search = document.getElementById('input_search');
                 input_search.textContent = '錄音中...'
                 if (!isRecording) {
@@ -717,15 +782,16 @@
             };
 
             document.getElementById("cancelButton").onclick = function() {
-                if (isRecording) {
+                if (isRecording && mediaRecorder) {
                     mediaRecorder.stop();
-                    var input_search = document.getElementById('input_search');
-                    input_search.textContent = ''
-
+                    mediaRecorder.stream.getTracks().forEach(track => track.stop());  // 停止所有軌道，確保完全釋放資源
+                    mediaRecorder = null;  // 清除mediaRecorder實例
                 }
-                audioChunks = [];
-                isRecording = false;
-            }
+                var input_search = document.getElementById('input_search');
+                input_search.textContent = '';  // 清除錄音中狀態的文字
+                audioChunks = [];  // 清空錄音資料
+                isRecording = false;  // 設定錄音狀態為不在錄音
+            };
 
             document.getElementById("stopButton").onclick = function() {
                 if (isRecording) {
@@ -760,53 +826,7 @@
                         isRecording = false;
                     };
                 }
-            };
-
-            const canvas = document.getElementById('audioCanvas');
-            const canvasContext = canvas.getContext('2d');
-
-            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-                .then(stream => {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const analyser = audioContext.createAnalyser();
-                    const microphone = audioContext.createMediaStreamSource(stream);
-                    microphone.connect(analyser);
-                    analyser.fftSize = 2048;
-
-                    const bufferLength = analyser.frequencyBinCount;
-                    const dataArray = new Uint8Array(bufferLength);
-
-                    function draw() {
-                        requestAnimationFrame(draw);
-
-                        analyser.getByteTimeDomainData(dataArray);
-                        canvasContext.fillStyle = 'rgb(256, 256, 256)';
-                        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-                        canvasContext.lineWidth = 2;
-                        canvasContext.strokeStyle = 'rgb(0, 0, 0)';
-                        canvasContext.beginPath();
-                        var sliceWidth = canvas.width * 1.0 / bufferLength;
-                        var x = 0;
-
-                        for(var i = 0; i < bufferLength; i++) {
-                            var v = dataArray[i] / 128.0;
-                            var y = v * canvas.height / 2;
-
-                            if(i === 0) {
-                                canvasContext.moveTo(x, y);
-                            } else {
-                                canvasContext.lineTo(x, y);
-                            }
-
-                            x += sliceWidth;
-                        }
-
-                        canvasContext.lineTo(canvas.width, canvas.height / 2);
-                        canvasContext.stroke();
-                    }
-
-                    draw();
-                })
+            };     
         });
     </script>
  

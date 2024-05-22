@@ -9,12 +9,14 @@ import shutil
 import logging
 logging.basicConfig(level=logging.INFO)
 
+
 # 第三方庫導入
 from flask import Flask, request, render_template, jsonify, redirect
 from werkzeug.utils import secure_filename
 import mysql.connector
 import soundfile as sf
 from pydub import AudioSegment
+
 
 # 應用程式或局部模組導入
 from config import DevelopmentConfig, Config,Database_Config,audio_Config
@@ -31,7 +33,7 @@ from sys_py_FeSiCr.parameter_sug_total import FeSiCr_customize,FeSiCr_max_mu_max
 from sys_py_NiFe.parameter_sug_total import Nife_customize,Nife_max_mu_max_tensile,Nife_max_mu_min_pcv
 
 logging.info("Loading parameter model complete")
-call_motor_AI = True
+call_motor_AI = False
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
@@ -41,6 +43,7 @@ app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
 if call_motor_AI:
     from call_alpaca import call_alpaca
     alpaca_model = call_alpaca()
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
@@ -206,10 +209,13 @@ def search_database():
     return_dict = {
         'news':0,
         'sentence':'none',
+        'two_port_model':'none',
+        'two_port_curve':'none',
     }
    
     data = request.get_json()
     conn = mysql.connector.connect(**Database_Config.db_config)
+    
     cursor = conn.cursor()
 
     query = "SELECT * FROM e_newspaper_name"
@@ -229,17 +235,42 @@ def search_database():
     
     sentence = find_first_motor(data['value'])
     logging.info(f'find setence {sentence}')
-
     return_dict['sentence'] = sentence
 
     if sentence is not None:
-        logging.info('find setence')('sentence =  ' + sentence)
+        logging.info('sentence =  ' + sentence)
         result_df = df[df['e_newspaper_name'].str.contains(sentence, case=False, regex=False)] 
         selected_df = result_df[Database_Config.get_columns]
+        
     if len(selected_df) == 0:
         return jsonify(return_dict)
     
     return_dict['news']= selected_df.to_json(orient='records', force_ascii=False)
+
+    try:
+        two_port ={
+            '永磁直流馬達': ['PMDC_simulink','./static/output_PMDC.png'],
+            '串激直流馬達': ['SeriesExcited_simulink','./static/output_SeriesExcited.png'],
+            '它激直流馬達': ['SeparatelyExcited_simulink','./static/output_SeparatelyExcited.png'],
+            '並激直流馬達': ['ShuntExcited_simulink','./static/output_ShuntExcited.png'],
+        }
+        
+        for key in two_port:
+            if key in data['value']:
+                # import matlab
+                # import matlab.engine
+                # eng = matlab.engine.start_matlab()
+                # eng.cd(r'Simulink_model')
+                # eng.feval(two_port[key][0], nargout=0)
+                # eng.quit()
+                return_dict['two_port_model'] = key
+                return_dict['two_port_curve'] = two_port[key][1]
+                print(key)
+
+
+    except ImportError:
+         logging.info("Matlab module is not available.")
+
     return jsonify(return_dict)
 
 
@@ -263,7 +294,6 @@ def run_simulink():
     try:
         if keyword is not None:
             import matlab
-            import matlab.engine
             logging.info('run Matlab')
             ratio = extract_and_convert_numbers(data['value'])
             excel_path = r'./static/parm_table.xlsx'
@@ -284,7 +314,6 @@ def run_simulink():
                 return_dict['Kt'] = eng.evalin('base', 'Kt', nargout=1)
             else:
                 logging.info("no parm found")
-        # 模塊導入成功，可以使用numpy進行後續操作
     except ImportError:
          logging.info("Matlab module is not available.")
     return jsonify(return_dict)
@@ -300,6 +329,7 @@ def pred_string():
         'workpice': 0,
         'ration': 0,
     }
+
     data = request.get_json()
     input_string = data.get('value', '').lower()
     
@@ -319,7 +349,6 @@ def process_audio():
         # 使用 BytesIO 從記憶體讀取音頻數據
         audio_data = io.BytesIO(audio_file.read())
         # 轉換音頻格式
-        sound = AudioSegment.from_file(audio_data)
         wav_filename = os.path.join(app.config['UPLOAD_FOLDER'], "audio.wav")
 
         try:
@@ -354,20 +383,16 @@ def run_alpaca():
     
     
 def clear_folder(folder_path):
-    # 確認資料夾存在
     if os.path.exists(folder_path):
-        # 刪除資料夾及其所有內容
         shutil.rmtree(folder_path)
-        # 重新建立同名資料夾
         os.mkdir(folder_path)
     else:
         logging.info(f"資料夾 {folder_path} 不存在，無法清空。") 
         
-
+logging.info("=================Web server is running=================")
 if __name__ == '__main__':
     app.secret_key = Config.SECRET_KEY
     # app.debug = False
-    logging.info("Web server is running...")
     app.run('0.0.0.0',port=8152)
 
     clear_folder(app.config['UPLOAD_FOLDER'])

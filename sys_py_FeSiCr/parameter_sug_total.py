@@ -2,7 +2,7 @@ import numpy as np
 import sys
 from sys_py_FeSiCr.model_load import *
 from pymoo.core.problem import ElementwiseProblem
-from pymoo.factory import get_problem, get_sampling, get_crossover, get_mutation
+from pymoo.factory import get_sampling, get_crossover, get_mutation
 
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.factory import get_termination
@@ -24,6 +24,7 @@ class customize(ElementwiseProblem):    # max mu and min Pcv
         self.mu = cus_par[0]
         self.Pcv = cus_par[1]
         self.tensile = cus_par[2]
+
     def _evaluate(self,x, out, *args, **kwargs):
         f1 = np.abs(self.mu-np.float64(self.mode1.predict(np.array(x).reshape(1, -1))))   #mu
         f2 = np.abs(self.Pcv-np.float64(self.mode2.predict(np.array(x).reshape(1, -1))))  #Pcv
@@ -129,35 +130,35 @@ def FeSiCr_customize(input_data):
     if(mode == "0"):
         pred_mu_50 = model_mu_xgb_50.predict(data_for_pred)
         pred_Pcv_50 = model_Pcv_xgb_50.predict(data_for_pred)
-        print('%.3f'%pred_mu_50[0], '%.3f'%pred_Pcv_50[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_50[0], '%.3f'%pred_Pcv_50[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_50[0],pred_Pcv_50[0],pred_tensile[0]]
     if(mode == "1"):
         pred_mu_200 = model_mu_xgb_200.predict(data_for_pred)
         pred_Pcv_200 = model_Pcv_xgb_200.predict(data_for_pred)
-        print('%.3f'%pred_mu_200[0], '%.3f'%pred_Pcv_200[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_200[0], '%.3f'%pred_Pcv_200[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_200[0],pred_Pcv_200[0],pred_tensile[0]]
     if(mode == "2"):
         pred_mu_400 = model_mu_xgb_400.predict(data_for_pred)
         pred_Pcv_400 = model_Pcv_xgb_400.predict(data_for_pred)
-        print('%.3f'%pred_mu_400[0], '%.3f'%pred_Pcv_400[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_400[0], '%.3f'%pred_Pcv_400[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_400[0],pred_Pcv_400[0],pred_tensile[0]]
     if(mode == "3"):
         pred_mu_800 = model_mu_xgb_800.predict(data_for_pred)
         pred_Pcv_800 = model_Pcv_xgb_800.predict(data_for_pred)
-        print('%.3f'%pred_mu_800[0], '%.3f'%pred_Pcv_800[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_800[0], '%.3f'%pred_Pcv_800[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_800[0],pred_Pcv_800[0],pred_tensile[0]]
 
     ########manufacturing parameter suggestion################
-    print(np.int16(X[i][0]),                ## ox            #
-        np.int16(X[i][1]),                ## power         #
-        np.int16(X[i][2]),                ## speed         #
-        X[i][3].round(decimals=2))        ## spacing       #
+    # print(  np.int16(X[i][0]),                ## ox            #
+            # np.int16(X[i][1]),                ## power         #
+            # np.int16(X[i][2]),                ## speed         #
+            # X[i][3].round(decimals=2))        ## spacing       #
     ##########################################################
 
     out_list2 = [np.int16(X[i][0]),np.int16(X[i][1]),np.int16(X[i][2]),X[i][3].round(decimals=2)]
-    print("mode = ", mode)
+    # print("mode = ", mode)
 
-    print("Parameter suggestion finish!!- mmmt")
+    # print("Parameter suggestion finish!!- mmmt")
     return out_list1,out_list2
 
 
@@ -272,34 +273,37 @@ def FeSiCr_max_mu_max_tensile(input_data):
     if(mode == "0"):
         pred_mu_50 = model_mu_xgb_50.predict(data_for_pred)
         pred_Pcv_50 = model_Pcv_xgb_50.predict(data_for_pred)
-        print('%.3f'%pred_mu_50[0], '%.3f'%pred_Pcv_50[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_50[0], '%.3f'%pred_Pcv_50[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_50[0],pred_Pcv_50[0],pred_tensile[0]]
+
     if(mode == "1"):
         pred_mu_200 = model_mu_xgb_200.predict(data_for_pred)
         pred_Pcv_200 = model_Pcv_xgb_200.predict(data_for_pred)
-        print('%.3f'%pred_mu_200[0], '%.3f'%pred_Pcv_200[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_200[0], '%.3f'%pred_Pcv_200[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_200[0],pred_Pcv_200[0],pred_tensile[0]]
+
     if(mode == "2"):
         pred_mu_400 = model_mu_xgb_400.predict(data_for_pred)
         pred_Pcv_400 = model_Pcv_xgb_400.predict(data_for_pred)
-        print('%.3f'%pred_mu_400[0], '%.3f'%pred_Pcv_400[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_400[0], '%.3f'%pred_Pcv_400[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_400[0],pred_Pcv_400[0],pred_tensile[0]]
+
     if(mode == "3"):
         pred_mu_800 = model_mu_xgb_800.predict(data_for_pred)
         pred_Pcv_800 = model_Pcv_xgb_800.predict(data_for_pred)
-        print('%.3f'%pred_mu_800[0], '%.3f'%pred_Pcv_800[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_800[0], '%.3f'%pred_Pcv_800[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_800[0],pred_Pcv_800[0],pred_tensile[0]]
 
     ########manufacturing parameter suggestion################
-    print(np.int16(X[i][0]),              ## ox            #
-        np.int16(X[i][1]),                ## power         #
-        np.int16(X[i][2]),                ## speed         #
-        X[i][3].round(decimals=2))        ## spacing       #
+    # # print(np.int16(X[i][0]),              ## ox            #
+    #     np.int16(X[i][1]),                ## power         #
+    #     np.int16(X[i][2]),                ## speed         #
+    #     X[i][3].round(decimals=2))        ## spacing       #
     ##########################################################
     out_list2 = [np.int16(X[i][0]),np.int16(X[i][1]),np.int16(X[i][2]),X[i][3].round(decimals=2)]
-    print("mode = ", mode)
+    # # print("mode = ", mode)
 
-    print("Parameter suggestion finish!!- mmmt")
+    # # print("Parameter suggestion finish!!- mmmt")
     return out_list1,out_list2
 
 class max_mu_min_pcv(ElementwiseProblem):    # max mu and min Pcv
@@ -392,7 +396,7 @@ def FeSiCr_max_mu_min_pcv(input_data):
     i = decomp.do(nF, 1/weights).argmin()   ## BEST index
 
     ###characteristic prediction from NSGA-II###
-    # print(-F[i][0].round(decimals = 2), F[i][1].round(decimals = 2))    ## characteristic
+    # # print(-F[i][0].round(decimals = 2), F[i][1].round(decimals = 2))    ## characteristic
     ##########################
 
     data_for_pred = [np.int16(X[i][0]),                ## ox
@@ -415,34 +419,34 @@ def FeSiCr_max_mu_min_pcv(input_data):
     if(mode == "0"):
         pred_mu_50 = model_mu_xgb_50.predict(data_for_pred)
         pred_Pcv_50 = model_Pcv_xgb_50.predict(data_for_pred)
-        print('%.3f'%pred_mu_50[0], '%.3f'%pred_Pcv_50[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_50[0], '%.3f'%pred_Pcv_50[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_50[0],pred_Pcv_50[0],pred_tensile[0]]
     if(mode == "1"):
         pred_mu_200 = model_mu_xgb_200.predict(data_for_pred)
         pred_Pcv_200 = model_Pcv_xgb_200.predict(data_for_pred)
-        print('%.3f'%pred_mu_200[0], '%.3f'%pred_Pcv_200[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_200[0], '%.3f'%pred_Pcv_200[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_200[0],pred_Pcv_200[0],pred_tensile[0]]
     if(mode == "2"):
         pred_mu_400 = model_mu_xgb_400.predict(data_for_pred)
         pred_Pcv_400 = model_Pcv_xgb_400.predict(data_for_pred)
-        print('%.3f'%pred_mu_400[0], '%.3f'%pred_Pcv_400[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_400[0], '%.3f'%pred_Pcv_400[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_400[0],pred_Pcv_400[0],pred_tensile[0]]
     if(mode == "3"):
         pred_mu_800 = model_mu_xgb_800.predict(data_for_pred)
         pred_Pcv_800 = model_Pcv_xgb_800.predict(data_for_pred)
-        print('%.3f'%pred_mu_800[0], '%.3f'%pred_Pcv_800[0], '%.3f'%pred_tensile[0])
+        # print('%.3f'%pred_mu_800[0], '%.3f'%pred_Pcv_800[0], '%.3f'%pred_tensile[0])
         out_list1 = [pred_mu_800[0],pred_Pcv_800[0],pred_tensile[0]]
 
 
     
     ########manufacturing parameter suggestion################
-    print(np.int16(X[i][0]),                ## ox            #
-            np.int16(X[i][1]),                ## power         #
-            np.int16(X[i][2]),                ## speed         #
-            X[i][3].round(decimals=2))        ## spacing       #
+    # print(np.int16(X[i][0]),                ## ox            #
+            # np.int16(X[i][1]),                ## power         #
+            # np.int16(X[i][2]),                ## speed         #
+            # X[i][3].round(decimals=2))        ## spacing       #
     ##########################################################
     out_list2 = [np.int16(X[i][0]),np.int16(X[i][1]),np.int16(X[i][2]),X[i][3].round(decimals=2)]
-    print("mode = ", mode)
+    # print("mode = ", mode)
 
-    print("Parameter suggestion finish!!- mmmt")
+    # print("Parameter suggestion finish!!- mmmt")
     return out_list1,out_list2
