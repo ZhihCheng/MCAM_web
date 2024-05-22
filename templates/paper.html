@@ -144,8 +144,8 @@
     }
   
     .top-left {
-        grid-row: 1 / 2; 
-        grid-column: 1 / 2; 
+        /* grid-row: 1 / 2; 
+        grid-column: 1 / 2;  */
         background-color: #CD5C5C;; 
         padding: 20px;
         border-radius: 20px;
@@ -157,27 +157,30 @@
     }
 
     .top-right {
-        grid-row: 1 / 2;
-        grid-column: 2 / 3;
+        /* grid-row: 1 / 2;
+        grid-column: 2 / 3; */
         background-color: #B0C4DE; 
         padding: 20px;
         border-radius: 20px;
+        display: none; 
     }
 
     .bottom-left {
-        grid-row: 2 / 3;
-        grid-column: 1 / 2;
+        /* grid-row: 2 / 3;
+        grid-column: 1 / 2; */
         background-color: #C8A2C8; 
         padding: 20px;
         border-radius: 20px;
+        display: none; 
     }
 
     .bottom-right {
-        grid-row: 2 / 3;
-        grid-column: 2 / 3;
+        /* grid-row: 2 / 3;
+        grid-column: 2 / 3; */
         background-color: #F5F5DC; 
         padding: 20px;
         border-radius: 20px;
+        display: none; 
     }
     /*parm_tabel fone setting*/
     .boldAndLarge {
@@ -353,7 +356,7 @@
         </div>
     </div>
     <div class = "split_form">
-        <div class="top-left grid-item">
+        <div class="top-left grid-item" id='paper'>    
             <div  class="inear-container " id ="search_output">
                 <div class="row row-spacing">
                     <div class="col-md-10">
@@ -375,7 +378,7 @@
                 </label>
             </div>
         </div>
-        <div class="bottom-right grid-item ">
+        <div class="bottom-right grid-item "id='tn_curve'>
             <div  class="inear-container " id ="search_output1">
                 <div class="row row-spacing">
                     <div class="col-md-10">
@@ -392,7 +395,7 @@
                 </div>
             </div>
         </div>
-        <div class="bottom-left grid-item">
+        <div class="bottom-left grid-item" id = 'parameter'>
             <div  class="inear-container " id ="search_output2">
                 <div class="row row-spacing">
                     <div class="col-md-10">
@@ -438,7 +441,7 @@
                 </table>
             </div>
         </div>
-        <div class="top-right grid-item">
+        <div class="top-right grid-item" id="motor_block">
             <div  class="inear-container " id ="search_output3">
                 <div class="row row-spacing">
                     <div class="col-md-10">
@@ -488,6 +491,14 @@
                 <h4 id="SucessText" class="ms-3" style="color: #5a7beb;">Simulink Success</h4>
             `;
         }
+        function toggleDisplay(elementIds, show) {
+            elementIds.forEach(function(id) {
+                var element = document.getElementById(id);
+                if (element) {
+                    element.style.display = show ? 'block' : 'none';
+                }
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             
@@ -505,7 +516,6 @@
                     textElement.innerHTML += char;
 
                     if (index === textArray.length - 1) {
-
                         finalCursor.style.display = 'none';
                         MPRS_Main.style.display = 'block';
                     }
@@ -516,32 +526,16 @@
 
             search_button.addEventListener('click', function() {
                 const searchInput = document.getElementById('searchInput');
-                var Error_content = document.getElementById('Error_content');
-                var search_result = document.getElementById('search_result');
-                var searchResult = document.getElementById('searchResult');
-                var image_show = document.getElementById('image_show')
-                var motor_curve = document.getElementById('motor_curve')
-                var parm_table = document.getElementById('parm_table')
-                var AI_result = document.getElementById('AIout')
-                
-                Error_content.style.display='none';
-                image_show.style.display='none';
-                motor_curve.style.display='none';
-                search_result.style.display='none';
-                parm_table.style.display='none';
-                AI_result.style.display='none';
-
+                toggleDisplay(['search_result','Error_content','image_show','motor_curve','parm_table','AIout','motor_block','tn_curve','parameter'], false);
                 
                 var myModal = new bootstrap.Modal(document.getElementById('loading_modal'));
-
-
 
                 if (searchInput.value !== ""){
                     myModal.show();
                     let showModalForAtLeast = 500; // 毫秒
                     let showStart = new Date().getTime();
                     var textToAnimate1 = "預設";
-                    // AI_result.style.display='block';
+                    
                     var textElement1 = document.getElementById('AIout_animatedText');
                     var finalCursor1 = document.getElementById('AIout_finalCursor');
                     textElement1.innerHTML = '';
@@ -556,22 +550,24 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                    
-
-                        input_search.textContent = " "
-                        textToAnimate1 = data.result;
-                        var textArray1 = textToAnimate1.split('');
-                        finalCursor1.style.display = 'inline-block';
-                        textElement1.innerHTML = '';
-                        
-                        textArray1.forEach(function(char, index) {
-                            setTimeout(function(){
-                                textElement1.innerHTML += char;
-                                if (index === textArray1.length - 1) {
-                                    finalCursor1.style.display = 'none';
-                                }
-                            }, index * 50); 
-                        });
+                        if (data.complet === 0) {
+                            toggleDisplay(['AIout'], true);
+                            input_search.textContent = " "
+                            textToAnimate1 = data.result;
+                            var textArray1 = textToAnimate1.split('');
+                            finalCursor1.style.display = 'inline-block';
+                            textElement1.innerHTML = '';
+                            
+                            textArray1.forEach(function(char, index) {
+                                setTimeout(function(){
+                                    textElement1.innerHTML += char;
+                                    if (index === textArray1.length - 1) {
+                                        finalCursor1.style.display = 'none';
+                                    }
+                                }, index * 50); 
+                            });
+                        }
+      
                     });
 
                     
@@ -594,12 +590,13 @@
                         if (data.two_port_model!='none' && data.two_port_curve!='none'){
                             
                             // play two port model
-                            image_show.style.display='block'
+                            toggleDisplay(['image_show','motor_block'], true);
+                
                             var uploadedImage = document.getElementById('uploadedImage');
                             uploadedImage.src = "./static/" + data.two_port_model + '.jpg';
 
                             // play TN curve
-                            motor_curve.style.display = 'block';
+                            toggleDisplay(['motor_curve','tn_curve'], true);
                             var uploadedImage2 = document.getElementById('uploadedImage2');
                             uploadedImage2.src =  data.two_port_curve;
 
@@ -616,8 +613,7 @@
 
                         updateLoadingToSuccess();   
                         if (jsonData === 0) {
-                            Error_content.style.display = 'block';
-                            
+                            toggleDisplay(['Error_content'], true);
                             var textElement = document.getElementById('animatedText4');
                             var finalCursor = document.getElementById('finalCursor4');
                             
@@ -636,9 +632,8 @@
                             });
                         }else{
                             document.getElementById("newsletterHeading").textContent = "馬達中心電子報推薦   關鍵字 : " + data.sentence;
-                            search_result.style.display = 'block';
                             var split_form = document.getElementById('split_form');
-                            search_output.style.display = 'block';
+                            toggleDisplay(['search_result','search_output'], true);
                             var accordionHtml = "";
 
                             for (var i = 0; i < jsonData.length; i++) {
@@ -692,10 +687,10 @@
                             }, 1500);
                         }
                         if (searchInput.value.includes("最大功率") || searchInput.value.includes("最高轉速")) {
-                            motor_curve.style.display = 'block';
+                            toggleDisplay(['motor_curve'], true);
                             var uploadedImage2 = document.getElementById('uploadedImage2');
                             uploadedImage2.src = "./static/output_figure.png";
-                            parm_table.style.display = 'block';
+                            toggleDisplay([parm_table], true);
                             document.getElementById("textbox1").value = parseFloat(data.L).toFixed(5);
                             document.getElementById("textbox2").value = parseFloat(data.R).toFixed(5);
                             document.getElementById("textbox3").value = parseFloat(data.Ke).toFixed(5);
