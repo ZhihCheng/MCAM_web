@@ -64,6 +64,11 @@ def render_page(template):
 def index():
     pass
 
+@app.route('/motor_coai2', methods=['GET', 'POST'])
+@render_page('motor_coai2.html')
+def motor_coai2():
+    pass
+
 @app.route('/MPRS', methods=['GET', 'POST'])
 @render_page('MPRS.html')
 def mprs():
@@ -89,9 +94,9 @@ def search():
 def motor():
     pass
 
-@app.route('/paper', methods=['GET', 'POST'])
-@render_page('paper.html')
-def paper():
+@app.route('/motor_coai', methods=['GET', 'POST'])
+@render_page('motor_coai.html')
+def motor_coai():
     pass
 
 @app.route('/increment', methods=['POST'])
@@ -241,7 +246,7 @@ def search_database():
         logging.info('sentence =  ' + sentence)
         result_df = df[df['e_newspaper_name'].str.contains(sentence, case=False, regex=False)] 
         selected_df = result_df[Database_Config.get_columns]
-        
+
     if len(selected_df) == 0:
         return jsonify(return_dict)
     

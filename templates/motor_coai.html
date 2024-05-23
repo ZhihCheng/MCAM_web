@@ -24,16 +24,47 @@
     label {
         font-weight: bold;
     }
+    h4 {
+        font-family: Helvetica;
+        /* font-size: 36px; */
+        color: #333; 
+        opacity: 0;
+        animation: .6s title ease-in-out;
+        animation-delay: 0.5s;
+        animation-fill-mode: forwards; 
+    }
     
-    img {
-        max-width: 100%; 
-        max-height: 100%; 
-        width: auto; 
-        height: auto; 
-        position: absolute; 
-        top: 50%;
-        left: 50%; 
-        transform: translate(-50%, -50%); 
+    .success-message {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .success-icon {
+        width: 25px;
+        height: 25px;
+        margin-right: 5px;
+        display: flex;
+        align-items: center; 
+    }
+
+    .loading-icon{
+        width: 25px;     
+        height: 25px;
+        margin-right: 5px;
+        display: flex;
+        align-items: center; 
+    }
+    #loadingText {
+        margin: 0; 
+        color: #5a7beb;
+        line-height: 25px; 
+        align-self: center; 
+    }
+    /* Loading message */
+
+    #SucessText{
+        margin-top: 5px;
     }
     .label-font {
         font-size: 24px;    
@@ -43,9 +74,41 @@
         font-size: 20px;    
     }
     
+    #Emtrc_log{
+        max-width: 100px; 
+        max-height: 100px; 
+        width:50px; 
+        height: 50px; 
+        position: absolute; 
+        top: 50%;
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+    }
+
+    #uploadedImage2,#uploadedImage {
+        max-width: 100%; 
+        max-height: 100%; 
+        width: auto; 
+        height: auto; 
+        position: absolute; 
+        top: 50%;
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+    }
+
     .container {
         max-width: 78%;
-        margin: 50px auto;
+        margin: 25px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .AI-container{
+        display: none;
+        max-width: 78%;
+        margin: 2px auto;
         padding: 20px;
         background-color: #fff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -86,8 +149,6 @@
         background-color: #CD5C5C;; 
         padding: 20px;
         border-radius: 20px;
-        
-
         display: flex;
         flex-direction: column;
         height: 50vh;
@@ -120,8 +181,8 @@
     }
     /*parm_tabel fone setting*/
     .boldAndLarge {
-        font-weight: bold; /* 使文字粗體 */
-        font-size: 20px; /* 文字大小設為16像素 */
+        font-weight: bold; 
+        font-size: 20px; 
     }
 
     #imageContainer{
@@ -131,6 +192,12 @@
         position: relative; 
         overflow: hidden; 
     }
+    #logoContainer{
+        width: 100px auto; 
+        height: 100%;
+        border: 2px solid rgb(175, 170, 170)0d0; 
+        position: relative; 
+    }
 
     #searchResults {
         margin-top: 20px;
@@ -139,6 +206,7 @@
     #Error_content,#search_result,#image_show,#motor_curve,#parm_table {
         display: none;
     }
+
     .accordion-button {
         font-size: 18px; 
     }
@@ -172,42 +240,6 @@
         right: 10px; 
     }
 
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 90;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
-    }
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 50%;
-    }
-    .loading-form {
-        display: none;
-        position: fixed;
-        z-index: 90;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
-    }
-    .loading-form-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 25%;
-    }
 
     @keyframes typing {
       from { width: 0; }
@@ -225,6 +257,57 @@
         border: 2px solid #726f6f; 
     }
 
+    /* success message */
+    .circle {
+        stroke-dasharray: 1194;
+        stroke-dashoffset: 1194;
+        }
+
+        
+    svg .circle {
+    animation: circle 1s ease-in-out;
+    animation-fill-mode: forwards;
+    }
+    
+    svg .tick {
+    animation: tick .8s ease-out;
+    animation-fill-mode: forwards;
+    animation-delay: .95s;
+    }
+
+    .tick {
+    stroke-dasharray: 350;
+    stroke-dashoffset: 350;
+    }
+    
+    
+    @keyframes circle {
+    from {
+        stroke-dashoffset: 1194;
+    }
+    to {
+        stroke-dashoffset: 2388;
+    }
+    }
+
+    
+    @keyframes tick {
+    from {
+        stroke-dashoffset: 350;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+    }
+    
+    @keyframes title {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+    }
 </style>
 
 <body>
@@ -233,7 +316,6 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <h1><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor Tech</span><span style="color: black;"> Co-AI</span></h1>
             </div>
-            
         </div>
     </nav>
     <div class="container" >
@@ -253,6 +335,22 @@
             </div>
         </div>
         <div id="searchResults"><label  id="input_search" class="label-font"></div>
+    </div>
+    <!-- output -->
+    <div class="AI-container" id="AIout" >
+        <div class="row row-spacing">
+            <div class="col-md-1">
+                <div id="logoContainer" >
+                    <img src="./static/EMTRC_Logo.png" alt="image-placeholder" class="img-thumbnail" id="Emtrc_log">
+                </div>
+            </div>
+            <div class="col-md-11">
+                <label class="label-font ">
+                    <span id="AIout_animatedText" class="typing"></span>
+                    <span id="AIout_finalCursor"  class="typing-cursor" ></span>
+                </label>
+            </div>
+        </div>
     </div>
     <div class = "split_form">
         <div class="top-left grid-item">
@@ -277,7 +375,7 @@
                 </label>
             </div>
         </div>
-        <div class="top-right grid-item ">
+        <div class="bottom-right grid-item ">
             <div  class="inear-container " id ="search_output1">
                 <div class="row row-spacing">
                     <div class="col-md-10">
@@ -340,7 +438,7 @@
                 </table>
             </div>
         </div>
-        <div class="bottom-right grid-item">
+        <div class="top-right grid-item">
             <div  class="inear-container " id ="search_output3">
                 <div class="row row-spacing">
                     <div class="col-md-10">
@@ -364,17 +462,39 @@
             let gridItem = button.closest('.grid-item');
             if(gridItem.classList.contains('zoomed')) {
                 gridItem.classList.remove('zoomed');
+                button.textContent = '展開'; 
             } else {
                 gridItem.classList.add('zoomed');
                 button.textContent = '還原'; 
             }
         }
+        function updateLoadingToSuccess() {
+            var loadingDiv = document.getElementById('loading_div');
+            loadingDiv.innerHTML = `
+                <svg class="success-icon" viewBox="0 0 400 400">
+                    <circle fill="none" stroke="#68E534" stroke-width="20" cx="200" cy="200" r="190" stroke-linecap="round" transform="rotate(-90 200 200)" class="circle"/>
+                    <polyline fill="none" stroke="#68E534" stroke-width="24" points="88,214 173,284 304,138" stroke-linecap="round" stroke-linejoin="round" class="tick" />
+                </svg>
+                <h4 id="SucessText" class="ms-3" style="color: #5a7beb;">Search Newsletter Success</h4>
+            `;
+        }
+        function updateSimulinkToSuccess() {
+            var simulinkdiv = document.getElementById('simulink_div');
+            simulinkdiv.innerHTML = `
+                <svg class="success-icon" viewBox="0 0 400 400">
+                    <circle fill="none" stroke="#68E534" stroke-width="20" cx="200" cy="200" r="190" stroke-linecap="round" transform="rotate(-90 200 200)" class="circle"/>
+                    <polyline fill="none" stroke="#68E534" stroke-width="24" points="88,214 173,284 304,138" stroke-linecap="round" stroke-linejoin="round" class="tick" />
+                </svg>
+                <h4 id="SucessText" class="ms-3" style="color: #5a7beb;">Simulink Success</h4>
+            `;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             
             var search_output = document.getElementById('search_output');
             var textElement = document.getElementById('first_animatedText');
             var finalCursor = document.getElementById('first_finalCursor');
-            var textToAnimate = "您可以在下方搜尋輸入:";
+            var textToAnimate = "您好，這裡是馬達AI小助手，很高興為您服務:";
             var textArray = textToAnimate.split('');
             
             finalCursor.style.display = 'inline-block';
@@ -402,19 +522,60 @@
                 var image_show = document.getElementById('image_show')
                 var motor_curve = document.getElementById('motor_curve')
                 var parm_table = document.getElementById('parm_table')
-
-                
+                var AI_result = document.getElementById('AIout')
                 
                 Error_content.style.display='none';
                 image_show.style.display='none';
                 motor_curve.style.display='none';
                 search_result.style.display='none';
                 parm_table.style.display='none';
-                let loading_form = document.getElementById("loading_form");
-                if (searchInput.value !== ""){
+                AI_result.style.display='none';
 
-                    input_search.textContent = searchInput.value;
-                    loading_form.style.display = 'block';
+                
+                var myModal = new bootstrap.Modal(document.getElementById('loading_modal'));
+
+
+
+                if (searchInput.value !== ""){
+                    myModal.show();
+                    let showModalForAtLeast = 500; // 毫秒
+                    let showStart = new Date().getTime();
+                    var textToAnimate1 = "預設";
+                    AI_result.style.display='block';
+                    var textElement1 = document.getElementById('AIout_animatedText');
+                    var finalCursor1 = document.getElementById('AIout_finalCursor');
+                    textElement1.innerHTML = '';
+                    fetch('/run_alpaca', {
+                        method: 'POST',
+                        body: JSON.stringify({  
+                                                value : searchInput.value,
+                                            }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                    
+
+                        input_search.textContent = " "
+                        textToAnimate1 = data.result;
+                        var textArray1 = textToAnimate1.split('');
+                        finalCursor1.style.display = 'inline-block';
+                        textElement1.innerHTML = '';
+                        
+                        textArray1.forEach(function(char, index) {
+                            setTimeout(function(){
+                                textElement1.innerHTML += char;
+                                if (index === textArray1.length - 1) {
+                                    finalCursor1.style.display = 'none';
+                                }
+                            }, index * 50); 
+                        });
+                    });
+
+                    
+                    // 資料庫搜尋
                     fetch('/search_database', {
                         method: 'POST',
                         body: JSON.stringify({  
@@ -426,26 +587,14 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        loading_form.style.display='none';
+                        updateLoadingToSuccess();
                         var jsonData = JSON.parse(data.news);
-                        var accordionHtml = "";
+                        document.getElementById("newsletterHeading").textContent = "馬達中心電子報推薦";
                         if (data.sentence === "無刷直流馬達" || data.sentence === "永磁同步馬達" || data.sentence === "永磁直流馬達") {
-                            image_show.style.display = 'block';
+                            image_show.style.display='block'
                             var uploadedImage = document.getElementById('uploadedImage');
                             uploadedImage.src = "./static/" + data.sentence + '.jpg';
-                        }
-                        if (searchInput.value.includes("最大功率") || searchInput.value.includes("最高轉速")) {
-                            motor_curve.style.display = 'block';
-                            var uploadedImage2 = document.getElementById('uploadedImage2');
-                            uploadedImage2.src = "./static/output_figure.png";
-                            parm_table.style.display = 'block';
-                            document.getElementById("textbox1").value = parseFloat(data.L).toFixed(5);
-                            document.getElementById("textbox2").value = parseFloat(data.R).toFixed(5);
-                            document.getElementById("textbox3").value = parseFloat(data.Ke).toFixed(5);
-                            document.getElementById("textbox4").value = parseFloat(data.Kt).toFixed(5);
-                            document.getElementById("textbox5").value = parseFloat(data.J).toFixed(5);
-                            document.getElementById("textbox6").value = parseFloat(data.B).toFixed(5);     
-                        }
+                        }   
                         if (jsonData === 0) {
                             Error_content.style.display = 'block';
                             
@@ -465,16 +614,16 @@
                                     }
                                 }, index * 50); 
                             });
-                            loading_form.style.display = 'none';
                         }else{
                             document.getElementById("newsletterHeading").textContent = "馬達中心電子報推薦   關鍵字 : " + data.sentence;
                             search_result.style.display = 'block';
                             var split_form = document.getElementById('split_form');
                             search_output.style.display = 'block';
-                            
+                            var accordionHtml = "";
 
                             for (var i = 0; i < jsonData.length; i++) {
                                 var item = jsonData[i];
+                                
                                 accordionHtml += '  <div class="accordion-item">';
                                 accordionHtml += '    <h2 class="accordion-header" id="flush-heading' + i + '">';
                                 accordionHtml += '            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse' + i + '" aria-expanded="false" aria-controls="flush-collapse' + i + '">';
@@ -492,17 +641,50 @@
                                 accordionHtml += '    </div>';
                                 accordionHtml += '  </div>';
                             }
-
-                            // 插入手風琴到 HTML 中
                             document.getElementById("searchResult").innerHTML = accordionHtml;
                             split_form.scrollIntoView({ behavior: 'smooth' });
                             
-                        }                   
+                        }               
                     });
-
+                    fetch('/run_simulink', {
+                        method: 'POST',
+                        body: JSON.stringify({  
+                                                value : searchInput.value,
+                                            }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        updateSimulinkToSuccess();
+                        let timePassed = new Date().getTime() - showStart;
+                        if (timePassed < showModalForAtLeast) {
+                            setTimeout(() => {
+                                setTimeout(() => {
+                                    myModal.hide();
+                                }, 1500);
+                            }, showModalForAtLeast - timePassed);
+                        } else {
+                            setTimeout(() => {
+                                myModal.hide();
+                            }, 1500);
+                        }
+                        if (searchInput.value.includes("最大功率") || searchInput.value.includes("最高轉速")) {
+                            motor_curve.style.display = 'block';
+                            var uploadedImage2 = document.getElementById('uploadedImage2');
+                            uploadedImage2.src = "./static/output_figure.png";
+                            parm_table.style.display = 'block';
+                            document.getElementById("textbox1").value = parseFloat(data.L).toFixed(5);
+                            document.getElementById("textbox2").value = parseFloat(data.R).toFixed(5);
+                            document.getElementById("textbox3").value = parseFloat(data.Ke).toFixed(5);
+                            document.getElementById("textbox4").value = parseFloat(data.Kt).toFixed(5);
+                            document.getElementById("textbox5").value = parseFloat(data.J).toFixed(5);
+                            document.getElementById("textbox6").value = parseFloat(data.B).toFixed(5);     
+                        }
+                    });
                 }
-                
-                
+              
             });
 
             // 錄音按鈕功能新增
@@ -511,7 +693,57 @@
             let isRecording = false;
 
             document.getElementById("recordButton").onclick = function() {
-                let modal = document.getElementById("modal");
+                var audio_modal = new bootstrap.Modal(document.getElementById('audio_modal'), {
+                    keyboard: false // 選項設置，這裡表示按下鍵盤上的esc鍵不會關閉Modal
+                });
+
+                const canvas = document.getElementById('audioCanvas');
+                const canvasContext = canvas.getContext('2d');
+
+                navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                    .then(stream => {
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const analyser = audioContext.createAnalyser();
+                        const microphone = audioContext.createMediaStreamSource(stream);
+                        microphone.connect(analyser);
+                        analyser.fftSize = 2048;
+
+                        const bufferLength = analyser.frequencyBinCount;
+                        const dataArray = new Uint8Array(bufferLength);
+
+                        function draw() {
+                            requestAnimationFrame(draw);
+
+                            analyser.getByteTimeDomainData(dataArray);
+                            canvasContext.fillStyle = 'rgb(256, 256, 256)';
+                            canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+                            canvasContext.lineWidth = 2;
+                            canvasContext.strokeStyle = 'rgb(0, 0, 0)';
+                            canvasContext.beginPath();
+                            var sliceWidth = canvas.width * 1.0 / bufferLength;
+                            var x = 0;
+
+                            for(var i = 0; i < bufferLength; i++) {
+                                var v = dataArray[i] / 128.0;
+                                var y = v * canvas.height / 2;
+
+                                if(i === 0) {
+                                    canvasContext.moveTo(x, y);
+                                } else {
+                                    canvasContext.lineTo(x, y);
+                                }
+
+                                x += sliceWidth;
+                            }
+
+                            canvasContext.lineTo(canvas.width, canvas.height / 2);
+                            canvasContext.stroke();
+                        }
+
+                        draw();
+                    })
+
+
                 var input_search = document.getElementById('input_search');
                 input_search.textContent = '錄音中...'
                 if (!isRecording) {
@@ -522,11 +754,22 @@
                                 audioChunks.push(event.data);
                             };
                             mediaRecorder.start();
-                            modal.style.display = "block"; // 顯示模態彈窗
-                            
+                            audio_modal.show();             
                             isRecording = true;
                         });
                 }
+            };
+
+            document.getElementById("cancelButton").onclick = function() {
+                if (isRecording && mediaRecorder) {
+                    mediaRecorder.stop();
+                    mediaRecorder.stream.getTracks().forEach(track => track.stop());  // 停止所有軌道，確保完全釋放資源
+                    mediaRecorder = null;  // 清除mediaRecorder實例
+                }
+                var input_search = document.getElementById('input_search');
+                input_search.textContent = '';  // 清除錄音中狀態的文字
+                audioChunks = [];  // 清空錄音資料
+                isRecording = false;  // 設定錄音狀態為不在錄音
             };
 
             document.getElementById("stopButton").onclick = function() {
@@ -558,104 +801,57 @@
                                 inputlabel.innerText  = data.result;
                             }
                         });
-                        document.getElementById("recordButton").textContent = "語音識別";
                         audioChunks = [];
                         isRecording = false;
                     };
-                    modal.style.display = "none"; // 隱藏模態彈窗
                 }
-            };
-
-            // 當用戶點擊彈窗之外的區域，關閉彈窗
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    if (isRecording) {
-                        mediaRecorder.stop();
-                        audioChunks = [];
-                        isRecording = false;
-                    }
-                    var input_search = document.getElementById('input_search');
-                    input_search.textContent = ' '
-                    modal.style.display = "none";
-                    
-                }
-            };
-
-            let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            let analyser = audioContext.createAnalyser();
-            let dataArray, bufferLength;
-
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                let source = audioContext.createMediaStreamSource(stream);
-                source.connect(analyser);
-                analyser.fftSize = 4096; // 增加FFT Size
-                analyser.smoothingTimeConstant = 0.2; // 減小平滑時間常數
-                analyser.minDecibels = -90; // 調整最小分貝
-                analyser.maxDecibels = -10; // 調整最大分貝
-                bufferLength = analyser.frequencyBinCount;
-                dataArray = new Uint8Array(bufferLength);
-                draw();
-            });
-
-            function draw() {
-                requestAnimationFrame(draw);
-                analyser.getByteTimeDomainData(dataArray);
-
-                let canvas = document.getElementById("visualizer");
-                let ctx = canvas.getContext("2d");
-                let width = canvas.width;
-                let height = canvas.height;
-
-                ctx.fillStyle = "white";
-                ctx.fillRect(0, 0, width, height);
-
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = "black";
-
-                ctx.beginPath();
-
-                let sliceWidth = width * 1.0 / bufferLength;
-                let x = 0;
-
-                for(let i = 0; i < bufferLength; i++) {
-                    let v = dataArray[i] / 128.0;
-                    let y = v * height / 2;
-
-                    if(i === 0) {
-                        ctx.moveTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
-                    }
-
-                    x += sliceWidth;
-                }
-
-                ctx.lineTo(canvas.width, canvas.height / 2);
-                ctx.stroke();
-            }
-            
-
-
+            };     
         });
     </script>
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button"> × </span>
-            <p>正在錄音中...</p>
-            <canvas id="visualizer" width="640" height="100"></canvas>
-            <button id="stopButton">停止錄音</button>
-        </div>
-    </div>
-
-    <div id="loading_form" class="loading-form">
-        <div class="loading-form-content">
-            <span class="close-button"> × </span>
-            <p>正在錄音中...</p>
-
-        </div>
-    </div>
  
-    
+    <!--Audio Modal -->
+    <div class="modal fade" id="audio_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">音訊錄製</h5>
+            </div>
+            <div class="modal-body">
+                音訊錄製中...
+                <canvas id="audioCanvas"></canvas>
+            </div>
+            <div class="modal-footer">
+            <button id="stopButton" type="button" class="btn btn-primary" data-bs-dismiss="modal">結束錄製</button>
+            <button id="cancelButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loading_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">執行中</h5>
+            </div>
+            <div class="modal-body">
+                <div class="success-message" id="loading_div">
+                    <div class="spinner-border text-primary loading-icon" role="status" >
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h4 id="loadingText" class="ms-3" style="color: #5a7beb;">Search Database</h4>
+                </div>
+                <div class="success-message" id="simulink_div">
+                    <div class="spinner-border text-primary loading-icon" role="status" >
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h4 id="loadingText" class="ms-3" style="color: #5a7beb;">Simulink</h4>
+                </div>
+                
+            </div>
+          </div>
+        </div>
+      </div>
    
 </body>
 </html>
