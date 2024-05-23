@@ -15,6 +15,10 @@
 /static/parm_table.xlsx
 /static/3D_image
 /static/gray_img
+/static/plugins
+/static/js
+/static/icons
+/static/css
 
 #weight
 /Img_Predict/result
