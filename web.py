@@ -373,6 +373,39 @@ def process_audio():
         text_line['result'] = '沒有找到音頻檔案'
         return jsonify(text_line)
     
+@app.route('/update_chart', methods=['POST'])
+def update_chart():
+    # 從CSV文件讀取資料
+    data = pd.read_csv('d:\\work_for_vscode\\MCAM_web\\static\\output_data.csv')
+    data = data[data['efficiency'] > 0]
+    # 設定 x 軸資料 (Speed)
+    x = data['speed'].tolist()
+
+    # 構建資料字典
+    data_dict = {
+        "Torque": list(zip(x, data['torque'].tolist())),
+        "Efficiency": list(zip(x, data['efficiency'].tolist())),
+        "Powerin": list(zip(x, data['powerin'].tolist())),
+        "Voltage": list(zip(x, data['voltage'].tolist())),
+        "Current": list(zip(x, data['current'].tolist())),
+    }
+
+    selected_data = request.json.get('selectedData', [])
+    datasets = []
+
+    for data_key in selected_data:
+        datasets.append({
+            'label': data_key,
+            'data': [{'x': x, 'y': y} for x, y in data_dict.get(data_key, [])],
+            'borderColor': '',
+            'backgroundColor': '',
+            'fill': False,
+            'showLine': True,
+            'yAxisID': ''  # 初始值，前端會動態分配
+        })
+    
+    return jsonify({'datasets': datasets})
+    
 @app.route('/run_alpaca', methods=['POST'])
 def run_alpaca():
     text_line = {'complet': 0, 'result': ""}
