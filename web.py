@@ -39,6 +39,9 @@ app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
 
+# import matlab
+import matlab.engine
+
 
 if call_motor_AI:
     from call_alpaca import call_alpaca
@@ -215,7 +218,6 @@ def search_database():
         'news':0,
         'sentence':'none',
         'two_port_model':'none',
-        'two_port_curve':'none',
     }
    
     data = request.get_json()
@@ -254,29 +256,56 @@ def search_database():
 
     try:
         two_port ={
-            '永磁直流馬達': ['PMDC_simulink','./static/output_PMDC.png'],
-            '串激直流馬達': ['SeriesExcited_simulink','./static/output_SeriesExcited.png'],
-            '它激直流馬達': ['SeparatelyExcited_simulink','./static/output_SeparatelyExcited.png'],
-            '並激直流馬達': ['ShuntExcited_simulink','./static/output_ShuntExcited.png'],
+            '永磁直流馬達': 'PMDC_simulink',
+            '串激直流馬達': 'SeriesExcited_simulink',
+            '它激直流馬達': 'SeparatelyExcited_simulink',
+            '並激直流馬達': 'ShuntExcited_simulink',
         }
         
         for key in two_port:
             if key in data['value']:
-                # import matlab
-                # import matlab.engine
-                # eng = matlab.engine.start_matlab()
-                # eng.cd(r'Simulink_model')
-                # eng.feval(two_port[key][0], nargout=0)
-                # eng.quit()
                 return_dict['two_port_model'] = key
-                return_dict['two_port_curve'] = two_port[key][1]
                 print(key)
 
-
+        
     except ImportError:
          logging.info("Matlab module is not available.")
 
     return jsonify(return_dict)
+
+@app.route('/update_chart', methods=['POST'])
+def update_chart():
+    # 從CSV文件讀取資料
+    two_port_model = request.json.get('two_port_model')
+    data = pd.read_csv(f'./static/{two_port_model}_output_data.csv')
+    data = data[data['efficiency'] > 0]
+    # 設定 x 軸資料 (Speed)
+    x = data['speed'].tolist()
+
+    # 構建資料字典
+    data_dict = {
+        "Torque": list(zip(x, data['torque'].tolist())),
+        "Efficiency": list(zip(x, data['efficiency'].tolist())),
+        "Powerin": list(zip(x, data['powerin'].tolist())),
+        "Voltage": list(zip(x, data['voltage'].tolist())),
+        "Current": list(zip(x, data['current'].tolist())),
+    }
+
+    selected_data = request.json.get('selectedData', [])
+    datasets = []
+
+    for data_key in selected_data:
+        datasets.append({
+            'label': data_key,
+            'data': [{'x': x, 'y': y} for x, y in data_dict.get(data_key, [])],
+            'borderColor': '',
+            'backgroundColor': '',
+            'fill': False,
+            'showLine': True,
+            'yAxisID': ''  # 初始值，前端會動態分配
+        })
+    
+    return jsonify({'datasets': datasets})
 
 
 @app.route('/run_simulink', methods=['POST'])
@@ -373,38 +402,7 @@ def process_audio():
         text_line['result'] = '沒有找到音頻檔案'
         return jsonify(text_line)
     
-@app.route('/update_chart', methods=['POST'])
-def update_chart():
-    # 從CSV文件讀取資料
-    data = pd.read_csv('d:\\work_for_vscode\\MCAM_web\\static\\output_data.csv')
-    data = data[data['efficiency'] > 0]
-    # 設定 x 軸資料 (Speed)
-    x = data['speed'].tolist()
 
-    # 構建資料字典
-    data_dict = {
-        "Torque": list(zip(x, data['torque'].tolist())),
-        "Efficiency": list(zip(x, data['efficiency'].tolist())),
-        "Powerin": list(zip(x, data['powerin'].tolist())),
-        "Voltage": list(zip(x, data['voltage'].tolist())),
-        "Current": list(zip(x, data['current'].tolist())),
-    }
-
-    selected_data = request.json.get('selectedData', [])
-    datasets = []
-
-    for data_key in selected_data:
-        datasets.append({
-            'label': data_key,
-            'data': [{'x': x, 'y': y} for x, y in data_dict.get(data_key, [])],
-            'borderColor': '',
-            'backgroundColor': '',
-            'fill': False,
-            'showLine': True,
-            'yAxisID': ''  # 初始值，前端會動態分配
-        })
-    
-    return jsonify({'datasets': datasets})
     
 @app.route('/run_alpaca', methods=['POST'])
 def run_alpaca():

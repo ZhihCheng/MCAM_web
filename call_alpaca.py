@@ -73,9 +73,6 @@ class call_alpaca():
             max_new_tokens=400
         )
 
-
-
-
         quantization_config = BitsAndBytesConfig(
             load_in_4bit=load_in_4bit,
             load_in_8bit=load_in_8bit,
@@ -92,7 +89,6 @@ class call_alpaca():
             quantization_config=quantization_config if (load_in_4bit or load_in_8bit) else None,
             trust_remote_code=True
         )
-
 
         model_vocab_size = base_model.get_input_embeddings().weight.size(0)
         tokenizer_vocab_size = len(self.tokenizer)
@@ -135,9 +131,6 @@ class call_alpaca():
         s = generation_output[0]
         output = self.tokenizer.decode(s,skip_special_tokens=True)
         response = output.split("[/INST]")[-1].strip()
-        #real output
-        # print("Response:",cc.convert(response))
-        # print("\n")
         return cc.convert(response)
 
     

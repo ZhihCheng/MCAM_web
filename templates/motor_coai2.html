@@ -153,13 +153,12 @@
         /* grid-row: 1 / 2; 
         grid-column: 1 / 2;  */
         background-color: #ecb4b4;
-        /* padding: 20px; */
         border-radius: 20px;
         display: none;
         flex-direction: column;
         overflow: hidden;
         height: 50vh;
-        width: calc(100% - 20px); /* 寬度減去左右 margin */
+        width: calc(100% - 20px);
     }
 
 
@@ -170,7 +169,7 @@
         border-radius: 20px;
         display: none; 
         height: 50vh;
-        width: calc(100% - 20px); /* 寬度減去左右 margin */
+        width: calc(100% - 20px); 
     }
 
     .bottom-left {
@@ -180,7 +179,7 @@
         border-radius: 20px;
         display: none; 
         height: 50vh;
-        width: calc(100% - 20px); /* 寬度減去左右 margin */
+        width: calc(100% - 20px); 
     }
 
     .bottom-right {
@@ -190,7 +189,7 @@
         border-radius: 20px;
         display: none; 
         height: 50vh;
-        width: calc(100% - 20px); /* 寬度減去左右 margin */
+        width: calc(100% - 20px);
     }
     /*parm_tabel fone setting*/
     .boldAndLarge {
@@ -610,7 +609,7 @@
             }
         }
         function updateLoadingToSuccess() {
-            var loadingDiv = document.getElementById('loading_div');
+            var loadingDiv = document.getElementById('search_db');
             loadingDiv.innerHTML = `
                 <svg class="success-icon" viewBox="0 0 400 400">
                     <circle fill="none" stroke="#68E534" stroke-width="20" cx="200" cy="200" r="190" stroke-linecap="round" transform="rotate(-90 200 200)" class="circle"/>
@@ -651,7 +650,7 @@
                         position: 'bottom',
                         title: {
                             display: true,
-                            text: 'Speed'
+                            text: 'Speed(RPM)'
                         }
                     }
                 }
@@ -665,7 +664,7 @@
             Voltage: 'rgb(75, 192, 192)',   // Green
             Current: 'rgb(153, 102, 255)'   // Purple
         };
-
+        var two_port_model = " "
         function updateChart() {
             const formData = new FormData(document.getElementById('data-form'));
             const selectedData = Array.from(formData.getAll('data'));
@@ -678,7 +677,7 @@
                         position: 'bottom',
                         title: {
                             display: true,
-                            text: 'Speed'
+                            text: 'Speed(RPM)'
                         }
                     }
                 };
@@ -689,7 +688,10 @@
             fetch('/update_chart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ selectedData: selectedData })
+                body: JSON.stringify({ 
+                    selectedData: selectedData,
+                    two_port_model: two_port_model
+                })
             })
             .then(response => response.json())
             .then(data => {
@@ -757,9 +759,13 @@
             search_button.addEventListener('click', function() {
                 const searchInput = document.getElementById('searchInput');
                 toggleDisplay(['search_result','Error_content','image_show','motor_curve','paper','parm_table','AIout','motor_block','tn_curve','parameter'], false);
-                
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                updateChart()
                 var myModal = new bootstrap.Modal(document.getElementById('loading_modal'));
-
+                
                 if (searchInput.value !== ""){
                     myModal.show();
                     let showModalForAtLeast = 500; // 毫秒
@@ -824,7 +830,8 @@
                             toggleDisplay(['image_show','motor_block'], true);
                 
                             var uploadedImage = document.getElementById('uploadedImage');
-                            uploadedImage.src = "./static/" + data.two_port_model + '.jpg';
+                            two_port_model = data.two_port_model
+                            uploadedImage.src = "./static/" + two_port_model + '.jpg';
 
                             // play TN curve
                             toggleDisplay(['motor_curve','tn_curve'], true);
@@ -1068,7 +1075,7 @@
               <h5 class="modal-title" id="staticBackdropLabel">執行中</h5>
             </div>
             <div class="modal-body">
-                <div class="success-message" id="loading_div">
+                <div class="success-message" id="search_db">
                     <div class="spinner-border text-primary loading-icon" role="status" >
                         <span class="visually-hidden">Loading...</span>
                     </div>

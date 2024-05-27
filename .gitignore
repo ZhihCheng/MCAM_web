@@ -2,16 +2,7 @@
 /static/circle(340x344)
 /static/sectionview
 /static/slice
-/static/output_figure.png
-/static/voice_我需要最大功率為21000瓦的直流馬達.wav
-/static/output_PMDC.png 
-/static/output_SeparatelyExcited.png 
-/static/output_SeriesExcited.png 
-/static/output_ShuntExcited.png
-/static/並激直流馬達.jpg 
-/static/它激直流馬達.jpg 
-/static/永磁直流馬達.jpg 
-/static/串激直流馬達.jpg
+
 /static/parm_table.xlsx
 /static/3D_image
 /static/gray_img
@@ -20,6 +11,7 @@
 /static/icons
 /static/css
 /static/images
+
 
 #weight
 /Img_Predict/result
@@ -35,7 +27,20 @@ audio.wav
 temp_audio.webm
 /slprj
 case2.ps
-
+/static/並激直流馬達.jpg 
+/static/它激直流馬達.jpg 
+/static/永磁直流馬達.jpg 
+/static/串激直流馬達.jpg
+/static/output_figure.png
+/static/voice_我需要最大功率為21000瓦的直流馬達.wav
+/static/output_PMDC.png 
+/static/output_SeparatelyExcited.png 
+/static/output_SeriesExcited.png 
+/static/output_ShuntExcited.png
+static/它激直流馬達_output_data.csv
+static/永磁直流馬達_output_data.csv
+static/串激直流馬達_output_data.csv
+static/並激直流馬達_output_data.csv
 
 #scirpt
 server.crt
