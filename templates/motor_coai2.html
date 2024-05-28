@@ -10,9 +10,11 @@
     <!-- 引入 Bootstrap 5 Bundle JS (包含 Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Favicon icon -->
     <link rel="icon" type="static/image/png" sizes="16x16" href="static/images/favicon.png">
     <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="static/css/style.css" rel="stylesheet">
     <script>
         (function() {
@@ -28,6 +30,52 @@
 
 </head>
 <style>
+    /*switch checkbox*/
+    .custom-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    
+    .custom-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #007bff;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    /*switch checkbox*/
     label {
         font-weight: bold;
     }
@@ -422,12 +470,16 @@
         <div class="content-body">
             <!-- row -->
             <div class="container" >
-                <label class="label-font ">
-                    <span id="first_animatedText" class="typing"></span>
-                    <span id="first_finalCursor"  class="typing-cursor" ></span>
-                </label>
                 <div class="row row-spacing">
-                    <div class="col-md-9">
+                    <div class="col-md-10">
+                        <label class="label-font ">
+                            <span id="first_animatedText" class="typing"></span>
+                            <span id="first_finalCursor"  class="typing-cursor" ></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row row-spacing">
+                    <div class="col-md-8">
                         <input type="text" id="searchInput" class="form-control object_font" placeholder="輸入關鍵字" aria-label="輸入關鍵字" aria-describedby="basic-addon2">
                     </div>
                     <div class="col-md-3">
@@ -435,6 +487,12 @@
                             <button id="search_button" class="btn mb-1 btn-primary btn-lg">搜尋</button>
                             <button id="recordButton" class="btn mb-1 btn-secondary btn-lg">語音識別</button>
                         </div>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="custom-switch">
+                            <input type="checkbox" id="toggleSwitch" class="no-reset">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
                 <div id="searchResults"><label  id="input_search" class="label-font"></div>
@@ -598,6 +656,7 @@
     <script src="static/js/gleek.js"></script>
     <script src="static/js/styleSwitcher.js"></script>
     <script>
+        
         function zoomIn(button) {
             let gridItem = button.closest('.grid-item');
             if(gridItem.classList.contains('zoomed')) {
@@ -731,7 +790,47 @@
                 chart.update();
             });
         }
-
+        function checkSwitch() {
+            var switchElement = document.getElementById('toggleSwitch');
+            if (switchElement.checked) {
+                // 執行方案1
+                toggleDisplay(['AIout'], true);
+                var textToAnimate1 = "預設";
+                var textElement1 = document.getElementById('AIout_animatedText');
+                var finalCursor1 = document.getElementById('AIout_finalCursor');
+                textElement1.innerHTML = '';
+                fetch('/run_alpaca', {
+                    method: 'POST',
+                    body: JSON.stringify({  
+                                            value : searchInput.value,
+                                        }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.complet === 0) {
+                        
+                        input_search.textContent = " "
+                        textToAnimate1 = data.result;
+                        var textArray1 = textToAnimate1.split('');
+                        finalCursor1.style.display = 'inline-block';
+                        textElement1.innerHTML = '';
+                        
+                        textArray1.forEach(function(char, index) {
+                            setTimeout(function(){
+                                textElement1.innerHTML += char;
+                                if (index === textArray1.length - 1) {
+                                    finalCursor1.style.display = 'none';
+                                }
+                            }, index * 50); 
+                        });
+                    }
+    
+                });
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
             
             var search_output = document.getElementById('search_output');
@@ -757,10 +856,11 @@
             const search_button = document.getElementById('search_button');
 
             search_button.addEventListener('click', function() {
+                
                 const searchInput = document.getElementById('searchInput');
                 toggleDisplay(['search_result','Error_content','image_show','motor_curve','paper','parm_table','AIout','motor_block','tn_curve','parameter'], false);
-                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(.no-reset)');
+                    checkboxes.forEach(checkbox => {
                     checkbox.checked = false;
                 });
                 updateChart()
@@ -768,43 +868,10 @@
                 
                 if (searchInput.value !== ""){
                     myModal.show();
+                   
                     let showModalForAtLeast = 500; // 毫秒
                     let showStart = new Date().getTime();
-                    var textToAnimate1 = "預設";
-                    
-                    var textElement1 = document.getElementById('AIout_animatedText');
-                    var finalCursor1 = document.getElementById('AIout_finalCursor');
-                    textElement1.innerHTML = '';
-                    fetch('/run_alpaca', {
-                        method: 'POST',
-                        body: JSON.stringify({  
-                                                value : searchInput.value,
-                                            }),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.complet === 0) {
-                            toggleDisplay(['AIout'], true);
-                            input_search.textContent = " "
-                            textToAnimate1 = data.result;
-                            var textArray1 = textToAnimate1.split('');
-                            finalCursor1.style.display = 'inline-block';
-                            textElement1.innerHTML = '';
-                            
-                            textArray1.forEach(function(char, index) {
-                                setTimeout(function(){
-                                    textElement1.innerHTML += char;
-                                    if (index === textArray1.length - 1) {
-                                        finalCursor1.style.display = 'none';
-                                    }
-                                }, index * 50); 
-                            });
-                        }
-      
-                    });
+                    checkSwitch()
 
                     
                     // 資料庫搜尋

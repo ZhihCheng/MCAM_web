@@ -33,7 +33,7 @@ from sys_py_FeSiCr.parameter_sug_total import FeSiCr_customize,FeSiCr_max_mu_max
 from sys_py_NiFe.parameter_sug_total import Nife_customize,Nife_max_mu_max_tensile,Nife_max_mu_min_pcv
 
 logging.info("Loading parameter model complete")
-call_motor_AI = False
+call_motor_AI = True
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
@@ -406,6 +406,7 @@ def process_audio():
     
 @app.route('/run_alpaca', methods=['POST'])
 def run_alpaca():
+    print("run_alpaca")
     text_line = {'complet': 0, 'result': ""}
     
     data = request.get_json()

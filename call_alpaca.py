@@ -10,8 +10,8 @@ import sys
 
 
 cc = OpenCC('s2t') 
-DEFAULT_SYSTEM_PROMPT = """You are an assistant with knowledge about motors. 你是一位有馬達領域知識的助手。"""
-
+DEFAULT_SYSTEM_PROMPT = """你是一位有馬達領域知識的助手。"""
+# DEFAULT_SYSTEM_PROMPT = """你是一位馬達領域的知識助手，每次回覆最大字數限制為100字"""
 DEFAULT_Negative_PROMPT = None
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
