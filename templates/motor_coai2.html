@@ -10,6 +10,7 @@
     <!-- 引入 Bootstrap 5 Bundle JS (包含 Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair"></script>
     
     <!-- Favicon icon -->
     <link rel="icon" type="static/image/png" sizes="16x16" href="static/images/favicon.png">
@@ -160,6 +161,15 @@
     }
 
     .AI-container{
+        display: none;
+        max-width: 78%;
+        margin: 2px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    .Chating-container{
         display: none;
         max-width: 78%;
         margin: 2px auto;
@@ -367,6 +377,76 @@
     to {
         opacity: 1;
     }
+    }
+    /* chatting Style set */
+    .chat-container {
+        /* width: 400px; */
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 80vh;
+    }
+    .chat-header {
+        background-color: #007bff;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        font-size: 18px;
+    }
+    .chat-messages {
+        flex: 1;
+        padding: 10px;
+        overflow-y: auto;
+    }
+    .message {
+        margin-bottom: 10px;
+        display: flex;
+    }
+    .message.user {
+        justify-content: flex-end;
+    }
+    .message.bot {
+        justify-content: flex-start;
+    }
+    .message-content {
+        max-width: 70%;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+    .message.user .message-content {
+        background-color: #007bff;
+        color: white;
+        border-bottom-right-radius: 0;
+    }
+    .message.bot .message-content {
+        background-color: #e0e0e0;
+        color: black;
+        border-bottom-left-radius: 0;
+    }
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #e0e0e0;
+    }
+    .chat-input input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    .chat-input button {
+        padding: 10px;
+        margin-left: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
     }
 </style>
 <body>
@@ -625,7 +705,21 @@
                     </div>
                 </div>
             </div>
-            
+            <!-- split_form end -->
+            <div class="Chating-container" id="chat_window" >
+                <div class="chat-container">
+                    <div class="chat-header">
+                        Motor AI Chatting
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                       
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chat-input" placeholder="輸入您的消息...">
+                        <button onclick="sendMessage()">發送</button>
+                    </div>
+                </div>
+            </div>
             <!-- #/ container -->
         </div>
         <!--**********************************
@@ -712,6 +806,33 @@
                             text: 'Speed(RPM)'
                         }
                     }
+                },
+                plugins: {
+                    crosshair: {
+                        line: {
+                            color: '#F66',  // crosshair line color
+                            width: 1        // crosshair line width
+                        },
+                        sync: {
+                            enabled: false,            // sync crosshairs across multiple charts
+                            group: 1,                 // chart group
+                            suppressTooltips: false   // suppress tooltips when showing a synced crosshair
+                        },
+                        zoom: {
+                            enabled: false,                                      // enable zooming
+                            zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',     // background color of zoom box
+                            zoomboxBorderColor: '#48F',                         // border color of zoom box
+                            zoomButtonText: 'Reset Zoom',                       // reset zoom button text
+                            zoomButtonClass: 'reset-zoom',                      // reset zoom button class
+                        },
+                        callbacks: {
+                            beforeZoom: function(start, end) {                  // called before zoom, return false to prevent zoom
+                                return true;
+                            },
+                            afterZoom: function(start, end) {                   // called after zoom
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -794,7 +915,7 @@
             var switchElement = document.getElementById('toggleSwitch');
             if (switchElement.checked) {
                 // 執行方案1
-                toggleDisplay(['AIout'], true);
+                toggleDisplay(['AIout','chat_window'], true);
                 var textToAnimate1 = "預設";
                 var textElement1 = document.getElementById('AIout_animatedText');
                 var finalCursor1 = document.getElementById('AIout_finalCursor');
@@ -826,10 +947,55 @@
                                 }
                             }, index * 50); 
                         });
+                        updateChat(searchInput.value,data.result);
                     }
     
                 });
             }
+        }
+        // 假設這兩個字串是從其他元件取得的
+        var userMessage = "這是使用者的輸入消息";
+        var botReply = "這是機器人的回覆消息";
+
+        function sendMessage() {
+            var inputField = document.getElementById("chat-input");
+            var message = inputField.value.trim();
+            
+            if (message !== "") {
+                updateChat(message, botReply);
+                
+                // 清空輸入框
+                inputField.value = "";
+            }
+        }
+
+        function updateChat(userMessage, botMessage) {
+            var messagesContainer = document.getElementById("chat-messages");
+            
+            // 創建用戶消息元素
+            var userMessageElement = document.createElement("div");
+            userMessageElement.classList.add("message", "user");
+            
+            var userMessageContent = document.createElement("div");
+            userMessageContent.classList.add("message-content");
+            userMessageContent.textContent = userMessage;
+            
+            userMessageElement.appendChild(userMessageContent);
+            messagesContainer.appendChild(userMessageElement);
+
+            // 創建機器人回覆消息元素
+            var botMessageElement = document.createElement("div");
+            botMessageElement.classList.add("message", "bot");
+            
+            var botMessageContent = document.createElement("div");
+            botMessageContent.classList.add("message-content");
+            botMessageContent.textContent = botMessage;
+
+            botMessageElement.appendChild(botMessageContent);
+            messagesContainer.appendChild(botMessageElement);
+            
+            // 自動滾動到底部
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
         document.addEventListener('DOMContentLoaded', function() {
             
@@ -858,7 +1024,7 @@
             search_button.addEventListener('click', function() {
                 
                 const searchInput = document.getElementById('searchInput');
-                toggleDisplay(['search_result','Error_content','image_show','motor_curve','paper','parm_table','AIout','motor_block','tn_curve','parameter'], false);
+                toggleDisplay(['search_result','Error_content','image_show','motor_curve','paper','parm_table','AIout','motor_block','tn_curve','parameter','chat_window'], false);
                 const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(.no-reset)');
                     checkboxes.forEach(checkbox => {
                     checkbox.checked = false;
@@ -1114,6 +1280,7 @@
                 }
             };     
         });
+
     </script>
 
     <!--Audio Modal -->
