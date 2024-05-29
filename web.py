@@ -42,10 +42,13 @@ app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
 # import matlab
 import matlab.engine
 
-
+alpaca = True
 if call_motor_AI:
-    from call_alpaca import call_alpaca
-    alpaca_model = call_alpaca()
+    if alpaca:
+        from call_alpaca import call_alpaca
+        alpaca_model = call_alpaca()
+    else:
+        import openai
 
 
 def allowed_file(filename):
@@ -412,7 +415,15 @@ def run_alpaca():
     data = request.get_json()
     if call_motor_AI:
         logging.info("predoct start")
-        text_line['result'] = alpaca_model.alpaca_predict(data)
+        if alpaca:
+            text_line['result'] = alpaca_model.alpaca_predict(data)
+        else:
+            response = openai.Completion.create(
+                model="gpt-3.5-turbo",
+                prompt=data,
+                max_tokens=150
+            )
+            text_line['result'] = response.choices[0].text.strip()
         logging.info("predoct end")
     else:
         text_line['complet'] = 1
