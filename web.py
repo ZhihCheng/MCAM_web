@@ -417,6 +417,7 @@ def run_alpaca():
         logging.info("predoct start")
         if alpaca:
             text_line['result'] = alpaca_model.alpaca_predict(data)
+            print(text_line['result'])
         else:
             response = openai.Completion.create(
                 model="gpt-3.5-turbo",

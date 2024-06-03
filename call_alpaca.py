@@ -101,18 +101,7 @@ class call_alpaca():
             self.model.float()
         self.model.eval()
     
-        
         #####################################################################
-    def normalize_text(self,text: str) -> str:
-        import re
-        
-        # 將所有連續的空格轉換為單個空格
-        text = re.sub(r'\s+', ' ', text)
-        
-        # 在句點後添加換行符號
-        text = re.sub(r'(?<=[。！？])', '\n', text)
-        
-        return text.strip()
     def alpaca_predict(self,raw_input_text):
         input_text = generate_prompt(instruction=raw_input_text, system_prompt=DEFAULT_SYSTEM_PROMPT)
         negative_text = None if DEFAULT_Negative_PROMPT is None \
@@ -140,6 +129,6 @@ class call_alpaca():
         s = generation_output[0]
         output = self.tokenizer.decode(s,skip_special_tokens=True)
         response = output.split("[/INST]")[-1].strip()
-        return self.normalize_text(cc.convert(response))
+        return cc.convert(response)
 
     
