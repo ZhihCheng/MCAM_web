@@ -70,10 +70,6 @@ def render_page(template):
 def index():
     pass
 
-@app.route('/motor_coai2', methods=['GET', 'POST'])
-@render_page('motor_coai2.html')
-def motor_coai2():
-    pass
 
 @app.route('/MPRS', methods=['GET', 'POST'])
 @render_page('MPRS.html')
@@ -103,6 +99,16 @@ def motor():
 @app.route('/motor_coai', methods=['GET', 'POST'])
 @render_page('motor_coai.html')
 def motor_coai():
+    pass
+
+@app.route('/motor_coai2', methods=['GET', 'POST'])
+@render_page('motor_coai2.html')
+def motor_coai2():
+    pass
+
+@app.route('/Two_port', methods=['GET', 'POST'])
+@render_page('Two_port.html')
+def Two_port():
     pass
 
 @app.route('/increment', methods=['POST'])
@@ -417,7 +423,6 @@ def run_alpaca():
         logging.info("predoct start")
         if alpaca:
             text_line['result'] = alpaca_model.alpaca_predict(data)
-            print(text_line['result'])
         else:
             response = openai.Completion.create(
                 model="gpt-3.5-turbo",

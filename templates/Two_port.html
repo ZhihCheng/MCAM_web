@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Motor Tech Co-AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- 引入 Bootstrap 5 Bundle JS (包含 Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Favicon icon -->
+    <link rel="icon" type="static/image/png" sizes="16x16" href="static/images/favicon.png">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="static/css/style.css" rel="stylesheet">
+    <script>
+        (function() {
+            const originalWarn = console.warn;
+            console.warn = function(message, ...args) {
+                if (typeof message === 'string' && message.includes('Ignoring resolver passed as options for scale:')) {
+                    return;
+                }
+                originalWarn.apply(console, [message, ...args]);
+            };
+        })();
+    </script>
+
+</head>
+<style>
+    .tabs-container{
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+
+    .tabs-wrapper {
+        flex: 1;
+        overflow-x: hidden;
+    }
+
+    .tabs {
+        display: flex;
+        overflow-x: hidden;
+        white-space: nowrap;
+        border-bottom: 1px solid #dee2e6;
+        margin: 0;
+    }
+
+    .tab-button {
+        flex: 0 0 auto;
+        padding: 10px 20px;
+        cursor: pointer;
+        background-color: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        transition: border-color 0.3s;
+    }
+
+    .tab-button:hover {
+        border-color: #dee2e6;
+    }
+
+    .tab-button.active {
+        border-color: #007BFF;
+        color: #007BFF;
+    }
+
+    .tab-content {
+        display: none;
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        border-top: none;
+        height: calc(80vh - 140px); /* 設置最大高度為視窗高度減去標籤按鈕的高度和一些內邊距 */
+        overflow-y: auto; /* 當內容超過高度時，顯示滾動條 */
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .scroll-button {
+        background-color: #007BFF;
+        border: none;
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 10;
+        height: 100%;
+    }
+
+    .scroll-button-left {
+        margin-right: 10px;
+    }
+
+    .scroll-button-right {
+        margin-left: 10px;
+    }
+
+    .curve-container {
+        width: 100%;
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        height: calc(87vh - 140px); 
+    }
+
+    .control-selector {
+        padding: 10px;
+        background-color: #f8f9fa;
+    }
+    .control-selector h5 {
+        margin-bottom: 10px;
+    }
+
+    .control-selector .form-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #dee2e6;
+        width: 50%;
+        box-sizing: border-box;
+    }
+    .control-selector .form-group label {
+        margin-right: 10px;
+        white-space: nowrap;
+        margin-bottom: 0;
+        font-size: 14px;
+    }
+    .control-selector .form-group select {
+        flex: 1;
+        font-size: 14px;
+        max-width: 200px;
+        max-height: 90%;
+        
+    }
+    .control-selector .form-row {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+    }
+    .container{
+        background-color: #ffffff8e;
+        min-width: 1000px; 
+        /* overflow-x: auto;  */
+
+    }
+    #chart {
+        width: 100%;
+        height: calc(70vh - 140px);
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+</style>
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="loader">
+            <svg class="circular" viewBox="25 25 50 50">
+                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
+            </svg>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+        <div class="nav-header">
+            <div class="brand-logo">
+                <!-- <a href="index.html"> -->
+                <a>
+                    <span class="brand-title">
+                        <!-- <img src="static/WEMTRC_Logo.png" alt=""> -->
+                    </span>
+                </a>
+            </div>
+        </div>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">    
+            <div class="header-content clearfix">
+                <div class="nav-control">
+                    <div class="hamburger">
+                        <span class="toggle-icon"><i class="icon-menu"></i></span>
+                    </div>
+                </div>
+                <div class="header-left">
+                    <div class="input-group icons">
+                        <h2><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor Tech</span><span style="color: black;"> Co-AI</span></h2>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="nk-sidebar">           
+            <div class="nk-nav-scroll">
+                <ul class="metismenu" id="menu">
+                    <li class="nav-label">Apps</li>
+                        <li>
+                            <a  href="Two_port" aria-expanded="false">
+                                <i class="icon-envelope menu-icon"></i> <span class="nav-text">Two port </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a  href="Measurement" aria-expanded="false">
+                                <i class="icon-screen-tablet menu-icon"></i><span class="nav-text">Measurement</span>
+                            </a>
+                            <!-- <ul aria-expanded="false">
+                                <li><a href="./app-profile.html">Profile</a></li>
+                                <li><a href="./app-calender.html">Calender</a></li>
+                            </ul> -->
+                        </li>
+                </ul>
+            </div>
+        </div>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-3 text-center  mt-4 ">
+                        <button id="runButton" class="btn btn-success btn-lg">Run</button>
+                        <button id="stopButton" class="btn btn-secondary btn-lg" disabled>Stop</button>
+                    </div>
+                    <div class="col-7 text-center  mt-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <label for="stopTime" class="form-label me-2">Stop Time</label>
+                            <input type="number" id="stopTime" class="form-control mx-4" value="10" style="width: 100px;">
+                            <label for="rpm" class="form-label me-2">轉速命令 (rpm)</label>
+                            <input type="number" id="rpm" class="form-control mx-4" value="200" style="width: 100px;">
+                        </div>
+                    </div>
+                    <div class="col-2 text-center  mt-4">
+                        <button id="connectButton" class="btn btn-primary btn-lg">Connection</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class=" mt-3">
+                                <div class="tabs-container">
+                                    <button class="scroll-button scroll-button-left" onclick="scrollTabs(-200)">&lt;</button>
+                                    <div class="tabs">
+                                        <button class="tab-button btn mb-1 btn-light" onclick="openTab(event, 'Tab1')">電源供應</button>
+                                        <button class="tab-button btn mb-1 btn-light" onclick="openTab(event, 'Tab2')">PMDC馬達參數</button>
+                                        <button class="tab-button btn mb-1 btn-light" onclick="openTab(event, 'Tab3')">聯軸器</button>
+                                        <button class="tab-button btn mb-1 btn-light" onclick="openTab(event, 'Tab4')">齒輪</button>
+                                        <button class="tab-button btn mb-1 btn-light" onclick="openTab(event, 'Tab5')">負載</button>
+                                        <button class="tab-button btn mb-1 btn-light" onclick="openTab(event, 'Tab6')">速度控制器</button>
+                                        <button class="tab-button btn mb-1 btn-light" onclick="openTab(event, 'Tab7')">電流迴路控制器</button>
+                                    </div>
+                                    <button class="scroll-button scroll-button-right" onclick="scrollTabs(200)">&gt;</button>
+                                </div>
+                                <div id="Tab1" class="tab-content">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="vdc" class="form-label">V<sub>DC</sub> (V)</label>
+                                            <input type="number" class="form-control" id="vdc" value="75">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="ro" class="form-label">R<sub>0</sub> (Ω)</label>
+                                            <input type="number" class="form-control" id="ro" value="0.001">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="vp" class="form-label">V<sub>p</sub> (V)</label>
+                                            <input type="number" class="form-control" id="vp" value="12">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="Tab2" class="tab-content">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="L" class="form-label">L (H)</label>
+                                            <input type="number" class="form-control" id="L" value="0.038">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="R" class="form-label">R (Ω)</label>
+                                            <input type="number" class="form-control" id="R" value="7.55">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="ke" class="form-label">K<sub>e</sub> (V·s/rad)</label>
+                                            <input type="number" class="form-control" id="ke" value="0.21">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="jkg" class="form-label">J (kg·m²)</label>
+                                            <input type="number" class="form-control" id="jkg" value="0.00057">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bnms" class="form-label">B (N·m·s)</label>
+                                            <input type="number" class="form-control" id="bnms" value="0.000055">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="ktnm" class="form-label">K<sub>t</sub>(N·m/A)</label>
+                                            <input type="number" class="form-control" id="ktnm" value="0.21">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="Tab3" class="tab-content">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="ks" class="form-label">K<sub>s</sub>(N·m)</label>
+                                            <input type="number" class="form-control" id="ks" value="1500">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="Tab4" class="tab-content">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="Ji" class="form-label">J<sub>i</sub> (kg·m²)</label>
+                                            <input type="number" class="form-control" id="Ji" value="2.5e-05">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Bi" class="form-label">B<sub>i</sub> (N·m·s/rad)</label>
+                                            <input type="number" class="form-control" id="Bi" value="2e-05">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Ri" class="form-label">R<sub>i</sub> (Ω)</label>
+                                            <input type="number" class="form-control" id="Ri" value="0.06">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Jo" class="form-label">J<sub>o</sub> (kg·m²)</label>
+                                            <input type="number" class="form-control" id="Jo" value="1.3e-05">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Bo" class="form-label">B<sub>o</sub> (N·m·s/rad)</label>
+                                            <input type="number" class="form-control" id="Bo" value="2e-05">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Ro" class="form-label">R<sub>o</sub> (Ω)</label>
+                                            <input type="number" class="form-control" id="Ro" value="0.01">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="KtJB" class="form-label">K<sub>tJB</sub> (N·m)</label>
+                                            <input type="number" class="form-control" id="KtJB" value="1.5e+04">
+                                        </div>
+                                    </form>
+                                    
+                                    
+                                </div>
+                                <div id="Tab5" class="tab-content">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="Bl" class="form-label">B<sub>L</sub></label>
+                                            <input type="number" class="form-control" id="Bl" value="0">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="Tab6" class="tab-content">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="frequency" class="form-label">速度頻寬 (Hz)</label>
+                                            <input type="number" class="form-control" id="frequency" value="300">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="zeta" class="form-label">ζ</label>
+                                            <input type="number" class="form-control" id="zeta" value="0.866">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="kp" class="form-label">K<sub>p</sub></label>
+                                            <input type="number" class="form-control" id="kp" value="0">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="ki" class="form-label">K<sub>i</sub></label>
+                                            <input type="number" class="form-control" id="ki" value="0">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="Tab7" class="tab-content">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label for="current" class="form-label">電流頻寬 (Hz)</label>
+                                            <input type="number" class="form-control" id="current" value="1500">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="zeta2" class="form-label">ζ</label>
+                                            <input type="number" class="form-control" id="zeta2" value="0.866">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="kp2" class="form-label">K<sub>p</sub></label>
+                                            <input type="number" class="form-control" id="kp2" value="0">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="ki2" class="form-label">K<sub>i</sub></label>
+                                            <input type="number" class="form-control" id="ki2" value="0">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>  
+                        </div>
+                            
+                        <div class="col-8 mt-3">
+                            <div class="curve-container">
+                                <div class="control-selector">
+                                    <h6 class="text-center">控制器選擇</h6>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="currentControl" class="form-label">電流迴路控制器</label>
+                                            <select id="currentControl" class="form-control form-select">
+                                                <option >請選擇控制器</option>
+                                                <option value="1">PI型控制器</option>
+                                                <option value="2">IP型控制器</option>
+                                                <option value="3">PID型控制器</option>
+                                                <option value="4">強健控制器</option>
+                                                <!-- 添加其他選項 -->
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="speedControl" class="form-label">速度迴路控制器</label>
+                                            <select id="speedControl" class="form-control form-select">
+                                                <option>請選擇控制器</option>
+                                                <option value="1">PI型控制器</option>
+                                                <option value="2">IP型控制器</option>
+                                                <option value="3">PID型控制器</option>
+                                                <option value="4">強健控制器</option>
+                                                <!-- 添加其他選項 -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+        
+        
+        
+    </div>
+
+   
+        <!-- <div class="footer">
+            <div class="copyright">
+                <p>Copyright &copy; Designed & Developed by <a href="https://themeforest.net/user/quixlab">Quixlab</a> 2018</p>
+            </div>
+        </div> -->
+
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <script src="static/plugins/common/common.min.js"></script>
+    <script src="static/js/custom.min.js"></script>
+    <script src="static/js/settings.js"></script>
+    <script src="static/js/gleek.js"></script>
+    <script src="static/js/styleSwitcher.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+
+
+    <script>
+        var trace1 = {
+            x: [0, 2, 4, 6, 8, 10],
+            y: [0, 0, 0, 0, 0, 0],
+            type: 'scatter'
+        };
+
+        var layout = {
+            title: '轉速圖',
+            xaxis: {
+                title: 'Time (secs)'
+            },
+            yaxis: {
+                title: 'Wrm (rpm)',
+                range: [-10, 10]
+            }
+        };
+
+        var data = [trace1];
+
+        Plotly.newPlot('chart', data, layout);
+        document.getElementById('runButton').addEventListener('click', function() {
+            document.getElementById('runButton').disabled = true;
+            document.getElementById('stopButton').disabled = false;
+        });
+
+        document.getElementById('stopButton').addEventListener('click', function() {
+            document.getElementById('runButton').disabled = false;
+            document.getElementById('stopButton').disabled = true;
+        });
+
+        document.getElementById('connectButton').addEventListener('click', function() {
+            alert('Connected!');
+        });
+        function openTab(event, tabName) {
+            var i, tabcontent, tabbuttons;
+
+            // Hide all tab contents
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Remove the class "active" from all buttons
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "block";
+            event.currentTarget.classList.add("active");
+        }
+
+        function scrollTabs(distance) {
+            const tabsContainer = document.querySelector('.tabs');
+            tabsContainer.scrollBy({
+                left: distance,
+                behavior: 'smooth'
+            });
+        }
+
+        // Set default tab
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelector('.tab-button').click();
+        });
+    </script>
+</body>
+
+</html>
