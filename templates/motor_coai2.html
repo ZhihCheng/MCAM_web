@@ -212,11 +212,11 @@
         grid-column: 1 / 2;  */
         background-color: #ecb4b4;
         border-radius: 20px;
-        display: none;
         flex-direction: column;
         overflow: hidden;
         height: 50vh;
         width: calc(100% - 20px);
+        /* display: none; */
     }
 
 
@@ -225,9 +225,9 @@
         grid-column: 2 / 3; */
         background-color: #d3e4fa; 
         border-radius: 20px;
-        display: none; 
         height: 50vh;
         width: calc(100% - 20px); 
+        /* display: none; */
     }
 
     .bottom-left {
@@ -235,9 +235,9 @@
         grid-column: 1 / 2; */
         background-color: #eccbec; 
         border-radius: 20px;
-        display: none; 
         height: 50vh;
         width: calc(100% - 20px); 
+        /* display: none; */
     }
 
     .bottom-right {
@@ -245,9 +245,9 @@
         grid-column: 2 / 3; */
         background-color: #dfdfcc; 
         border-radius: 20px;
-        display: none; 
         height: 50vh;
         width: calc(100% - 20px);
+        /* display: none;  */
     }
     /*parm_tabel fone setting*/
     .boldAndLarge {
@@ -587,119 +587,133 @@
                     </div>
                 </div>
             </div>
-            <div class = "split_form">
-                <div class="top-left grid-item" id='paper'>    
-                    <div  class="inear-container " id ="search_output">
-                        <div class="row row-spacing">
-                            <div class="col-md-10">
-                                <h3 class="fw-bolder mb-2" id="newsletterHeading">馬達中心電子報推薦</h3>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="outer-container" id="search_result">
-                        <div id="searchResult" class="accordion"></div>
-                    </div>
-                    
-                    <div  class="outer-container " id ="Error_content">
-                        <label  id="Error_label" class="label-font ">
-                            <span id="animatedText4" class="typing"></span>
-                            <span id="finalCursor4"  class="typing-cursor" ></span>
-                        </label>
-                    </div>
+            
+            
+            
+            <div class="row row-spacing">
+                <div class="col-md-6">
+
                 </div>
-                <div class="bottom-right grid-item "id='tn_curve'>
-                    <div  class="inear-container " id ="search_output1">
-                        <div class="row row-spacing">
-                            <div class="col-md-10">
-                                <h3 class="fw-bolder mb-2">TN-Curve</h3>
+                <div class="col-md-6">
+                    <div class = "split_form">
+                        <div class="top-left grid-item" id='paper'>    
+                            <div  class="inear-container " id ="search_output">
+                                <div class="row row-spacing">
+                                    <div class="col-md-10">
+                                        <h3 class="fw-bolder mb-2" id="newsletterHeading">馬達中心電子報推薦</h3>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-2 text-end">
-                                <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
+                            <div class="outer-container" id="search_result">
+                                <div id="searchResult" class="accordion"></div>
                             </div>
-                        </div>
-                    </div>
-                    <div  class="outer-container" style="height: 80%;" id ="motor_curve">
-                        <form id="data-form">
-                            <label><input type="checkbox" name="data" value="Torque" onchange="updateChart()"> TL(Nm)</label>
-                            <label><input type="checkbox" name="data" value="Efficiency" onchange="updateChart()"> Efficiency(%) </label>
-                            <label><input type="checkbox" name="data" value="Powerin" onchange="updateChart()"> Pin(W)</label>
-                            <label><input type="checkbox" name="data" value="Voltage" onchange="updateChart()"> Voltage(volt)</label>
-                            <label><input type="checkbox" name="data" value="Current" onchange="updateChart()"> Current(A)</label>
-                        </form>
-                        <canvas id="myChart"></canvas>
-                        <!-- <div id="imageContainer" >
-                            <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage2">
-                        </div> -->
-                    </div>
-                </div>
-                <div class="bottom-left grid-item" id = 'parameter'>
-                    <div  class="inear-container " id ="search_output2">
-                        <div class="row row-spacing">
-                            <div class="col-md-10">
-                                <h3 class="fw-bolder mb-2">馬達參數</h3>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
+                            
+                            <div  class="outer-container " id ="Error_content">
+                                <label  id="Error_label" class="label-font ">
+                                    <span id="animatedText4" class="typing"></span>
+                                    <span id="finalCursor4"  class="typing-cursor" ></span>
+                                </label>
                             </div>
                         </div>
-                    </div>
-                    <div  class="outer-container " id ="parm_table">
-                        <table border="1" class = "table table-hover"  id = 'customTable'>
-                            <tr>
-                                <td class="boldAndLarge" >電樞電感(L)</td> 
-                                <td><input type="text" id="textbox1" name="textbox1" class="form-control" value="0" readonly></td>
-                                <td class="boldAndLarge" style="font-style: italic;">H</td> 
-                            </tr>
-                            <tr>
-                                <td class="boldAndLarge">電樞電阻(R)</td>
-                                <td><input type="text" id="textbox2" name="textbox2" class="form-control" value="0" readonly></td>
-                                <td class="boldAndLarge" style="font-style: italic;">Ω</td> 
-                            </tr>
-                            <tr>
-                                <td class="boldAndLarge">反電動勢常數(Ke)</td>
-                                <td><input type="text" id="textbox3" name="textbox3" class="form-control" value="0" readonly></td>
-                                <td class="boldAndLarge" style="font-style: italic;">V𝑜𝑙𝑡𝑠/(rad/s)</td> 
-                            </tr>
-                            <tr>
-                                <td class="boldAndLarge">轉矩常數(Kt)</td>
-                                <td><input type="text" id="textbox4" name="textbox4" class="form-control" value="0" readonly></td>
-                                <td class="boldAndLarge" style="font-style: italic;">𝑁𝑚/𝐴𝑚𝑝𝑠</td> 
-                            </tr>
-                            <tr>
-                                <td class="boldAndLarge">轉動慣量(J)</td>
-                                <td><input type="text" id="textbox5" name="textbox5" class="form-control" value="0" readonly></td>
-                                <td class="boldAndLarge" style="font-style: italic;">𝑘𝑔∙𝑚^2</td> 
-                            </tr>
-                            <tr>
-                                <td class="boldAndLarge">黏滯係數(B)</td>
-                                <td><input type="text" id="textbox6" name="textbox6" class="form-control" value="0"readonly></td>
-                                <td class="boldAndLarge" style="font-style: italic;">(𝑁∙𝑚)⁄(𝑟𝑎𝑑⁄𝑠)</td> 
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                <div class="top-right grid-item" id="motor_block">
-                    <div  class="inear-container " id ="search_output3">
-                        <div class="row row-spacing">
-                            <div class="col-md-10">
-                                <h3 class="fw-bolder mb-2">Motor Digital Twin</h3>
+                        <div class="bottom-right grid-item "id='tn_curve'>
+                            <div  class="inear-container " id ="search_output1">
+                                <div class="row row-spacing">
+                                    <div class="col-md-10">
+                                        <h3 class="fw-bolder mb-2">TN-Curve</h3>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-2 text-end">
-                                <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
+                            <div  class="outer-container" style="height: 80%;" id ="motor_curve">
+                                <form id="data-form">
+                                    <label><input type="checkbox" name="data" value="Torque" onchange="updateChart()"> TL(Nm)</label>
+                                    <label><input type="checkbox" name="data" value="Efficiency" onchange="updateChart()"> Efficiency(%) </label>
+                                    <label><input type="checkbox" name="data" value="Powerin" onchange="updateChart()"> Pin(W)</label>
+                                    <label><input type="checkbox" name="data" value="Voltage" onchange="updateChart()"> Voltage(volt)</label>
+                                    <label><input type="checkbox" name="data" value="Current" onchange="updateChart()"> Current(A)</label>
+                                </form>
+                                <canvas id="myChart"></canvas>
+                                <!-- <div id="imageContainer" >
+                                    <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage2">
+                                </div> -->
                             </div>
                         </div>
-                    </div>
-                    <div  class="outer-container " style="height: 80%;" id ="image_show">
-                        <div id="imageContainer" >
-                            <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage">
+                        <div class="bottom-left grid-item" id = 'parameter'>
+                            <div  class="inear-container " id ="search_output2">
+                                <div class="row row-spacing">
+                                    <div class="col-md-10">
+                                        <h3 class="fw-bolder mb-2">馬達參數</h3>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div  class="outer-container " id ="parm_table">
+                                <table border="1" class = "table table-hover"  id = 'customTable'>
+                                    <tr>
+                                        <td class="boldAndLarge" >電樞電感(L)</td> 
+                                        <td><input type="text" id="textbox1" name="textbox1" class="form-control" value="0" readonly></td>
+                                        <td class="boldAndLarge" style="font-style: italic;">H</td> 
+                                    </tr>
+                                    <tr>
+                                        <td class="boldAndLarge">電樞電阻(R)</td>
+                                        <td><input type="text" id="textbox2" name="textbox2" class="form-control" value="0" readonly></td>
+                                        <td class="boldAndLarge" style="font-style: italic;">Ω</td> 
+                                    </tr>
+                                    <tr>
+                                        <td class="boldAndLarge">反電動勢常數(Ke)</td>
+                                        <td><input type="text" id="textbox3" name="textbox3" class="form-control" value="0" readonly></td>
+                                        <td class="boldAndLarge" style="font-style: italic;">V𝑜𝑙𝑡𝑠/(rad/s)</td> 
+                                    </tr>
+                                    <tr>
+                                        <td class="boldAndLarge">轉矩常數(Kt)</td>
+                                        <td><input type="text" id="textbox4" name="textbox4" class="form-control" value="0" readonly></td>
+                                        <td class="boldAndLarge" style="font-style: italic;">𝑁𝑚/𝐴𝑚𝑝𝑠</td> 
+                                    </tr>
+                                    <tr>
+                                        <td class="boldAndLarge">轉動慣量(J)</td>
+                                        <td><input type="text" id="textbox5" name="textbox5" class="form-control" value="0" readonly></td>
+                                        <td class="boldAndLarge" style="font-style: italic;">𝑘𝑔∙𝑚^2</td> 
+                                    </tr>
+                                    <tr>
+                                        <td class="boldAndLarge">黏滯係數(B)</td>
+                                        <td><input type="text" id="textbox6" name="textbox6" class="form-control" value="0"readonly></td>
+                                        <td class="boldAndLarge" style="font-style: italic;">(𝑁∙𝑚)⁄(𝑟𝑎𝑑⁄𝑠)</td> 
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                        
+                        <div class="top-right grid-item" id="motor_block">
+                            <div  class="inear-container " id ="search_output3">
+                                <div class="row row-spacing">
+                                    <div class="col-md-10">
+                                        <h3 class="fw-bolder mb-2">Motor Digital Twin</h3>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <button class="zoom-btn btn btn-light" onclick="zoomIn(this)">展開</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div  class="outer-container " style="height: 80%;" id ="image_show">
+                                <div id="imageContainer" >
+                                    <img src="https://via.placeholder.com/300x300/efefef?text=Avatar" alt="image-placeholder" class="img-thumbnail" id="uploadedImage">
+                                </div>
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            
+            
+           
             <!-- split_form end -->
             <div class="Chating-container" id="chat_window" >
                 <div class="chat-container">
