@@ -549,6 +549,12 @@
                             <button id="recordButton" class="btn mb-1 btn-secondary btn-lg">語音識別</button>
                         </div>
                     </div>
+                    <div class="col-md-2 d-flex justify-content-end">
+                        <label class="custom-switch">
+                            <input type="checkbox" id="toggleSwitch" class="no-reset">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
                 <div id="searchResults"><label  id="input_search" class="label-font"></div>
             </div>
@@ -884,31 +890,31 @@
             });
         }
         function checkSwitch() {
-            // var switchElement = document.getElementById('toggleSwitch');
-            // if (switchElement.checked) {
+            var switchElement = document.getElementById('toggleSwitch');
+            if (switchElement.checked) {
                 // 執行方案1
-            toggleDisplay(['chat_window'], true);
-            chatHistory.push({ role: 'user', content: searchInput.value });
-            updateChat('user', searchInput.value);
-            fetch('/run_alpaca', {
-                method: 'POST',
-                body: JSON.stringify({  
-                                        value : searchInput.value,
-                                        list : chatHistory
-                                    }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.complet === 0) {
-                    chatHistory.push({ role: 'assistant', content: data.result });
-                    updateChat('bot',data.result);
-                }
-
-            });
-            // }
+                toggleDisplay(['chat_window'], true);
+                chatHistory.push({ role: 'user', content: searchInput.value });
+                updateChat('user', searchInput.value);
+                fetch('/run_alpaca', {
+                    method: 'POST',
+                    body: JSON.stringify({  
+                                            value : searchInput.value,
+                                            list : chatHistory
+                                        }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.complet === 0) {
+                        chatHistory.push({ role: 'assistant', content: data.result });
+                        updateChat('bot',data.result);
+                    }
+    
+                });
+            }
         }
 
         var chatHistory = [];

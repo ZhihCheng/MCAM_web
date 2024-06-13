@@ -41,14 +41,8 @@ app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
 
 # import matlab
 import matlab.engine
-
-alpaca = True
-if call_motor_AI:
-    if alpaca:
-        from call_alpaca import call_alpaca
-        alpaca_model = call_alpaca()
-    else:
-        import openai
+import ollama
+from opencc import OpenCC
 
 
 def allowed_file(filename):
@@ -411,26 +405,67 @@ def process_audio():
         text_line['result'] = '沒有找到音頻檔案'
         return jsonify(text_line)
     
-
-    
 @app.route('/run_alpaca', methods=['POST'])
 def run_alpaca():
     print("run_alpaca")
-    text_line = {'complet': 0, 'result': ""}
+    text_line = {'complet': 0, 
+                 'result': "",
+                 'curve' : False,
+                 'twoport' : False,
+                 'motor' : False,
+                 'pic' : None,
+                 }
+    
+    module_dict = {
+        '串激馬達': '串激直流馬達',
+        '串激式馬達': '串激直流馬達',
+        '串激式有刷馬達': '串激直流馬達',
+        '串激式直流有刷馬達': '串激直流馬達',
+        '永磁馬達': '永磁直流馬達',
+        '永磁式馬達': '永磁直流馬達',
+        '永磁式有刷馬達': '永磁直流馬達',
+        '永磁式直流有刷馬達': '永磁直流馬達',
+        '它激馬達': '它激直流馬達',
+        '它激式馬達': '它激直流馬達',
+        '它激式有刷馬達': '它激直流馬達',
+        '它激式直流有刷馬達': '它激直流馬達',
+        '並激馬達': '並激直流馬達',
+        '並激式馬達': '並激直流馬達',
+        '並激式有刷馬達': '並激直流馬達',
+        '並激式直流有刷馬達': '並激直流馬達',
+    }
+
+    mission_dice = {'曲線': 'curve', 
+                    '架構': 'twoport', 
+        }
+    
+    pic_dict = {
+        '電路': 0
+    }
+    
     
     data = request.get_json()
+    
+    print(f'data[list] is {data["list"]}')
     if call_motor_AI:
         logging.info("predoct start")
-        if alpaca:
-            text_line['result'] = alpaca_model.alpaca_predict(data)
-        else:
-            response = openai.Completion.create(
-                model="gpt-3.5-turbo",
-                prompt=data,
-                max_tokens=150
-            )
-            text_line['result'] = response.choices[0].text.strip()
-        logging.info("predoct end")
+        response = ollama.chat(
+            model="lgkt/llama3-chinese-alpaca:latest",
+            messages=data["list"]
+        )
+        cc = OpenCC('s2t') 
+        text_line['result'] = cc.convert(response["message"]["content"])
+
+        for keyword in module_dict.keys():
+            if keyword in text_line['result']:
+                text_line['motor'] = module_dict[keyword]
+
+        for keyword in mission_dice.keys():
+            if keyword in data['value']:
+                text_line[mission_dice[keyword]] = True
+                
+        print(text_line)
+
     else:
         text_line['complet'] = 1
     return jsonify(text_line)
