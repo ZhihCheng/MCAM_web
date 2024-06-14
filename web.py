@@ -410,10 +410,10 @@ def run_alpaca():
     print("run_alpaca")
     text_line = {'complet': 0, 
                  'result': "",
-                 'curve' : False,
-                 'twoport' : False,
-                 'motor' : False,
-                 'pic' : None,
+                 'curve' : 'False',
+                 'twoport' : 'False',
+                 'motor' : 'False',
+                 'pic' : 'None',
                  }
     
     module_dict = {
@@ -462,8 +462,8 @@ def run_alpaca():
 
         for keyword in mission_dice.keys():
             if keyword in data['value']:
-                text_line[mission_dice[keyword]] = True
-                
+                text_line[mission_dice[keyword]] = 'True'
+
         print(text_line)
 
     else:
