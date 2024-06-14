@@ -42,6 +42,7 @@ static/永磁直流馬達_output_data.csv
 static/串激直流馬達_output_data.csv
 static/並激直流馬達_output_data.csv
 quixlab-bootstrap-main
+static/串激直流馬達
 test.py
 #scirpt
 server.crt
