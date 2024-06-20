@@ -75,8 +75,8 @@
         padding: 20px;
         border: 1px solid #dee2e6;
         border-top: none;
-        height: calc(80vh - 140px); /* 設置最大高度為視窗高度減去標籤按鈕的高度和一些內邊距 */
-        overflow-y: auto; /* 當內容超過高度時，顯示滾動條 */
+        height: calc(80vh - 140px); 
+        overflow-y: auto; 
     }
 
     .tab-content.active {
@@ -255,10 +255,10 @@
                     </div>
                     <div class="col-7 text-center  mt-4">
                         <div class="d-flex align-items-center mb-3">
-                            <label for="stopTime" class="form-label me-2">Stop Time</label>
-                            <input type="number" id="stopTime" class="form-control mx-4" value="10" style="width: 100px;">
-                            <label for="rpm" class="form-label me-2">轉速命令 (rpm)</label>
-                            <input type="number" id="rpm" class="form-control mx-4" value="200" style="width: 100px;">
+                            <label for="StopTime" class="form-label me-2">Stop Time</label>
+                            <input type="number" id="StopTime" class="form-control mx-4" value="10" style="width: 100px;">
+                            <label for="cmd" class="form-label me-2">轉速命令 (rpm)</label>
+                            <input type="number" id="cmd" class="form-control mx-4" value="200" style="width: 100px;">
                         </div>
                     </div>
                     <div class="col-2 text-center  mt-4">
@@ -285,16 +285,16 @@
                                 <div id="Tab1" class="tab-content">
                                     <form>
                                         <div class="mb-3">
-                                            <label for="vdc" class="form-label">V<sub>DC</sub> (V)</label>
-                                            <input type="number" class="form-control" id="vdc" value="75">
+                                            <label for="Vdc" class="form-label">V<sub>DC</sub> (V)</label>
+                                            <input type="number" class="form-control" id="Vdc" value="75">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="ro" class="form-label">R<sub>0</sub> (Ω)</label>
-                                            <input type="number" class="form-control" id="ro" value="0.001">
+                                            <label for="R0" class="form-label">R<sub>0</sub> (Ω)</label>
+                                            <input type="number" class="form-control" id="R0" value="0.001">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="vp" class="form-label">V<sub>p</sub> (V)</label>
-                                            <input type="number" class="form-control" id="vp" value="12">
+                                            <label for="Vp" class="form-label">V<sub>p</sub> (V)</label>
+                                            <input type="number" class="form-control" id="Vp" value="12">
                                         </div>
                                     </form>
                                 </div>
@@ -309,28 +309,28 @@
                                             <input type="number" class="form-control" id="R" value="7.55">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="ke" class="form-label">K<sub>e</sub> (V·s/rad)</label>
-                                            <input type="number" class="form-control" id="ke" value="0.21">
+                                            <label for="Ke" class="form-label">K<sub>e</sub> (V·s/rad)</label>
+                                            <input type="number" class="form-control" id="Ke" value="0.21">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="jkg" class="form-label">J (kg·m²)</label>
-                                            <input type="number" class="form-control" id="jkg" value="0.00057">
+                                            <label for="J" class="form-label">J (kg·m²)</label>
+                                            <input type="number" class="form-control" id="J" value="0.00057">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="bnms" class="form-label">B (N·m·s)</label>
-                                            <input type="number" class="form-control" id="bnms" value="0.000055">
+                                            <label for="Bm" class="form-label">B (N·m·s)</label>
+                                            <input type="number" class="form-control" id="Bm" value="0.000055">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="ktnm" class="form-label">K<sub>t</sub>(N·m/A)</label>
-                                            <input type="number" class="form-control" id="ktnm" value="0.21">
+                                            <label for="Kt" class="form-label">K<sub>t</sub>(N·m/A)</label>
+                                            <input type="number" class="form-control" id="Kt" value="0.21">
                                         </div>
                                     </form>
                                 </div>
                                 <div id="Tab3" class="tab-content">
                                     <form>
                                         <div class="mb-3">
-                                            <label for="ks" class="form-label">K<sub>s</sub>(N·m)</label>
-                                            <input type="number" class="form-control" id="ks" value="1500">
+                                            <label for="Ks" class="form-label">K<sub>s</sub>(N·m)</label>
+                                            <input type="number" class="form-control" id="Ks" value="1500">
                                         </div>
                                     </form>
                                 </div>
@@ -361,58 +361,60 @@
                                             <input type="number" class="form-control" id="Ro" value="0.01">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="KtJB" class="form-label">K<sub>tJB</sub> (N·m)</label>
-                                            <input type="number" class="form-control" id="KtJB" value="1.5e+04">
+                                            <label for="KJB" class="form-label">K<sub>tJB</sub> (N·m)</label>
+                                            <input type="number" class="form-control" id="KJB" value="1.5e+04">
                                         </div>
                                     </form>
-                                    
-                                    
                                 </div>
                                 <div id="Tab5" class="tab-content">
                                     <form>
                                         <div class="mb-3">
-                                            <label for="Bl" class="form-label">B<sub>L</sub></label>
-                                            <input type="number" class="form-control" id="Bl" value="0">
+                                            <label for="BL" class="form-label">B<sub>L</sub></label>
+                                            <input type="number" class="form-control" id="BL" value="0">
                                         </div>
                                     </form>
                                 </div>
                                 <div id="Tab6" class="tab-content">
                                     <form>
                                         <div class="mb-3">
-                                            <label for="frequency" class="form-label">速度頻寬 (Hz)</label>
-                                            <input type="number" class="form-control" id="frequency" value="300">
+                                            <label for="f_v" class="form-label">速度頻寬 (Hz)</label>
+                                            <input type="number" class="form-control" id="f_v" value="300">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="zeta" class="form-label">ζ</label>
-                                            <input type="number" class="form-control" id="zeta" value="0.866">
+                                            <label for="zeta_v" class="form-label">ζ</label>
+                                            <input type="number" class="form-control" id="zeta_v" value="0.866">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="kp" class="form-label">K<sub>p</sub></label>
-                                            <input type="number" class="form-control" id="kp" value="0">
+                                            <label for="Kp_w" class="form-label">K<sub>p</sub></label>
+                                            <input type="number" class="form-control" id="Kp_w" value="0">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="ki" class="form-label">K<sub>i</sub></label>
-                                            <input type="number" class="form-control" id="ki" value="0">
+                                            <label for="Ki_w" class="form-label">K<sub>i</sub></label>
+                                            <input type="number" class="form-control" id="Ki_w" value="0">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Kd_w" class="form-label">K<sub>d</sub></label>
+                                            <input type="number" class="form-control" id="Kd_w" value="0">
                                         </div>
                                     </form>
                                 </div>
                                 <div id="Tab7" class="tab-content">
                                     <form>
                                         <div class="mb-3">
-                                            <label for="current" class="form-label">電流頻寬 (Hz)</label>
-                                            <input type="number" class="form-control" id="current" value="1500">
+                                            <label for="f_i" class="form-label">電流頻寬 (Hz)</label>
+                                            <input type="number" class="form-control" id="f_i" value="1500">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="zeta2" class="form-label">ζ</label>
-                                            <input type="number" class="form-control" id="zeta2" value="0.866">
+                                            <label for="zeta_i" class="form-label">ζ</label>
+                                            <input type="number" class="form-control" id="zeta_i" value="0.866">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="kp2" class="form-label">K<sub>p</sub></label>
-                                            <input type="number" class="form-control" id="kp2" value="0">
+                                            <label for="Kp_i" class="form-label">K<sub>p</sub></label>
+                                            <input type="number" class="form-control" id="Kp_i" value="0">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="ki2" class="form-label">K<sub>i</sub></label>
-                                            <input type="number" class="form-control" id="ki2" value="0">
+                                            <label for="Ki_i" class="form-label">K<sub>i</sub></label>
+                                            <input type="number" class="form-control" id="Ki_i" value="0">
                                         </div>
                                     </form>
                                 </div>
@@ -425,24 +427,22 @@
                                     <h6 class="text-center">控制器選擇</h6>
                                     <div class="form-row">
                                         <div class="form-group">
-                                            <label for="currentControl" class="form-label">電流迴路控制器</label>
-                                            <select id="currentControl" class="form-control form-select">
+                                            <label for="Current" class="form-label">電流迴路控制器</label>
+                                            <select id="Current" class="form-control form-select">
                                                 <option >請選擇控制器</option>
-                                                <option value="1">PI型控制器</option>
-                                                <option value="2">IP型控制器</option>
-                                                <option value="3">PID型控制器</option>
-                                                <option value="4">強健控制器</option>
+                                                <option value="PI">PI型控制器</option>
+                                                <option value="IP">IP型控制器</option>
                                                 <!-- 添加其他選項 -->
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label for="speedControl" class="form-label">速度迴路控制器</label>
-                                            <select id="speedControl" class="form-control form-select">
+                                            <label for="Velocity" class="form-label">速度迴路控制器</label>
+                                            <select id="Velocity" class="form-control form-select">
                                                 <option>請選擇控制器</option>
-                                                <option value="1">PI型控制器</option>
-                                                <option value="2">IP型控制器</option>
-                                                <option value="3">PID型控制器</option>
-                                                <option value="4">強健控制器</option>
+                                                <option value="PI">PI型控制器</option>
+                                                <option value="IP">IP型控制器</option>
+                                                <option value="PID">PID型控制器</option>
+                                                <option value="Robust IP">強健控制器</option>
                                                 <!-- 添加其他選項 -->
                                             </select>
                                         </div>
@@ -486,6 +486,44 @@
 
 
     <script>
+        function submitData() {
+            const tabIds = ['Tab1', 'Tab2', 'Tab3', 'Tab4', 'Tab5', 'Tab6', 'Tab7'];
+            const data = {};
+
+            tabIds.forEach(tabId => {
+                const tab = document.getElementById(tabId);
+                const inputs = tab.getElementsByTagName('input');
+                for (let input of inputs) {
+                    data[input.id] = input.value;
+                }
+            });
+            // 獲取 StopTime 和 cmd 的值
+            const stopTimeInput = document.getElementById('StopTime');
+            const cmdInput = document.getElementById('cmd');
+            data[stopTimeInput.id] = stopTimeInput.value;
+            data[cmdInput.id] = cmdInput.value;
+
+            // 獲取 Current 和 Velocity 的選擇值
+            const currentSelect = document.getElementById('Current');
+            const velocitySelect = document.getElementById('Velocity');
+            data[currentSelect.id] = currentSelect.value;
+            data[velocitySelect.id] = velocitySelect.value;
+
+            fetch('/get_two_port_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
         var trace1 = {
             x: [0, 2, 4, 6, 8, 10],
             y: [0, 0, 0, 0, 0, 0],
@@ -509,6 +547,7 @@
         document.getElementById('runButton').addEventListener('click', function() {
             document.getElementById('runButton').disabled = true;
             document.getElementById('stopButton').disabled = false;
+            submitData()
         });
 
         document.getElementById('stopButton').addEventListener('click', function() {

@@ -469,7 +469,12 @@ def run_alpaca():
     else:
         text_line['complet'] = 1
     return jsonify(text_line)
-    
+
+@app.route('/get_two_port_data', methods=['POST'])
+def get_two_port_data():
+    data = request.json
+    print(data)  # 這裡你可以處理收到的數據
+    return jsonify({"status": "success", "data": data})
     
 def clear_folder(folder_path):
     if os.path.exists(folder_path):
