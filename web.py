@@ -105,6 +105,11 @@ def motor_coai2():
 def Two_port():
     pass
 
+@app.route('/MotorMeasurement', methods=['GET', 'POST'])
+@render_page('MotorMeasurement.html')
+def MotorMeasurement():
+    pass
+
 @app.route('/increment', methods=['POST'])
 def increment():
     result = {}
@@ -462,8 +467,19 @@ def run_alpaca():
 
         for keyword in mission_dice.keys():
             if keyword in data['value']:
-                text_line[mission_dice[keyword]] = 'True'
-
+                if keyword == '曲線':
+                    text_line['curve'] = '''
+                                            <form id="data-form">
+                                                <label><input type="checkbox" name="data" value="Torque" onchange="updateChart()"> TL(Nm)</label>
+                                                <label><input type="checkbox" name="data" value="Efficiency" onchange="updateChart()"> Efficiency(%) </label>
+                                                <label><input type="checkbox" name="data" value="Powerin" onchange="updateChart()"> Pin(W)</label>
+                                                <label><input type="checkbox" name="data" value="Voltage" onchange="updateChart()"> Voltage(volt)</label>
+                                                <label><input type="checkbox" name="data" value="Current" onchange="updateChart()"> Current(A)</label>
+                                            </form>
+                                            <canvas id="myChart"></canvas>
+                                        '''
+                if keyword == '架構':
+                    text_line['twoport'] = 'False'
         print(text_line)
 
     else:

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Motor Tech Co-AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- 引入 Bootstrap 5 Bundle JS (包含 Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Favicon icon -->
+    <link rel="icon" type="static/image/png" sizes="16x16" href="static/images/favicon.png">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="static/css/style.css" rel="stylesheet">
+    <script>
+        (function() {
+            const originalWarn = console.warn;
+            console.warn = function(message, ...args) {
+                if (typeof message === 'string' && message.includes('Ignoring resolver passed as options for scale:')) {
+                    return;
+                }
+                originalWarn.apply(console, [message, ...args]);
+            };
+        })();
+    </script>
+
+</head>
+<style>
+    .contain {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        grid-template-rows: 1fr 3fr;
+        height: 100vh;
+        background-color: #ffffff8e;
+    }
+/* 
+    .contain > div {
+        border: 1px solid black;
+    }
+    .left > div {
+        border: 1px solid black;
+    } */
+    .contain > .top-left {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .contain > .bottom-left {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    .contain > .top-right {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+    }
+    
+    .contain > .bottom-right {
+        grid-column: 2;
+        grid-row: 2;
+    }
+    .form-container {
+        /* border: 1px solid #ccc; */
+        padding: 10px;
+        width: auto;
+    }
+    fieldset {
+        border: 1px solid #000;
+        padding: 10px;
+    }
+
+    legend {
+        font-weight: bold;
+        font-style: italic;
+        text-align: center;
+    }
+
+    div {
+        margin-bottom: 10px;
+    }
+    .parameter-form {
+        font-family: Arial, sans-serif;
+    }
+
+    .parameter-form h3 {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .parameter-form .form-group {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+    }
+
+    .parameter-form label {
+        width: 60px;
+        text-align: center;
+        margin-right: 10px;
+        color: #000;
+        font-weight:bold;
+    }
+
+    .parameter-form input {
+        width: 100px;
+        padding: 5px;
+        margin-right: 10px;
+    }
+
+    .parameter-form input[type="text"] {
+        text-align: right;
+    }
+    .image-container {
+        width: 70%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .image-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+
+</style>
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="loader">
+            <svg class="circular" viewBox="25 25 50 50">
+                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
+            </svg>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+        <div class="nav-header">
+            <div class="brand-logo">
+                <!-- <a href="index.html"> -->
+                <a>
+                    <span class="brand-title">
+                        <!-- <img src="static/WEMTRC_Logo.png" alt=""> -->
+                    </span>
+                </a>
+            </div>
+        </div>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">    
+            <div class="header-content clearfix">
+                <div class="nav-control">
+                    <div class="hamburger">
+                        <span class="toggle-icon"><i class="icon-menu"></i></span>
+                    </div>
+                </div>
+                <div class="header-left">
+                    <div class="input-group icons">
+                        <h2><span style="color: rgb(218, 12, 12);font-weight:bold;">Motor Tech</span><span style="color: black;"> Co-AI</span></h2>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="nk-sidebar">           
+            <div class="nk-nav-scroll">
+                <ul class="metismenu" id="menu">
+                    <li class="nav-label">Apps</li>
+                        <li>
+                            <a  href="Two_port" aria-expanded="false">
+                                <i class="icon-envelope menu-icon"></i> <span class="nav-text">Two port </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a  href="Measurement" aria-expanded="false">
+                                <i class="icon-screen-tablet menu-icon"></i><span class="nav-text">Measurement</span>
+                            </a>
+                        </li>
+                </ul>
+            </div>
+        </div>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <div class="contain mt-5 ml-5 mr-5" >
+                <div class="top-left">
+                    <div class="form-container">
+                        <fieldset>
+                            <legend><b>Motor Type</b></legend>
+                            <div>
+                                <input type="radio" id="pmdc" name="motor" value="pmdc" checked>
+                                <label for="pmdc">PMDC</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="compound" name="motor" value="compound">
+                                <label for="compound">Compound</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="series" name="motor" value="series">
+                                <label for="series">Series</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="shunt" name="motor" value="shunt">
+                                <label for="shunt">Shunt</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="separately" name="motor" value="separately">
+                                <label for="separately">Separately</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="top-right">
+                    <div class="image-container">
+                        <img src="../static/MotorMeasurement/PMDC_Model.png" alt="Description of the image">
+                    </div>
+                </div>
+                <div class="bottom-left">
+                    <form class="parameter-form">
+                        <legend> Parameters</legend>
+                        <div class="form-group">
+                            <label for="Vs">V<sub>s</sub></label>
+                            <input type="text" id="Vs" name="Vs" value="24"> V
+                        </div>
+                        <div class="form-group">
+                            <label for="La">L<sub>a</sub></label>
+                            <input type="text" id="La" name="La" value="0.01324"> H
+                        </div>
+                        <div class="form-group">
+                            <label for="Ra">R<sub>a</sub></label>
+                            <input type="text" id="Ra" name="Ra" value="3.264"> Ω
+                        </div>
+                        <div class="form-group">
+                            <label for="Ke">K<sub>e</sub></label>
+                            <input type="text" id="Ke" name="Ke" value="1.19"> V/rad/s
+                        </div>
+                        <div class="form-group">
+                            <label for="Jm">J<sub>m</sub></label>
+                            <input type="text" id="Jm" name="Jm" value="0.01829"> kgm²
+                        </div>
+                        <div class="form-group">
+                            <label for="Bm">B<sub>m</sub></label>
+                            <input type="text" id="Bm" name="Bm" value="0.019"> Nm/rad/s
+                        </div>
+                        <div class="form-group">
+                            <label for="Kt">K<sub>t</sub></label>
+                            <input type="text" id="Kt" name="Kt" value="1.19"> Nm/A
+                        </div>
+                        <div class="form-group">
+                            <label for="param8">–</label>
+                            <input type="text" id="param8" name="param8" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="param9">–</label>
+                            <input type="text" id="param9" name="param9" value="0">
+                        </div>
+                    
+                        <legend> Stop Time</legend>
+                        <div class="form-group">
+                            <label></label>
+                            <input type="text" id="stop-time" name="stop-time" value="50"> sec
+                        </div>
+                        <label></label>
+                        <button type="button" class="btn btn-primary btn-lg">
+                            <span class="play-icon">&#9658;</span> Simulate
+                        </button>
+                    </form>
+                </div>
+                <div class="bottom-right">
+                    4
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+        
+        
+        
+    </div>
+
+   
+        <!-- <div class="footer">
+            <div class="copyright">
+                <p>Copyright &copy; Designed & Developed by <a href="https://themeforest.net/user/quixlab">Quixlab</a> 2018</p>
+            </div>
+        </div> -->
+
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <script src="static/plugins/common/common.min.js"></script>
+    <script src="static/js/custom.min.js"></script>
+    <script src="static/js/settings.js"></script>
+    <script src="static/js/gleek.js"></script>
+    <script src="static/js/styleSwitcher.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+
+
+    <script>
+       
+
+        // Set default tab
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelector('.tab-button').click();
+        });
+    </script>
+</body>
+
+</html>

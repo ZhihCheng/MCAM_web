@@ -53,8 +53,8 @@ server.key
 
 #simulink
 /Simulink_model
-PMDC_exhibition.slx
-PMDC_exhibition.slxc
+/static/MotorMeasurement
+
 myaxisc.m
 test_api.py
 ## Ignore Visual Studio temporary files, build results, and

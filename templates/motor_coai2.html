@@ -965,7 +965,7 @@
             
             var messageContent = document.createElement("div");
             messageContent.classList.add("message-content");
-            messageContent.textContent = message;
+            messageContent.innerHTML  = message;
             
             messageElement.appendChild(messageContent);
             messagesContainer.appendChild(messageElement);
