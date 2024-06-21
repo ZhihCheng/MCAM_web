@@ -54,7 +54,7 @@ server.key
 #simulink
 /Simulink_model
 /static/MotorMeasurement
-
+/static/two_port_app
 myaxisc.m
 test_api.py
 ## Ignore Visual Studio temporary files, build results, and
